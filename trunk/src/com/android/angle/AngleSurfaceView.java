@@ -15,26 +15,28 @@ public class AngleSurfaceView extends SurfaceView implements
 	public AngleSurfaceView(Context context)
 	{
 		super(context);
-		doInit();
+		doInit(context);
 	}
 
 	public AngleSurfaceView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		doInit();
+		doInit(context);
 	}
 
-	private void doInit()
+	private void doInit(Context context)
 	{
+		//new AngleRenderEngine(context);
+		AngleRenderEngine.mContext=context;
 		mSurfaceHolder = getHolder();
 		mSurfaceHolder.addCallback(this);
 		mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+		mRenderThread = new AngleRenderThread();
+		mRenderThread.start();
 	}
 
 	public void setRenderEngine(AngleRenderEngine renderEngine)
 	{
-		mRenderThread = new AngleRenderThread(renderEngine);
-		mRenderThread.start();
 	}
 
 	public void surfaceCreated(SurfaceHolder holder)
