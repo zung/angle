@@ -1,7 +1,6 @@
 package com.android.angle;
 
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
@@ -20,11 +19,11 @@ public class AngleRenderEngine
 
 	public AngleRenderEngine(Context context)
 	{
-		new AngleTextureEngine();
+		//new AngleTextureEngine();
 		mContext = context;
 	}
 	
-	public void addRenderer(AngleRenderer renderer)
+	public static void addRenderer(AngleRenderer renderer)
 	{
 		if (mRenderersCount<MAX_RENDERERS)
 		{
@@ -36,13 +35,7 @@ public class AngleRenderEngine
 
 	}
 
-	public int[] getConfigSpec()
-	{
-		int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0, EGL10.EGL_NONE };
-		return configSpec;
-	}
-
-	public void drawFrame()
+	public static void drawFrame()
 	{
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
@@ -56,7 +49,7 @@ public class AngleRenderEngine
 		//Log.v("Frame", "Frame");
 	}
 
-	public void sizeChanged(int width, int height)
+	public static void sizeChanged(int width, int height)
 	{
 		mWidth=width;
 		mHeight=height;
@@ -72,14 +65,14 @@ public class AngleRenderEngine
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 	}
 	
-	public void loadTextures ()
+	public static void loadTextures ()
 	{
 		for (int r = 0; r < mRenderersCount; r++)
 			mRenderers[r].loadTextures();
 		AngleTextureEngine.loadTextures();
 	}
 
-	public void shutdown()
+	public static void shutdown()
 	{
 		for (int r = 0; r < mRenderersCount; r++)
 			mRenderers[r].shutdown();

@@ -2,28 +2,28 @@ package com.android.angle;
 
 import java.util.concurrent.Semaphore;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.util.Log;
 
 class AngleRenderThread extends Thread
 {
-   private static final Semaphore sEglSemaphore = new Semaphore(1);
+	private static final int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0, EGL10.EGL_NONE };
+	private static final Semaphore sEglSemaphore = new Semaphore(1);
 	private boolean mDone=false;
-	private boolean mPaused=false;
-	private boolean mHasFocus=true;
+	private boolean mPaused=true;
+	private boolean mHasFocus=false;
 	private boolean mHasSurface;
 	private boolean mContextLost;
 	private int mWidth=0;
 	private int mHeight=0;
-	private AngleRenderEngine mRenderEngine=null;
 	private Runnable mBeforeDraw=null;
 	private EGLHelper mEglHelper=null;
 	
-	AngleRenderThread(AngleRenderEngine renderEngine)
+	AngleRenderThread()
 	{
 		super();
-		mRenderEngine = renderEngine;
 		setName("AngleRenderThread");
 	}
 
@@ -63,16 +63,15 @@ class AngleRenderThread extends Thread
 	private void guardedRun() throws InterruptedException
 	{
 		mEglHelper = new EGLHelper();
-		int[] configSpec = mRenderEngine.getConfigSpec();
 		mEglHelper.start(configSpec);
 
-		boolean tellRendererSurfaceCreated = true;
-		boolean tellRendererSurfaceChanged = true;
+		boolean tellRendererSurfaceCreated = false;
+		boolean tellRendererSurfaceChanged = false;
 
 		while (!mDone)
 		{
 			int w, h;
-			boolean changed;
+			boolean changed=false;
 			boolean needStart = false;
 			synchronized (this)
 			{
@@ -87,10 +86,12 @@ class AngleRenderThread extends Thread
 				}
 				if (needToWait())
 				{
+					Log.d("AngleRenderThread","Waiting...");
 					while (needToWait())
 					{
 						wait();
 					}
+					Log.d("AngleRenderThread","End wait!");
 				}
 				if (mDone)
 				{
@@ -103,42 +104,36 @@ class AngleRenderThread extends Thread
 			}
 			if (needStart)
 			{
+				Log.d("AngleRenderThread","Need Start");
 				mEglHelper.start(configSpec);
 				tellRendererSurfaceCreated = true;
 				changed = true;
 			}
 			if (changed)
 			{
+				Log.d("AngleRenderThread","Changed");
 				AngleRenderEngine.gl = (GL10) mEglHelper.createSurface(AngleSurfaceView.mSurfaceHolder);
 				tellRendererSurfaceChanged = true;
 			}
 			if (tellRendererSurfaceCreated)
 			{
-				mRenderEngine.loadTextures();
+				AngleRenderEngine.loadTextures();
 				tellRendererSurfaceCreated = false;
 			}
 			if (tellRendererSurfaceChanged)
 			{
-				mRenderEngine.sizeChanged(w, h);
+				AngleRenderEngine.sizeChanged(w, h);
 				tellRendererSurfaceChanged = false;
 			}
 			if ((w > 0) && (h > 0))
 			{
-				/* draw a frame here */
-				mRenderEngine.drawFrame();
+				AngleRenderEngine.drawFrame();
 
-				/*
-				 * Once we're done with GL, we need to call swapBuffers() to
-				 * instruct the system to display the rendered frame
-				 */
 				mEglHelper.swap();
 			}
 		}
 
-		/*
-		 * clean-up everything...
-		 */
-		mRenderEngine.shutdown();
+		AngleRenderEngine.shutdown();
 
 		mEglHelper.finish();
 	}
@@ -172,6 +167,7 @@ class AngleRenderThread extends Thread
 	{
 		synchronized (this)
 		{
+			Log.d("AngleRenderThread","PAUSED!!!");
 			mPaused = true;
 		}
 	}
@@ -180,6 +176,7 @@ class AngleRenderThread extends Thread
 	{
 		synchronized (this)
 		{
+			Log.d("AngleRenderThread","RESUME!!!");
 			mPaused = false;
 			notify();
 		}

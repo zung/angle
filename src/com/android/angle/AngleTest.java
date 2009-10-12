@@ -6,28 +6,40 @@ import android.util.Log;
 
 public class AngleTest extends Activity
 {
-	AngleSurfaceView mView;
-	AngleRenderEngine mRenderEngine;
-	AngleGameEngine mGameEngine;
-	AngleSpriteRenderer mSprites; 
+	private AngleSurfaceView mView;
+	private AngleSpriteRenderer mSprites;
+	private AngleGameEngine mGame; 
 	
 	class AngleGameEngine implements Runnable
 	{
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
-		private AngleRenderEngine mRenderEngine;
 		private int mStateMachine=smLoad;
 		private AngleSprite s;
 		private int dir=1;
 		
-		AngleGameEngine (AngleRenderEngine renderEngine)
+		AngleGameEngine ()
 		{
-			mRenderEngine=renderEngine;
 		}
+
+      public void SaveInstance(Bundle outState)
+      {
+         Bundle sav = new Bundle();
+
+         sav.putInt("mStateMachine", Integer.valueOf(mStateMachine));
+   		outState.putBundle("AngleGameEngine", sav);
+   		Log.v("AngleGameEngine", "SaveInstance");
+      }
+
+      public void RestoreInstance(Bundle savedInstanceState)
+      {
+         Bundle sav = savedInstanceState.getBundle("AngleGameEngine");
+         mStateMachine = sav.getInt("mStateMachine");
+   		Log.v("AngleGameEngine", "RestoreInstance");
+      }
 		
 		public void run()
 		{
-			Log.v("Run", "Run");
 			switch (mStateMachine)
 			{
 				case smLoad:
@@ -51,12 +63,43 @@ public class AngleTest extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		mSprites=new AngleSpriteRenderer();
-		mRenderEngine = new AngleRenderEngine(this);
-		mRenderEngine.addRenderer(mSprites);
-		mView = new AngleSurfaceView(this);
-		mView.setRenderEngine(mRenderEngine);
-		mView.setBeforeDraw(new AngleGameEngine(mRenderEngine));
+		if (savedInstanceState==null)
+		{
+			Log.e("CREATE!!!!!!!!!", "New");
+			mSprites=new AngleSpriteRenderer();
+			mView = new AngleSurfaceView(this);
+			mGame=new AngleGameEngine();
+			mView.setBeforeDraw(mGame);
+			AngleRenderEngine.addRenderer(mSprites);
+		}
+		else
+		{
+			Log.e("CREATE!!!!!!!!!", "SAVED!!!");
+			mGame.RestoreInstance(savedInstanceState);
+		}
 		setContentView(mView);
 	}
+
+	@Override
+   public void onSaveInstanceState(Bundle outState) 
+	{
+       mGame.SaveInstance(outState);
+   }
+
+	@Override
+   protected void onResume() 
+	{
+       // Ideally a game should implement onResume() and onPause()
+       // to take appropriate action when the activity looses focus
+       super.onResume();
+       mView.onResume();
+   }
+
+   @Override
+   protected void onPause() {
+       // Ideally a game should implement onResume() and onPause()
+       // to take appropriate action when the activity looses focus
+       super.onPause();
+       mView.onPause();
+   }
 }
