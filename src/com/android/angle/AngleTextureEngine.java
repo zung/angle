@@ -15,7 +15,7 @@ public class AngleTextureEngine
 	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
 	private static final int MAX_TEXTURES = 16;
 	public static AngleTexture[] mTextures = new AngleTexture[MAX_TEXTURES];
-	private static int mTextureCount=0; 
+	private static int mTextureCount = 0;
 
 	AngleTextureEngine()
 	{
@@ -29,36 +29,37 @@ public class AngleTextureEngine
 			int d = 0;
 			int[] textures = new int[MAX_TEXTURES];
 
-			for (int t=0;t<mTextureCount;t++)
+			for (int t = 0; t < mTextureCount; t++)
 			{
-				if (mTextures[t].mWidth>0)
+				if (mTextures[t].mWidth > 0)
 					textures[d++] = mTextures[t].mHWTextureID;
 			}
 			AngleRenderEngine.gl.glDeleteTextures(d, textures, 0);
 		}
 	}
-	
-	public static int createHWTextureFromResource (int resourceId)
+
+	public static int createHWTextureFromResource(int resourceId)
 	{
-		for (int t=0;t<mTextureCount;t++)
+		for (int t = 0; t < mTextureCount; t++)
 		{
-			if (mTextures[t].mResourceID==resourceId) //Texture already loaded
+			if (mTextures[t].mResourceID == resourceId) // Texture already loaded
 				return t;
 		}
-		if (mTextureCount<MAX_TEXTURES)
+		if (mTextureCount < MAX_TEXTURES)
 		{
-			mTextures[mTextureCount]=new AngleTexture();
-			mTextures[mTextureCount].mResourceID=resourceId;
+			mTextures[mTextureCount] = new AngleTexture();
+			mTextures[mTextureCount].mResourceID = resourceId;
 			return mTextureCount++;
 		}
 		Log.e("AngleTextureEngine",
 				"createHWTextureFromResource() MAX_TEXTURES reached");
 		return 0;
 	}
-	
+
 	public static void loadTextures()
 	{
-		AngleRenderEngine.gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
+		AngleRenderEngine.gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+				GL10.GL_FASTEST);
 
 		AngleRenderEngine.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
 		AngleRenderEngine.gl.glShadeModel(GL10.GL_FLAT);
@@ -67,14 +68,16 @@ public class AngleTextureEngine
 		AngleRenderEngine.gl.glDisable(GL10.GL_DITHER);
 		AngleRenderEngine.gl.glDisable(GL10.GL_LIGHTING);
 
-		AngleRenderEngine.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		AngleRenderEngine.gl.glClear(GL10.GL_COLOR_BUFFER_BIT
+				| GL10.GL_DEPTH_BUFFER_BIT);
 
 		for (int t = 0; t < MAX_TEXTURES; t++)
 		{
-			if (mTextures[t]!=null)
+			if (mTextures[t] != null)
 				loadTexture(t);
 		}
 	}
+
 	private static void loadTexture(int textureId)
 	{
 		if (AngleRenderEngine.mContext != null)
@@ -102,22 +105,22 @@ public class AngleTextureEngine
 				AngleRenderEngine.gl.glTexEnvf(GL10.GL_TEXTURE_ENV,
 						GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
 
-				InputStream is = AngleRenderEngine.mContext.getResources().openRawResource(mTextures[textureId].mResourceID);
+				InputStream is = AngleRenderEngine.mContext.getResources()
+						.openRawResource(mTextures[textureId].mResourceID);
 				Bitmap bitmap;
 				try
 				{
 					bitmap = BitmapFactory.decodeStream(is, null, sBitmapOptions);
-				} 
-				finally
+				} finally
 				{
 					try
 					{
 						is.close();
-					} 
-					catch (IOException e)
+					} catch (IOException e)
 					{
 						Log.e("AngleTextureEngine",
-								"loadTexture::InputStream.close error: " + e.getMessage());
+								"loadTexture::InputStream.close error: "
+										+ e.getMessage());
 					}
 				}
 

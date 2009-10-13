@@ -3,77 +3,109 @@ package com.android.angle;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 
 public class AngleTest extends Activity
 {
-	private AngleSurfaceView mView=null;
-	private AngleSpriteRenderer mSprites=null;
-	private AngleGameEngine mGame=null; 
-	
-	class AngleGameEngine implements Runnable
+	private AngleSurfaceView mView = null; //El View donde se pintará todo
+	private AngleSpriteRenderer mSprites = null; //Único renderizador que se usará en este ejemplo
+	private MyGameEngine mGame = null; //Motor de juego
+
+	class Pelota extends AngleSprite //Sobrecarga del sprite básico para que tenga velocidad
 	{
+		public float vX;
+		public float vY;
+
+		public Pelota()
+		{
+			super(34, 34, R.drawable.ball, 0, 0, 34, 34);
+			vX = 0;
+			vY = 0;
+		}
+	}
+
+	class MyGameEngine implements Runnable //Motor de juego
+	{
+		//máquina de estados
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
-		private int mStateMachine=0;
-		private AngleSprite s;
-		private int dir=1;
-		private int frameCount=0;
-		private long lCTM=0;
+		private int mStateMachine = 0;
 		
-		AngleGameEngine ()
+		//sprites
+		private Pelota pelota=null;
+		private AngleSprite nave=null;
+		
+		//contador fps
+		private int frameCount = 0;
+		private long lCTM = 0;
+
+		MyGameEngine()
 		{
 		}
 
-      public void SaveInstance(Bundle outState)
-      {
-         Bundle sav = new Bundle();
+		public void Start()
+		{
+			mStateMachine = smLoad;
+		}
 
-         sav.putInt("mStateMachine", Integer.valueOf(mStateMachine));
-   		outState.putBundle("AngleGameEngine", sav);
-   		Log.v("AngleGameEngine", "SaveInstance");
-      }
-
-      public void RestoreInstance(Bundle savedInstanceState)
-      {
-         Bundle sav = savedInstanceState.getBundle("AngleGameEngine");
-         mStateMachine = sav.getInt("mStateMachine");
-   		Log.v("AngleGameEngine", "RestoreInstance");
-      }
-      
-      public void Load ()
-      {
-      	mStateMachine=smLoad;
-      }
-		
 		public void run()
 		{
+			//--------FPS------------
 			frameCount++;
-			if (frameCount>=100)
+			if (frameCount >= 100)
 			{
 				long CTM = System.currentTimeMillis();
-				frameCount=0;
-				if (lCTM>0)
-					Log.v("FPS",String.valueOf(100.f/((CTM-lCTM)/1000.f)));
+				frameCount = 0;
+				if (lCTM > 0)
+					Log.v("FPS", String.valueOf(100.f / ((CTM - lCTM) / 1000.f)));
 				lCTM = CTM;
 			}
+			//-----------------------
 
 			switch (mStateMachine)
 			{
 				case smLoad:
-					for (int t=0;t<500;t++)
+					if (AngleRenderEngine.mWidth > 0			//Cargará una vez que se haya inicializado todo el motor gráfico
+							&& AngleRenderEngine.mHeight > 0)//Puede cargarse antes. Pero como uso las dimensiones.... 
 					{
-						s = new AngleSprite(34,34,R.drawable.ball,0,0,34,34);
-				      s.mX=(float) (Math.random()*300);
-				      s.mY=(float) (Math.random()*460);
-						mSprites.addSprite(s);
+						nave = new AngleSprite(34, 34, R.drawable.ball, 0, 0, 34, 34);
+						nave.mY = AngleRenderEngine.mHeight - nave.mHeight;
+						mSprites.addSprite(nave); //Al incluir la nave en el renderizador mSprites, se pintará sola
+						for (int t = 0; t < 5; t++)
+						{
+							pelota = new Pelota();
+							pelota.mX = (float) (Math.random()
+									* AngleRenderEngine.mWidth - 20) + 10;
+							pelota.mY = (float) (Math.random()
+									* AngleRenderEngine.mHeight - 20) + 10;
+							pelota.vX = (float) (Math.random() * 300) - 150;
+							pelota.vY = (float) (Math.random() * 300) - 150;
+							mSprites.addSprite(pelota); //lo mismo con la pelota(s)
+						}
+						AngleRenderEngine.loadTextures(); //Como he cargado sprites nuevos con el motor activo. He de forzar a que las texturas vuelvan a cargarse
+						mStateMachine = smMove;
 					}
-					mStateMachine=smMove;
 					break;
-				case smMove:
-					s.mX+=dir;
-					if (s.mX>300||s.mX<20)
-						dir=-dir;
+				case smMove: //movimiento básico
+				{
+					float dX = pelota.vX * AngleRenderEngine.secondsElapsed;
+					float dY = pelota.vY * AngleRenderEngine.secondsElapsed;
+					pelota.mX += dX;
+					pelota.mY += dY;
+					if (((pelota.vX > 0) && (pelota.mX + pelota.mWidth > AngleRenderEngine.mWidth))
+							|| ((pelota.vX < 0) && (pelota.mX < 0)))
+					{
+						pelota.vX = -pelota.vX;
+						pelota.mX += dX;
+					}
+					if (((pelota.vY > 0) && (pelota.mY + pelota.mHeight > AngleRenderEngine.mHeight))
+							|| ((pelota.vY < 0) && (pelota.mY < 0)))
+					{
+						pelota.vY = -pelota.vY;
+						pelota.mY += dY;
+					}
 					break;
+				}
 			}
 		}
 	}
@@ -82,47 +114,68 @@ public class AngleTest extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		Log.d("AngleTest", "Create");
 		setContentView(R.layout.main);
-		if (savedInstanceState==null)
-		{
-			Log.e("AngleGameEngine", "New");
-			mSprites=new AngleSpriteRenderer();
-			mView = new AngleSurfaceView(this);
-			mGame=new AngleGameEngine();
-			mView.setBeforeDraw(mGame);
-			AngleRenderEngine.addRenderer(mSprites);
-			mGame.Load();
-		}
-		else
-		{
-			Log.e("AngleGameEngine", "SAVED!!!");
-			mGame.RestoreInstance(savedInstanceState);
-		}
+
+		mGame = new MyGameEngine(); //creo un motor de juego propio
+
+		mSprites = new AngleSpriteRenderer();
+		AngleRenderEngine.addRenderer(mSprites); //Añado un renderizador para sprites
+		
+		mView = new AngleSurfaceView(this);
+		mView.setBeforeDraw(mGame); //Aqui le digo a la view, que Runnable.run() ha de ejecutar antes de cada frame 
 		setContentView(mView);
+
+		mGame.Start(); //Inicia el tema
 	}
 
 	@Override
-   public void onSaveInstanceState(Bundle outState) 
+	public boolean onTouchEvent(MotionEvent event)
 	{
-		Log.d("AngleTest", "SaveInstanceState");
-      mGame.SaveInstance(outState);
-   }
+		//Esto evita que la aplicación sea inundada con mensajes.
+		//Máximo unos 62 por segundo (como los FPS máximos)
+		try
+		{
+			Thread.sleep(16); 
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		//------------------------------------------------------
+		
+		if (mGame.nave!=null) //Posiciona la nave
+			mGame.nave.mX = event.getX() - mGame.nave.mWidth / 2;
+		
+		return super.onTouchEvent(event);
+	}
 
 	@Override
-   protected void onResume() 
+	protected void onPause()
+	{
+		Log.d("AngleTest", "Pause");
+		mView.onPause(); //He de informar al view que ha habido una pausa
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume()
 	{
 		Log.d("AngleTest", "Resume");
-      mView.onResume();
-      super.onResume();
-   }
+		mView.onResume();//He de informar al view que la pausa ha acabado
+		super.onResume();
+	}
 
-   @Override
+	@Override
 	protected void onDestroy()
 	{
 		Log.d("AngleTest", "Destroy");
-		AngleRenderEngine.shutdown();
+		AngleRenderEngine.shutdown(); //Destruyo el motor de renderizado
 		super.onDestroy();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		Log.d("AngleTest", "SaveInstanceState");
 	}
 
 	@Override
@@ -146,11 +199,4 @@ public class AngleTest extends Activity
 		super.onStop();
 	}
 
-	@Override
-   protected void onPause() 
-	{
-		Log.d("AngleTest", "Pause");
-      mView.onPause();
-      super.onPause();
-   }
 }

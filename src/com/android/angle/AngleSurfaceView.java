@@ -26,8 +26,8 @@ public class AngleSurfaceView extends SurfaceView implements
 
 	private void doInit(Context context)
 	{
-		//new AngleRenderEngine(context);
-		AngleRenderEngine.mContext=context;
+		// new AngleRenderEngine(context);
+		AngleRenderEngine.mContext = context;
 		mSurfaceHolder = getHolder();
 		mSurfaceHolder.addCallback(this);
 		mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
@@ -64,9 +64,9 @@ public class AngleSurfaceView extends SurfaceView implements
 		mRenderThread.onResume();
 	}
 
-	public void setBeforeDraw (Runnable beforeDraw)
+	public void setBeforeDraw(Runnable beforeDraw)
 	{
-		mRenderThread.setBeforeDraw (beforeDraw);
+		mRenderThread.setBeforeDraw(beforeDraw);
 	}
 
 	@Override
