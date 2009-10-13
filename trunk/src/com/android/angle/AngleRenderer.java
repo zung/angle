@@ -8,5 +8,5 @@ public abstract class AngleRenderer
 
 	public abstract void loadTextures();
 
-	public abstract void shutdown();
+	public abstract void onDestroy();
 }

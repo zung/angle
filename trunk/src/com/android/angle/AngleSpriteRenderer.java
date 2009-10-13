@@ -26,7 +26,7 @@ public class AngleSpriteRenderer extends AngleRenderer
 					.createHWTextureFromResource(mSprites[s].mResourceID);
 	}
 
-	public void shutdown()
+	public void onDestroy()
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s] = null;
