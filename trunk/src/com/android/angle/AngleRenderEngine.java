@@ -15,6 +15,7 @@ public class AngleRenderEngine
 	public static int mHeight=0;
 	public static Context mContext=null;
 	public static GL10 gl = null;
+	public static float secondsElapsed=0.0f;
 
 
 	public AngleRenderEngine(Context context)
@@ -75,8 +76,13 @@ public class AngleRenderEngine
 	public static void shutdown()
 	{
 		for (int r = 0; r < mRenderersCount; r++)
+		{
 			mRenderers[r].shutdown();
+			mRenderers[r]=null;
+		}
+		mRenderersCount=0;
 		AngleTextureEngine.shutdown();
+		java.lang.System.gc();
 	}
 	
 }

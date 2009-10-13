@@ -4,7 +4,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class AngleSpriteRenderer extends AngleRenderer
 {
-	private static final int MAX_SPRITES = 100;
+	private static final int MAX_SPRITES = 1000;
 	private static AngleSprite[] mSprites=new AngleSprite[MAX_SPRITES];
 	private static int mSpritesCount=0;
 
@@ -27,6 +27,8 @@ public class AngleSpriteRenderer extends AngleRenderer
 	
 	public void shutdown()
 	{
-		
+		for (int s = 0; s < mSpritesCount; s++)
+			mSprites[s]=null;
+		mSpritesCount=0;
 	}
 }
