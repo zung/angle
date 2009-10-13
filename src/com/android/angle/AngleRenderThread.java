@@ -14,8 +14,8 @@ class AngleRenderThread extends Thread
 	private boolean mDone=false;
 	private boolean mPaused=true;
 	private boolean mHasFocus=false;
-	private boolean mHasSurface;
-	private boolean mContextLost;
+	private boolean mHasSurface=false;
+	private boolean mContextLost=false;
 	private int mWidth=0;
 	private int mHeight=0;
 	private Runnable mBeforeDraw=null;
@@ -43,18 +43,21 @@ class AngleRenderThread extends Thread
 			try
 			{
 				sEglSemaphore.acquire();
-			} catch (InterruptedException e)
+			} 
+			catch (InterruptedException e)
 			{
 				Log.e("AngleRenderThread",
 						"sEglSemaphore.acquire() exception: " + e.getMessage());
 				return;
 			}
 			guardedRun();
-		} catch (InterruptedException e)
+		} 
+		catch (InterruptedException e)
 		{
 			Log.e("AngleRenderThread",
 					"guarded() exception: " + e.getMessage());
-		} finally
+		}
+		finally
 		{
 			sEglSemaphore.release();
 		}
@@ -65,24 +68,23 @@ class AngleRenderThread extends Thread
 		mEglHelper = new EGLHelper();
 		mEglHelper.start(configSpec);
 
-		boolean tellRendererSurfaceCreated = false;
-		boolean tellRendererSurfaceChanged = false;
+		boolean needStartEgl = true;
+		boolean needCreateSurface = false;
+		boolean needLoadTextures = false;
+		boolean needResize = false;
+		long lCTM = 0;
+
+		Log.d("AngleRenderThread","run init");
 
 		while (!mDone)
 		{
-			int w, h;
-			boolean changed=false;
-			boolean needStart = false;
 			synchronized (this)
 			{
-				if (mBeforeDraw != null)
-				{
-					mBeforeDraw.run();
-				}
 				if (mPaused)
 				{
 					mEglHelper.finish();
-					needStart = true;
+					needStartEgl = true;
+					Log.d("AngleRenderThread","PAUSED...");
 				}
 				if (needToWait())
 				{
@@ -92,43 +94,54 @@ class AngleRenderThread extends Thread
 						wait();
 					}
 					Log.d("AngleRenderThread","End wait!");
+					lCTM = 0;
 				}
 				if (mDone)
 				{
 					break;
 				}
-				changed = AngleSurfaceView.mSizeChanged;
-				w = mWidth;
-				h = mHeight;
+				if (mBeforeDraw != null)
+				{
+					AngleRenderEngine.secondsElapsed=0.0f;
+					long CTM = System.currentTimeMillis();
+					if (lCTM>0)
+						AngleRenderEngine.secondsElapsed=(CTM-lCTM)/1000.f;
+					mBeforeDraw.run();
+				}
+				//Captures variables values synchronized
+				needCreateSurface = AngleSurfaceView.mSizeChanged;
 				AngleSurfaceView.mSizeChanged = false;
 			}
-			if (needStart)
+			if (needStartEgl)
 			{
-				Log.d("AngleRenderThread","Need Start");
+				needStartEgl=false;
+				Log.d("AngleRenderThread","Need Start EGL");
 				mEglHelper.start(configSpec);
-				tellRendererSurfaceCreated = true;
-				changed = true;
+				needCreateSurface = true;
+				needLoadTextures = true;
 			}
-			if (changed)
+			if (needCreateSurface)
 			{
-				Log.d("AngleRenderThread","Changed");
+				needCreateSurface=false;
+				Log.d("AngleRenderThread","needCreateSurface");
 				AngleRenderEngine.gl = (GL10) mEglHelper.createSurface(AngleSurfaceView.mSurfaceHolder);
-				tellRendererSurfaceChanged = true;
+				needResize = true;
 			}
-			if (tellRendererSurfaceCreated)
+			if (needLoadTextures)
 			{
+				needLoadTextures=false;
+				Log.d("AngleRenderThread","needLoadTextures");
 				AngleRenderEngine.loadTextures();
-				tellRendererSurfaceCreated = false;
 			}
-			if (tellRendererSurfaceChanged)
+			if (needResize)
 			{
-				AngleRenderEngine.sizeChanged(w, h);
-				tellRendererSurfaceChanged = false;
+				needResize=false;
+				Log.d("AngleRenderThread","needResize");
+				AngleRenderEngine.sizeChanged(mWidth, mHeight);
 			}
-			if ((w > 0) && (h > 0))
+			if ((mWidth > 0) && (mHeight > 0))
 			{
 				AngleRenderEngine.drawFrame();
-
 				mEglHelper.swap();
 			}
 		}
@@ -176,7 +189,7 @@ class AngleRenderThread extends Thread
 	{
 		synchronized (this)
 		{
-			Log.d("AngleRenderThread","RESUME!!!");
+			Log.d("AngleRenderThread","RESUMED!!!");
 			mPaused = false;
 			notify();
 		}
@@ -194,12 +207,12 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void onWindowResize(int w, int h)
+	public void onWindowResize(int width, int height)
 	{
 		synchronized (this)
 		{
-			mWidth = w;
-			mHeight = h;
+			mWidth = width;
+			mHeight = height;
 			AngleSurfaceView.mSizeChanged = true;
 		}
 	}
@@ -216,7 +229,8 @@ class AngleRenderThread extends Thread
 		try
 		{
 			join();
-		} catch (InterruptedException ex)
+		} 
+		catch (InterruptedException ex)
 		{
 			Thread.currentThread().interrupt();
 		}

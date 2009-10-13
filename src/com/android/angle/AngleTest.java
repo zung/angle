@@ -6,17 +6,19 @@ import android.util.Log;
 
 public class AngleTest extends Activity
 {
-	private AngleSurfaceView mView;
-	private AngleSpriteRenderer mSprites;
-	private AngleGameEngine mGame; 
+	private AngleSurfaceView mView=null;
+	private AngleSpriteRenderer mSprites=null;
+	private AngleGameEngine mGame=null; 
 	
 	class AngleGameEngine implements Runnable
 	{
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
-		private int mStateMachine=smLoad;
+		private int mStateMachine=0;
 		private AngleSprite s;
 		private int dir=1;
+		private int frameCount=0;
+		private long lCTM=0;
 		
 		AngleGameEngine ()
 		{
@@ -37,16 +39,34 @@ public class AngleTest extends Activity
          mStateMachine = sav.getInt("mStateMachine");
    		Log.v("AngleGameEngine", "RestoreInstance");
       }
+      
+      public void Load ()
+      {
+      	mStateMachine=smLoad;
+      }
 		
 		public void run()
 		{
+			frameCount++;
+			if (frameCount>=100)
+			{
+				long CTM = System.currentTimeMillis();
+				frameCount=0;
+				if (lCTM>0)
+					Log.v("FPS",String.valueOf(100.f/((CTM-lCTM)/1000.f)));
+				lCTM = CTM;
+			}
+
 			switch (mStateMachine)
 			{
 				case smLoad:
-					s = new AngleSprite(34,34,R.drawable.ball,0,0,34,34);
-			      s.mX=30;
-			      s.mY=0;
-					mSprites.addSprite(s);
+					for (int t=0;t<500;t++)
+					{
+						s = new AngleSprite(34,34,R.drawable.ball,0,0,34,34);
+				      s.mX=(float) (Math.random()*300);
+				      s.mY=(float) (Math.random()*460);
+						mSprites.addSprite(s);
+					}
 					mStateMachine=smMove;
 					break;
 				case smMove:
@@ -62,19 +82,21 @@ public class AngleTest extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Log.d("AngleTest", "Create");
 		setContentView(R.layout.main);
 		if (savedInstanceState==null)
 		{
-			Log.e("CREATE!!!!!!!!!", "New");
+			Log.e("AngleGameEngine", "New");
 			mSprites=new AngleSpriteRenderer();
 			mView = new AngleSurfaceView(this);
 			mGame=new AngleGameEngine();
 			mView.setBeforeDraw(mGame);
 			AngleRenderEngine.addRenderer(mSprites);
+			mGame.Load();
 		}
 		else
 		{
-			Log.e("CREATE!!!!!!!!!", "SAVED!!!");
+			Log.e("AngleGameEngine", "SAVED!!!");
 			mGame.RestoreInstance(savedInstanceState);
 		}
 		setContentView(mView);
@@ -83,23 +105,52 @@ public class AngleTest extends Activity
 	@Override
    public void onSaveInstanceState(Bundle outState) 
 	{
-       mGame.SaveInstance(outState);
+		Log.d("AngleTest", "SaveInstanceState");
+      mGame.SaveInstance(outState);
    }
 
 	@Override
    protected void onResume() 
 	{
-       // Ideally a game should implement onResume() and onPause()
-       // to take appropriate action when the activity looses focus
-       super.onResume();
-       mView.onResume();
+		Log.d("AngleTest", "Resume");
+      mView.onResume();
+      super.onResume();
    }
 
    @Override
-   protected void onPause() {
-       // Ideally a game should implement onResume() and onPause()
-       // to take appropriate action when the activity looses focus
-       super.onPause();
-       mView.onPause();
+	protected void onDestroy()
+	{
+		Log.d("AngleTest", "Destroy");
+		AngleRenderEngine.shutdown();
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onRestart()
+	{
+		Log.d("AngleTest", "Restart");
+		super.onRestart();
+	}
+
+	@Override
+	protected void onStart()
+	{
+		Log.d("AngleTest", "Start");
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop()
+	{
+		Log.d("AngleTest", "Stop");
+		super.onStop();
+	}
+
+	@Override
+   protected void onPause() 
+	{
+		Log.d("AngleTest", "Pause");
+      mView.onPause();
+      super.onPause();
    }
 }
