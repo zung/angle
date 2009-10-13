@@ -1,5 +1,9 @@
 package com.android.angle;
 
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+import javax.microedition.khronos.opengles.GL11Ext;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,9 +22,44 @@ public class AngleTest extends Activity
 
 		public Pelota()
 		{
-			super(34, 34, R.drawable.ball, 0, 0, 34, 34);
+			super(14, 14, R.drawable.pelota, 0, 0, 14, 14);
 			vX = 0;
 			vY = 0;
+		}
+	}
+	
+	class Bola  extends AngleSprite
+	{
+		boolean isFocused;
+		boolean isSelected;
+		public Bola()
+		{
+			super(34, 34, R.drawable.ball, 0, 0, 34, 34);
+			isFocused=false;
+			isSelected=false;
+		}
+		
+		@Override
+		public void draw(GL10 gl)
+		{
+			if (mTextureID>=0)
+			{
+			//	gl.glMatrixMode(GL10.GL_MODELVIEW);
+
+				gl.glMatrixMode(GL10.GL_TEXTURE);
+				gl.glColor4f(0.5f, 0.5f, 1f, 1f);
+
+				gl.glBindTexture(GL10.GL_TEXTURE_2D,
+						AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
+		
+				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
+						GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
+		
+				((GL11Ext) gl).glDrawTexfOES(mX,
+						AngleRenderEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
+			}
+
+			//super.draw(gl);
 		}
 	}
 
@@ -29,11 +68,15 @@ public class AngleTest extends Activity
 		//máquina de estados
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
+		private static final int MAX_PELOTAS = 50;
+		private static final int MAX_BOLAS = 0;
 		private int mStateMachine = 0;
 		
 		//sprites
-		private Pelota pelota=null;
+		private Pelota[] pelota=new Pelota[MAX_PELOTAS];
 		private AngleSprite nave=null;
+
+		private Bola[] bolas=new Bola[MAX_BOLAS];
 		
 		//contador fps
 		private int frameCount = 0;
@@ -68,19 +111,29 @@ public class AngleTest extends Activity
 					if (AngleRenderEngine.mWidth > 0			//Cargará una vez que se haya inicializado todo el motor gráfico
 							&& AngleRenderEngine.mHeight > 0)//Puede cargarse antes. Pero como uso las dimensiones.... 
 					{
-						nave = new AngleSprite(34, 34, R.drawable.ball, 0, 0, 34, 34);
-						nave.mY = AngleRenderEngine.mHeight - nave.mHeight;
-						mSprites.addSprite(nave); //Al incluir la nave en el renderizador mSprites, se pintará sola
-						for (int t = 0; t < 5; t++)
+						for (int t = 0; t < MAX_BOLAS; t++)
 						{
-							pelota = new Pelota();
-							pelota.mX = (float) (Math.random()
-									* AngleRenderEngine.mWidth - 20) + 10;
-							pelota.mY = (float) (Math.random()
-									* AngleRenderEngine.mHeight - 20) + 10;
-							pelota.vX = (float) (Math.random() * 300) - 150;
-							pelota.vY = (float) (Math.random() * 300) - 150;
-							mSprites.addSprite(pelota); //lo mismo con la pelota(s)
+							bolas[t] = new Bola();
+							bolas[t].mX = (float) (Math.random()
+									* AngleRenderEngine.mWidth - bolas[t].mWidth - 20) + 10;
+							bolas[t].mY = (float) (Math.random()
+									* AngleRenderEngine.mHeight - bolas[t].mHeight - 20) + 10;
+							mSprites.addSprite(bolas[t]);
+						}
+						
+						nave = new AngleSprite(54, 29, R.drawable.tortuga, 0, 0, 54, 29);
+						nave.mY = AngleRenderEngine.mHeight - nave.mHeight-50;
+						mSprites.addSprite(nave); //Al incluir la nave en el renderizador mSprites, se pintará sola
+						for (int t = 0; t < MAX_PELOTAS; t++)
+						{
+							pelota[t] = new Pelota();
+							pelota[t].mX = (float) (Math.random()
+									* AngleRenderEngine.mWidth - pelota[t].mWidth - 20) + 10;
+							pelota[t].mY = (float) (Math.random()
+									* AngleRenderEngine.mHeight - pelota[t].mHeight - 20) + 10;
+							pelota[t].vX = (float) (Math.random() * 300) - 150;
+							pelota[t].vY = (float) (Math.random() * 300) - 150;
+							mSprites.addSprite(pelota[t]); //lo mismo con la pelota(s)
 						}
 						AngleRenderEngine.loadTextures(); //Como he cargado sprites nuevos con el motor activo. He de forzar a que las texturas vuelvan a cargarse
 						mStateMachine = smMove;
@@ -88,21 +141,24 @@ public class AngleTest extends Activity
 					break;
 				case smMove: //movimiento básico
 				{
-					float dX = pelota.vX * AngleRenderEngine.secondsElapsed;
-					float dY = pelota.vY * AngleRenderEngine.secondsElapsed;
-					pelota.mX += dX;
-					pelota.mY += dY;
-					if (((pelota.vX > 0) && (pelota.mX + pelota.mWidth > AngleRenderEngine.mWidth))
-							|| ((pelota.vX < 0) && (pelota.mX < 0)))
+					for (int t = 0; t < MAX_PELOTAS; t++)
 					{
-						pelota.vX = -pelota.vX;
-						pelota.mX += dX;
+					float dX = pelota[t].vX * AngleRenderEngine.secondsElapsed;
+					float dY = pelota[t].vY * AngleRenderEngine.secondsElapsed;
+					pelota[t].mX += dX;
+					pelota[t].mY += dY;
+					if (((pelota[t].vX > 0) && (pelota[t].mX + pelota[t].mWidth > AngleRenderEngine.mWidth))
+							|| ((pelota[t].vX < 0) && (pelota[t].mX < 0)))
+					{
+						pelota[t].vX = -pelota[t].vX;
+						pelota[t].mX += dX;
 					}
-					if (((pelota.vY > 0) && (pelota.mY + pelota.mHeight > AngleRenderEngine.mHeight))
-							|| ((pelota.vY < 0) && (pelota.mY < 0)))
+					if (((pelota[t].vY > 0) && (pelota[t].mY + pelota[t].mHeight > AngleRenderEngine.mHeight))
+							|| ((pelota[t].vY < 0) && (pelota[t].mY < 0)))
 					{
-						pelota.vY = -pelota.vY;
-						pelota.mY += dY;
+						pelota[t].vY = -pelota[t].vY;
+						pelota[t].mY += dY;
+					}
 					}
 					break;
 				}
@@ -145,6 +201,20 @@ public class AngleTest extends Activity
 		if (mGame.nave!=null) //Posiciona la nave
 			mGame.nave.mX = event.getX() - mGame.nave.mWidth / 2;
 		
+		for (int t=0;t<mGame.MAX_BOLAS;t++)
+		{
+			mGame.bolas[t].isFocused=false;
+			float X=event.getX();
+			float Y=event.getY();
+			if ((X>mGame.bolas[t].mX)&&(Y>mGame.bolas[t].mY)&&(X<mGame.bolas[t].mX+mGame.bolas[t].mWidth)&&(Y<mGame.bolas[t].mY+mGame.bolas[t].mHeight))
+			{
+				if (event.getPressure()>0.3f)
+					mGame.bolas[t].isSelected=true;
+				else
+					mGame.bolas[t].isFocused=true;
+			}
+		}
+
 		return super.onTouchEvent(event);
 	}
 
@@ -168,7 +238,7 @@ public class AngleTest extends Activity
 	protected void onDestroy()
 	{
 		Log.d("AngleTest", "Destroy");
-		AngleRenderEngine.shutdown(); //Destruyo el motor de renderizado
+		AngleRenderEngine.onDestroy(); //Destruyo el motor de renderizado
 		super.onDestroy();
 	}
 

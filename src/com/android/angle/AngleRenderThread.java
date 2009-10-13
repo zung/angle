@@ -144,7 +144,7 @@ class AngleRenderThread extends Thread
 			}
 		}
 
-		AngleRenderEngine.shutdown();
+		AngleRenderEngine.onDestroy();
 
 		mEglHelper.finish();
 	}
@@ -171,6 +171,16 @@ class AngleRenderThread extends Thread
 		{
 			mHasSurface = false;
 			notify();
+		}
+	}
+
+	public void surfaceChanged(int width, int height)
+	{
+		synchronized (this)
+		{
+			mWidth = width;
+			mHeight = height;
+			AngleSurfaceView.mSizeChanged = true;
 		}
 	}
 
@@ -202,16 +212,6 @@ class AngleRenderThread extends Thread
 			{
 				notify();
 			}
-		}
-	}
-
-	public void onWindowResize(int width, int height)
-	{
-		synchronized (this)
-		{
-			mWidth = width;
-			mHeight = height;
-			AngleSurfaceView.mSizeChanged = true;
 		}
 	}
 

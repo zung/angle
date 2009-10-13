@@ -22,7 +22,7 @@ public class AngleTextureEngine
 		sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 	}
 
-	public static void shutdown()
+	public static void onDestroy()
 	{
 		if (AngleRenderEngine.gl != null)
 		{
@@ -36,6 +36,9 @@ public class AngleTextureEngine
 			}
 			AngleRenderEngine.gl.glDeleteTextures(d, textures, 0);
 		}
+		for (int t = 0; t < mTextureCount; t++)
+			mTextures[t] = null;
+		mTextureCount=0;
 	}
 
 	public static int createHWTextureFromResource(int resourceId)

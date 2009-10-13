@@ -12,14 +12,12 @@ public class AngleRenderEngine
 	private static int mRenderersCount = 0;
 	public static int mWidth = 0;
 	public static int mHeight = 0;
-	public static Context mContext = null;
 	public static GL10 gl = null;
 	public static float secondsElapsed = 0.0f;
+	public static Context mContext;
 
-	public AngleRenderEngine(Context context)
+	public AngleRenderEngine()
 	{
-		// new AngleTextureEngine();
-		mContext = context;
 	}
 
 	public static void addRenderer(AngleRenderer renderer)
@@ -34,16 +32,16 @@ public class AngleRenderEngine
 
 	public static void drawFrame()
 	{
+/*
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		gl.glOrthof(0.0f, mWidth, mHeight, 0.0f, -1.0f, 1.0f);
-
+*/
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		for (int r = 0; r < mRenderersCount; r++)
 			mRenderers[r].drawFrame(gl);
-		// Log.v("Frame", "Frame");
 	}
 
 	public static void sizeChanged(int width, int height)
@@ -69,15 +67,15 @@ public class AngleRenderEngine
 		AngleTextureEngine.loadTextures();
 	}
 
-	public static void shutdown()
+	public static void onDestroy()
 	{
 		for (int r = 0; r < mRenderersCount; r++)
 		{
-			mRenderers[r].shutdown();
+			mRenderers[r].onDestroy();
 			mRenderers[r] = null;
 		}
 		mRenderersCount = 0;
-		AngleTextureEngine.shutdown();
+		AngleTextureEngine.onDestroy();
 		java.lang.System.gc();
 	}
 
