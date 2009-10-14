@@ -9,4 +9,6 @@ public abstract class AngleRenderer
 	public abstract void loadTextures();
 
 	public abstract void onDestroy();
+
+	public abstract void afterLoadTextures();
 }

@@ -15,7 +15,7 @@ public class AngleTest extends Activity
 	private AngleSpriteRenderer mSprites = null; //Único renderizador que se usará en este ejemplo
 	private MyGameEngine mGame = null; //Motor de juego
 
-	class Pelota extends AngleSprite //Sobrecarga del sprite básico para que tenga velocidad
+	class Pelota extends AngleSimpleSprite //Sobrecarga del sprite básico para que tenga velocidad
 	{
 		public float vX;
 		public float vY;
@@ -28,7 +28,7 @@ public class AngleTest extends Activity
 		}
 	}
 	
-	class Bola  extends AngleSprite
+	class Bola  extends AngleSimpleSprite
 	{
 		boolean isFocused;
 		boolean isSelected;
@@ -122,7 +122,7 @@ public class AngleTest extends Activity
 						}
 						
 						nave = new AngleSprite(54, 29, R.drawable.tortuga, 0, 0, 54, 29);
-						nave.mY = AngleRenderEngine.mHeight - nave.mHeight-50;
+						nave.mY = AngleRenderEngine.mHeight - nave.mHeight-100;
 						mSprites.addSprite(nave); //Al incluir la nave en el renderizador mSprites, se pintará sola
 						for (int t = 0; t < MAX_PELOTAS; t++)
 						{
@@ -199,9 +199,9 @@ public class AngleTest extends Activity
 		//------------------------------------------------------
 		
 		if (mGame.nave!=null) //Posiciona la nave
-			mGame.nave.mX = event.getX() - mGame.nave.mWidth / 2;
+			mGame.nave.mX = event.getX();
 		
-		for (int t=0;t<mGame.MAX_BOLAS;t++)
+		for (int t=0;t<MyGameEngine.MAX_BOLAS;t++)
 		{
 			mGame.bolas[t].isFocused=false;
 			float X=event.getX();

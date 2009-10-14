@@ -32,11 +32,6 @@ public class AngleRenderEngine
 
 	public static void drawFrame()
 	{
-/*
-		gl.glMatrixMode(GL10.GL_PROJECTION);
-		gl.glLoadIdentity();
-		gl.glOrthof(0.0f, mWidth, mHeight, 0.0f, -1.0f, 1.0f);
-*/
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -51,7 +46,8 @@ public class AngleRenderEngine
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrthof(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+//		gl.glOrthof(0.0f, width, height, 0.0f, -1.0f, 1.0f); //Mio
+		gl.glOrthof(0, width, 0, height, 0, 1);
 
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glEnable(GL10.GL_BLEND);
@@ -60,11 +56,14 @@ public class AngleRenderEngine
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 	}
 
+	
 	public static void loadTextures()
 	{
 		for (int r = 0; r < mRenderersCount; r++)
 			mRenderers[r].loadTextures();
 		AngleTextureEngine.loadTextures();
+		for (int r = 0; r < mRenderersCount; r++)
+			mRenderers[r].afterLoadTextures();
 	}
 
 	public static void onDestroy()
