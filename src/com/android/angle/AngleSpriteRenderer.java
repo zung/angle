@@ -29,10 +29,16 @@ public class AngleSpriteRenderer extends AngleRenderer
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s].afterLoadTexture();
+
+		AngleRenderEngine.gl.glMatrixMode(GL10.GL_MODELVIEW);
+		AngleRenderEngine.gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		AngleRenderEngine.gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 	}
 
 	public void onDestroy()
 	{
+		AngleRenderEngine.gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		AngleRenderEngine.gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s] = null;
 		mSpritesCount = 0;
