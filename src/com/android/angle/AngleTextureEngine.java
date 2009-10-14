@@ -64,13 +64,13 @@ public class AngleTextureEngine
 		AngleRenderEngine.gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
 				GL10.GL_FASTEST);
 
-		AngleRenderEngine.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
 		AngleRenderEngine.gl.glShadeModel(GL10.GL_FLAT);
 		AngleRenderEngine.gl.glDisable(GL10.GL_DEPTH_TEST);
-		AngleRenderEngine.gl.glEnable(GL10.GL_TEXTURE_2D);
 		AngleRenderEngine.gl.glDisable(GL10.GL_DITHER);
 		AngleRenderEngine.gl.glDisable(GL10.GL_LIGHTING);
+		AngleRenderEngine.gl.glEnable(GL10.GL_TEXTURE_2D);
 
+		AngleRenderEngine.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
 		AngleRenderEngine.gl.glClear(GL10.GL_COLOR_BUFFER_BIT
 				| GL10.GL_DEPTH_BUFFER_BIT);
 

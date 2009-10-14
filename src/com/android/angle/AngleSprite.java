@@ -1,42 +1,98 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.FloatBuffer;
 
-public class AngleSprite extends AngleVisible
+import javax.microedition.khronos.opengles.GL10;
+
+public class AngleSprite extends AngleSimpleSprite
 {
-	public int mResourceID;
-	public int mTextureID;
-	protected int[] mTextureCrop = new int[4];
+	private FloatBuffer mVertexBuffer;
+	private FloatBuffer mTexCoordBuffer;
+	private CharBuffer mIndexBuffer;
+	private float mCropLeft;
+	private float mCropRight;
+	private float mCropTop;
+	private float mCropBottom;
+
+	private static final char[] sIndexValues = new char[] 
+	{
+		0, 1, 2,
+		1, 2, 3,
+	};
 
 	public AngleSprite(int width, int height, int resourceId, int cropLeft,
 			int cropTop, int cropWidth, int cropHeight)
 	{
-		super(width, height);
-		mTextureID = -1;
-		mResourceID = resourceId;
-		mTextureCrop[0] = cropLeft; // Ucr
-		mTextureCrop[1] = cropTop + cropHeight; // Vcr
-		mTextureCrop[2] = cropWidth; // Wcr
-		mTextureCrop[3] = -cropHeight; // Hcr
+		super(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight);
+
+		mCropLeft=cropLeft;
+		mCropRight=cropLeft+cropWidth;
+		mCropTop=cropTop;
+		mCropBottom=cropTop+cropHeight;
+
+		mVertexBuffer = ByteBuffer.allocateDirect(48)
+		.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mTexCoordBuffer = ByteBuffer.allocateDirect(32)
+		.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mIndexBuffer = ByteBuffer.allocateDirect(12)
+		.order(ByteOrder.nativeOrder()).asCharBuffer();
+
+		for (int i = 0; i < sIndexValues.length; ++i)
+			mIndexBuffer.put(i, sIndexValues[i]);
+		
+		mVertexBuffer.put(0,-mWidth/2);
+		mVertexBuffer.put(1,-mHeight/2);
+		mVertexBuffer.put(2,0);
+		mVertexBuffer.put(3,mWidth/2);
+		mVertexBuffer.put(4,-mHeight/2);
+		mVertexBuffer.put(5,0);
+		mVertexBuffer.put(6,-mWidth/2);
+		mVertexBuffer.put(7,mHeight/2);
+		mVertexBuffer.put(8,0);
+		mVertexBuffer.put(9,mWidth/2);
+		mVertexBuffer.put(10,mHeight/2);
+		mVertexBuffer.put(11,0);
+	}
+	
+
+	@Override
+	public void afterLoadTexture()
+	{
+		float W=AngleTextureEngine.mTextures[mTextureID].mWidth;
+		float H=AngleTextureEngine.mTextures[mTextureID].mHeight;
+		
+		mTexCoordBuffer.put(0,mCropLeft/W);
+		mTexCoordBuffer.put(1,mCropBottom/H);
+		mTexCoordBuffer.put(2,mCropRight/W);
+		mTexCoordBuffer.put(3,mCropBottom/H);
+		mTexCoordBuffer.put(4,mCropLeft/W);
+		mTexCoordBuffer.put(5,mCropTop/H);
+		mTexCoordBuffer.put(6,mCropRight/W);
+		mTexCoordBuffer.put(7,mCropTop/H);
 	}
 
+	@Override
 	public void draw(GL10 gl)
 	{
-		if (mTextureID>=0)
-		{
-			gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glBindTexture(GL10.GL_TEXTURE_2D,
+				AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
 
-			gl.glBindTexture(GL10.GL_TEXTURE_2D,
-					AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
-	
-			((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
-	
-			((GL11Ext) gl).glDrawTexfOES(mX,
-					AngleRenderEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
-		}
+		gl.glTranslatef(mX, AngleRenderEngine.mHeight - mHeight - mY, mZ);
+
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
+		gl.glDrawElements(GL10.GL_TRIANGLES, sIndexValues.length, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+		gl.glPopMatrix();
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 	}
 
 }
