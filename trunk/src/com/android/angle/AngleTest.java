@@ -1,8 +1,6 @@
 package com.android.angle;
 
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -28,7 +26,7 @@ public class AngleTest extends Activity
 		}
 	}
 	
-	class Bola  extends AngleSimpleSprite
+	class Bola  extends AngleSprite
 	{
 		boolean isFocused;
 		boolean isSelected;
@@ -42,24 +40,7 @@ public class AngleTest extends Activity
 		@Override
 		public void draw(GL10 gl)
 		{
-			if (mTextureID>=0)
-			{
-			//	gl.glMatrixMode(GL10.GL_MODELVIEW);
-
-				gl.glMatrixMode(GL10.GL_TEXTURE);
-				gl.glColor4f(0.5f, 0.5f, 1f, 1f);
-
-				gl.glBindTexture(GL10.GL_TEXTURE_2D,
-						AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
-		
-				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-						GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
-		
-				((GL11Ext) gl).glDrawTexfOES(mX,
-						AngleRenderEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
-			}
-
-			//super.draw(gl);
+			super.draw(gl);
 		}
 	}
 
@@ -68,7 +49,7 @@ public class AngleTest extends Activity
 		//máquina de estados
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
-		private static final int MAX_PELOTAS = 50;
+		private static final int MAX_PELOTAS = 150;
 		private static final int MAX_BOLAS = 0;
 		private int mStateMachine = 0;
 		

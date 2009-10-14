@@ -16,6 +16,7 @@ public class AngleSprite extends AngleSimpleSprite
 	private float mCropRight;
 	private float mCropTop;
 	private float mCropBottom;
+	private float mRotation;
 
 	private static final char[] sIndexValues = new char[] 
 	{
@@ -28,6 +29,8 @@ public class AngleSprite extends AngleSimpleSprite
 	{
 		super(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight);
 
+		mRotation=0;
+		
 		mCropLeft=cropLeft;
 		mCropRight=cropLeft+cropWidth;
 		mCropTop=cropTop;
@@ -42,6 +45,7 @@ public class AngleSprite extends AngleSimpleSprite
 
 		for (int i = 0; i < sIndexValues.length; ++i)
 			mIndexBuffer.put(i, sIndexValues[i]);
+
 		
 		mVertexBuffer.put(0,-mWidth/2);
 		mVertexBuffer.put(1,-mHeight/2);
@@ -77,22 +81,20 @@ public class AngleSprite extends AngleSimpleSprite
 	@Override
 	public void draw(GL10 gl)
 	{
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D,
 				AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
+
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
 		gl.glTranslatef(mX, AngleRenderEngine.mHeight - mHeight - mY, mZ);
-
+		gl.glRotatef(mRotation, 0, 0, 1);
+		gl.glColor4f(1f, 1f, 1f, 1f);	
+		
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
 		gl.glDrawElements(GL10.GL_TRIANGLES, sIndexValues.length, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
 		gl.glPopMatrix();
-		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 	}
 
 }
