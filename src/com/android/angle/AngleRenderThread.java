@@ -74,6 +74,7 @@ class AngleRenderThread extends Thread
 
 		while (!mDone)
 		{
+			
 			synchronized (this)
 			{
 				if (mPaused)
