@@ -49,8 +49,8 @@ public class AngleTest extends Activity
 		//máquina de estados
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
-		private static final int MAX_PELOTAS = 150;
-		private static final int MAX_BOLAS = 0;
+		private static final int MAX_PELOTAS = 0;
+		private static final int MAX_BOLAS = 100;
 		private int mStateMachine = 0;
 		
 		//sprites
@@ -81,7 +81,7 @@ public class AngleTest extends Activity
 				long CTM = System.currentTimeMillis();
 				frameCount = 0;
 				if (lCTM > 0)
-					Log.v("FPS", String.valueOf(100.f / ((CTM - lCTM) / 1000.f)));
+					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
 				lCTM = CTM;
 			}
 			//-----------------------
@@ -96,9 +96,9 @@ public class AngleTest extends Activity
 						{
 							bolas[t] = new Bola();
 							bolas[t].mX = (float) (Math.random()
-									* AngleRenderEngine.mWidth - bolas[t].mWidth - 20) + 10;
+									* AngleRenderEngine.mWidth - bolas[t].mWidth) + bolas[t].mWidth;
 							bolas[t].mY = (float) (Math.random()
-									* AngleRenderEngine.mHeight - bolas[t].mHeight - 20) + 10;
+									* AngleRenderEngine.mHeight - bolas[t].mHeight) + bolas[t].mHeight;
 							mSprites.addSprite(bolas[t]);
 						}
 						
@@ -154,8 +154,8 @@ public class AngleTest extends Activity
 		setContentView(R.layout.main);
 
 		mGame = new MyGameEngine(); //creo un motor de juego propio
-
 		mSprites = new AngleSpriteRenderer();
+
 		AngleRenderEngine.addRenderer(mSprites); //Añado un renderizador para sprites
 		
 		mView = new AngleSurfaceView(this);
@@ -163,6 +163,9 @@ public class AngleTest extends Activity
 		setContentView(mView);
 
 		mGame.Start(); //Inicia el tema
+
+		
+	
 	}
 
 	@Override

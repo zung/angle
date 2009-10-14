@@ -81,6 +81,7 @@ public class AngleSprite extends AngleSimpleSprite
 	@Override
 	public void draw(GL10 gl)
 	{
+		
 		gl.glBindTexture(GL10.GL_TEXTURE_2D,
 				AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
 
@@ -91,10 +92,14 @@ public class AngleSprite extends AngleSimpleSprite
 		gl.glRotatef(mRotation, 0, 0, 1);
 		gl.glColor4f(1f, 1f, 1f, 1f);	
 		
+		//Estas 3 alocatan memoria
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
 		gl.glDrawElements(GL10.GL_TRIANGLES, sIndexValues.length, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+		//------------------------
+		
 		gl.glPopMatrix();
+		
 	}
 
 }
