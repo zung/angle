@@ -16,11 +16,16 @@ class AngleRenderThread extends Thread
 	private boolean mPaused = true;
 	private boolean mHasFocus = false;
 	private boolean mHasSurface = false;
-	private boolean mContextLost = false;
+	private boolean mContextLost = true;
 	private int mWidth = 0;
 	private int mHeight = 0;
 	private Runnable mBeforeDraw = null;
 	private EGLHelper mEglHelper = null;
+	private static GL10 gl = null;
+	private boolean needStartEgl = true;
+	private boolean needCreateSurface = false;
+	private boolean needLoadTextures = false;
+	private boolean needResize = false;
 
 	AngleRenderThread()
 	{
@@ -64,11 +69,9 @@ class AngleRenderThread extends Thread
 		mEglHelper = new EGLHelper();
 		mEglHelper.start(configSpec);
 
-		boolean needStartEgl = true;
-		boolean needCreateSurface = false;
-		boolean needLoadTextures = false;
-		boolean needResize = false;
 		long lCTM = 0;
+
+		mDone = false;
 
 		Log.d("AngleRenderThread", "run init");
 
@@ -94,15 +97,14 @@ class AngleRenderThread extends Thread
 					lCTM = 0;
 				}
 				if (mDone)
-				{
 					break;
-				}
+
 				if (mBeforeDraw != null)
 				{
-					AngleRenderEngine.secondsElapsed = 0.0f;
+					AngleMainEngine.secondsElapsed = 0.0f;
 					long CTM = System.currentTimeMillis();
 					if (lCTM > 0)
-						AngleRenderEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
+						AngleMainEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
 					lCTM = CTM;
 					mBeforeDraw.run();
 				}
@@ -122,7 +124,7 @@ class AngleRenderThread extends Thread
 			{
 				needCreateSurface = false;
 				Log.d("AngleRenderThread", "needCreateSurface");
-				AngleRenderEngine.gl = (GL10) mEglHelper
+				gl = (GL10) mEglHelper
 						.createSurface(AngleSurfaceView.mSurfaceHolder);
 				needResize = true;
 			}
@@ -130,22 +132,20 @@ class AngleRenderThread extends Thread
 			{
 				needLoadTextures = false;
 				Log.d("AngleRenderThread", "needLoadTextures");
-				AngleRenderEngine.loadTextures();
+				AngleMainEngine.loadTextures(gl);
 			}
 			if (needResize)
 			{
 				needResize = false;
 				Log.d("AngleRenderThread", "needResize");
-				AngleRenderEngine.sizeChanged(mWidth, mHeight);
+				AngleMainEngine.sizeChanged(gl, mWidth, mHeight);
 			}
-			if ((mWidth > 0) && (mHeight > 0))
+			if (mHasSurface && (mWidth > 0) && (mHeight > 0))
 			{
-				AngleRenderEngine.drawFrame();
+				AngleMainEngine.drawFrame(gl);
 				mEglHelper.swap();
 			}
 		}
-
-		AngleRenderEngine.onDestroy();
 
 		mEglHelper.finish();
 	}
@@ -170,6 +170,8 @@ class AngleRenderThread extends Thread
 	{
 		synchronized (this)
 		{
+			AngleMainEngine.onDestroy(gl);
+			mContextLost = true;
 			mHasSurface = false;
 			notify();
 		}
@@ -218,25 +220,31 @@ class AngleRenderThread extends Thread
 
 	public void requestExitAndWait()
 	{
-		// don't call this from GLThread thread or it is a guaranteed
-		// deadlock!
-		synchronized (this)
+		if (!mDone)
 		{
-			mDone = true;
-			notify();
-		}
-		try
-		{
-			join();
-		} catch (InterruptedException ex)
-		{
-			Thread.currentThread().interrupt();
+			synchronized (this)
+			{
+				mDone = true;
+				notify();
+			}
+			try
+			{
+				join();
+			} catch (InterruptedException ex)
+			{
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 
 	public void setBeforeDraw(Runnable beforeDraw)
 	{
 		mBeforeDraw = beforeDraw;
+	}
+
+	public void invalidateTextures()
+	{
+		needLoadTextures=true;
 	}
 
 }

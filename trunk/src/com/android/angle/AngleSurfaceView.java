@@ -1,7 +1,6 @@
 package com.android.angle;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -18,15 +17,9 @@ public class AngleSurfaceView extends SurfaceView implements
 		doInit(context);
 	}
 
-	public AngleSurfaceView(Context context, AttributeSet attrs)
-	{
-		super(context, attrs);
-		doInit(context);
-	}
-
 	private void doInit(Context context)
 	{
-		AngleRenderEngine.mContext = context;
+		AngleMainEngine.mContext = context;
 		mSurfaceHolder = getHolder();
 		mSurfaceHolder.addCallback(this);
 		mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
@@ -76,5 +69,15 @@ public class AngleSurfaceView extends SurfaceView implements
 	{
 		super.onDetachedFromWindow();
 		mRenderThread.requestExitAndWait();
+	}
+
+	public void onDestroy()
+	{
+		mRenderThread.requestExitAndWait();
+	}
+
+	public void invalidateTextures()
+	{
+		mRenderThread.invalidateTextures();
 	}
 }

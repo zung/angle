@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.android.angle"
       android:versionCode="1"
-      android:versionName="1.0">
+      android:versionName="1.0" package="com.android.tutorial">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
         <activity android:name=".AngleTest"
                   android:label="@string/app_name">
@@ -12,7 +11,10 @@
             </intent-filter>
         </activity>
 
-    </application>
+    <activity android:name="Tutorial01" android:label="@string/app_name"></activity>
+<activity android:name="Tutorial02"></activity><activity android:name="Tutorial99" android:label="@string/app_name" android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+
+</application>
     <uses-sdk android:minSdkVersion="3" />
 
 </manifest> 

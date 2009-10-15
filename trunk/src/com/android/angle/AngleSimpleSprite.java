@@ -45,8 +45,6 @@ public class AngleSimpleSprite
 	{
 		if (mTextureID>=0)
 		{
-			gl.glMatrixMode(GL10.GL_MODELVIEW);
-
 			gl.glBindTexture(GL10.GL_TEXTURE_2D,
 					AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
 	
@@ -54,7 +52,7 @@ public class AngleSimpleSprite
 					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
 	
 			((GL11Ext) gl).glDrawTexfOES(mX,
-					AngleRenderEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
+					AngleMainEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
 		}
 	}
 
