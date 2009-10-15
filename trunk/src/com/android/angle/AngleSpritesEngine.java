@@ -33,8 +33,8 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-		gl.glTexEnvf(GL10.GL_TEXTURE_ENV,
-				GL10.GL_TEXTURE_ENV_MODE, GL10.GL_BLEND);
+//		gl.glTexEnvf(GL10.GL_TEXTURE_ENV,
+//				GL10.GL_TEXTURE_ENV_MODE, GL10.GL_BLEND);
 	}
 
 	public void onDestroy(GL10 gl)

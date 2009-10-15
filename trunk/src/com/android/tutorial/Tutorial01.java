@@ -7,7 +7,15 @@ import com.android.angle.AngleSurfaceView;
 /**
  * This tutorial demonstrates how to create and destroy an empty ANGLE engine.
  * The process is extremely simple. All you should do is create and destroy an AngleSurfaceView.
- **/
+ * 
+ *  We learn to:
+ *  -Create the main view (AngleSurfaceView)
+ *  -Override the basic methods
+ *  -Destroy the engine
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 public class Tutorial01 extends Activity
 {
 	private AngleSurfaceView mView;

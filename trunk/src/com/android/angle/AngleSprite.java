@@ -16,7 +16,7 @@ public class AngleSprite extends AngleSimpleSprite
 	private float mCropRight;
 	private float mCropTop;
 	private float mCropBottom;
-	private float mRotation;
+	public float mRotation;
 
 	private static final char[] sIndexValues = new char[] 
 	{
@@ -90,7 +90,7 @@ public class AngleSprite extends AngleSimpleSprite
 		gl.glLoadIdentity();
 
 		gl.glTranslatef(mX, AngleMainEngine.mHeight - mHeight - mY, mZ);
-		gl.glRotatef(mRotation, 0, 0, 1);
+		gl.glRotatef(-mRotation, 0, 0, 1);
 		gl.glColor4f(0f, 1f, 1f, 0.5f);	
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D,

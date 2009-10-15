@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class AngleTest extends Activity implements OnClickListener
+public class AngleTutorials extends Activity implements OnClickListener
 {
 	public void onCreate(Bundle b)
 	{
@@ -14,6 +14,8 @@ public class AngleTest extends Activity implements OnClickListener
 		setContentView(R.layout.main);
 		findViewById(R.id.tut01).setOnClickListener(this);
 		findViewById(R.id.tut02).setOnClickListener(this);
+		findViewById(R.id.tut03).setOnClickListener(this);
+		findViewById(R.id.tut04).setOnClickListener(this);
 		findViewById(R.id.tut99).setOnClickListener(this);
 	}
 
@@ -28,6 +30,14 @@ public class AngleTest extends Activity implements OnClickListener
 				break;
 			case R.id.tut02:
 				intent = new Intent(this, Tutorial02.class);
+				startActivity(intent);
+				break;
+			case R.id.tut03:
+				intent = new Intent(this, Tutorial03.class);
+				startActivity(intent);
+				break;
+			case R.id.tut04:
+				intent = new Intent(this, Tutorial04.class);
 				startActivity(intent);
 				break;
 			case R.id.tut99:
