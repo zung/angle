@@ -101,5 +101,4 @@ public class Tutorial03 extends Activity
 		mView.onDestroy(); 
 		super.onDestroy();
 	}
-
 }

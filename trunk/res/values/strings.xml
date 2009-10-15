@@ -6,4 +6,5 @@
 <string name="tut02">02 Add rendering engine</string>
 <string name="tut03">03 Add game engine</string>
 <string name="tut04">04 In game load</string>
+<string name="tut05">05 Engine overload (Full Screen)</string>
 </resources>

@@ -75,9 +75,4 @@ public class AngleSurfaceView extends SurfaceView implements
 	{
 		mRenderThread.requestExitAndWait();
 	}
-
-	public void invalidateTextures()
-	{
-		mRenderThread.invalidateTextures();
-	}
 }

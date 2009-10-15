@@ -8,7 +8,7 @@ import com.android.angle.AngleSurfaceView;
 import android.app.Activity;
 import android.os.Bundle;
 /**
- * In this tutorial, we create a sprites engine and add an AngleSimleSprite.
+ * In this tutorial, we create a sprites engine and add an AngleSimpleSprite.
  *  
  *  We learn to:
  *  -Add one rendering engine to main engine. In this case a sprites engine.
