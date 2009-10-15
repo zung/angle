@@ -30,6 +30,7 @@ public class AngleSimpleSprite
 		mTextureCrop[1] = cropTop + cropHeight; // Vcr
 		mTextureCrop[2] = cropWidth; // Wcr
 		mTextureCrop[3] = -cropHeight; // Hcr
+		loadTexture();
 	}
 
 	public void loadTexture()
@@ -45,8 +46,7 @@ public class AngleSimpleSprite
 	{
 		if (mTextureID>=0)
 		{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D,
-					AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
+			AngleTextureEngine.bindTexture(gl, mTextureID);
 	
 			((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
 					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);

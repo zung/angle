@@ -65,8 +65,8 @@ public class AngleSprite extends AngleSimpleSprite
 	@Override
 	public void afterLoadTexture()
 	{
-		float W=AngleTextureEngine.mTextures[mTextureID].mWidth;
-		float H=AngleTextureEngine.mTextures[mTextureID].mHeight;
+		float W=AngleTextureEngine.getTextureWidth(mTextureID);
+		float H=AngleTextureEngine.getTextureHeight(mTextureID);
 		
 		mTexCoordBuffer.put(0,mCropLeft/W);
 		mTexCoordBuffer.put(1,mCropBottom/H);
@@ -81,20 +81,13 @@ public class AngleSprite extends AngleSimpleSprite
 	@Override
 	public void draw(GL10 gl)
 	{
-		
-
-//		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-//		gl.glDisable(GL10.GL_TEXTURE_2D);
-
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
-		gl.glTranslatef(mX, AngleMainEngine.mHeight - mHeight - mY, mZ);
+		gl.glTranslatef(mX, AngleMainEngine.mHeight - mY, mZ);
 		gl.glRotatef(-mRotation, 0, 0, 1);
-		gl.glColor4f(0f, 1f, 1f, 0.5f);	
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D,
-				AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
+		AngleTextureEngine.bindTexture(gl, mTextureID);
 		
 		//Estas 3 alocatan memoria
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
@@ -103,7 +96,5 @@ public class AngleSprite extends AngleSimpleSprite
 		//------------------------
 		
 		gl.glPopMatrix();
-		
 	}
-
 }

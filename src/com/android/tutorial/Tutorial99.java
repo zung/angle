@@ -38,7 +38,7 @@ public class Tutorial99 extends Activity
 		boolean isSelected;
 		public Bola()
 		{
-			super(34, 34, R.drawable.ball, 0, 0, 34, 34);
+			super(34, 34, R.drawable.ball, 0, 0, 128, 128);
 			isFocused=false;
 			isSelected=false;
 		}
@@ -55,8 +55,8 @@ public class Tutorial99 extends Activity
 		//máquina de estados
 		private static final int smLoad = 1;
 		private static final int smMove = 2;
-		private static final int MAX_PELOTAS = 0;
-		private static final int MAX_BOLAS = 100;
+		private static final int MAX_PELOTAS = 100;
+		private static final int MAX_BOLAS = 0;
 		private int mStateMachine = 0;
 		
 		//sprites
@@ -95,60 +95,53 @@ public class Tutorial99 extends Activity
 			switch (mStateMachine)
 			{
 				case smLoad:
-					if (AngleMainEngine.mWidth > 0			//Cargará una vez que se haya inicializado todo el motor gráfico
-							&& AngleMainEngine.mHeight > 0)//Puede cargarse antes. Pero como uso las dimensiones.... 
+					for (int t = 0; t < MAX_BOLAS; t++)
 					{
-						for (int t = 0; t < MAX_BOLAS; t++)
-						{
-							bolas[t] = new Bola();
-							bolas[t].mX = (float) (Math.random()
-									* AngleMainEngine.mWidth - bolas[t].mWidth) + bolas[t].mWidth;
-							bolas[t].mY = (float) (Math.random()
-									* AngleMainEngine.mHeight - bolas[t].mHeight) + bolas[t].mHeight;
-							mSprites.addSprite(bolas[t]);
-						}
-						
-						nave = new AngleSprite(54, 29, R.drawable.tortuga, 0, 0, 54, 29);
-						nave.mY = AngleMainEngine.mHeight - nave.mHeight-100;
-						mSprites.addSprite(nave); //Al incluir la nave en el renderizador mSprites, se pintará sola
-						for (int t = 0; t < MAX_PELOTAS; t++)
-						{
-							pelota[t] = new Pelota();
-							pelota[t].mX = (float) (Math.random()
-									* AngleMainEngine.mWidth - pelota[t].mWidth - 20) + 10;
-							pelota[t].mY = (float) (Math.random()
-									* AngleMainEngine.mHeight - pelota[t].mHeight - 20) + 10;
-							pelota[t].vX = (float) (Math.random() * 300) - 150;
-							pelota[t].vY = (float) (Math.random() * 300) - 150;
-							mSprites.addSprite(pelota[t]); //lo mismo con la pelota(s)
-						}
-						mView.invalidateTextures(); //Como he cargado sprites nuevos con el motor activo. He de forzar a que las texturas vuelvan a cargarse
-						mStateMachine = smMove;
+						bolas[t] = new Bola();
+						bolas[t].mX = (float) (Math.random()
+								* AngleMainEngine.mWidth - bolas[t].mWidth) + bolas[t].mWidth;
+						bolas[t].mY = (float) (Math.random()
+								* AngleMainEngine.mHeight - bolas[t].mHeight) + bolas[t].mHeight;
+						mSprites.addSprite(bolas[t]);
 					}
-					break;
-				case smMove: //movimiento básico
-				{
+						
+					nave = new AngleSprite(54, 29, R.drawable.tortuga, 0, 0, 54, 29);
+					nave.mY = AngleMainEngine.mHeight - nave.mHeight-100;
+					mSprites.addSprite(nave); //Al incluir la nave en el renderizador mSprites, se pintará sola
 					for (int t = 0; t < MAX_PELOTAS; t++)
 					{
-					float dX = pelota[t].vX * AngleMainEngine.secondsElapsed;
-					float dY = pelota[t].vY * AngleMainEngine.secondsElapsed;
-					pelota[t].mX += dX;
-					pelota[t].mY += dY;
-					if (((pelota[t].vX > 0) && (pelota[t].mX + pelota[t].mWidth > AngleMainEngine.mWidth))
-							|| ((pelota[t].vX < 0) && (pelota[t].mX < 0)))
+						pelota[t] = new Pelota();
+						pelota[t].mX = (float) (Math.random()
+								* AngleMainEngine.mWidth - pelota[t].mWidth - 20) + 10;
+						pelota[t].mY = (float) (Math.random()
+								* AngleMainEngine.mHeight - pelota[t].mHeight - 20) + 10;
+						pelota[t].vX = (float) (Math.random() * 300) - 150;
+						pelota[t].vY = (float) (Math.random() * 300) - 150;
+						mSprites.addSprite(pelota[t]); //lo mismo con la pelota(s)
+					}
+					mStateMachine = smMove;
+					break;
+				case smMove: //movimiento básico
+					for (int t = 0; t < MAX_PELOTAS; t++)
 					{
-						pelota[t].vX = -pelota[t].vX;
+						float dX = pelota[t].vX * AngleMainEngine.secondsElapsed;
+						float dY = pelota[t].vY * AngleMainEngine.secondsElapsed;
 						pelota[t].mX += dX;
-					}
-					if (((pelota[t].vY > 0) && (pelota[t].mY + pelota[t].mHeight > AngleMainEngine.mHeight))
-							|| ((pelota[t].vY < 0) && (pelota[t].mY < 0)))
-					{
-						pelota[t].vY = -pelota[t].vY;
 						pelota[t].mY += dY;
-					}
+						if (((pelota[t].vX > 0) && (pelota[t].mX + pelota[t].mWidth > AngleMainEngine.mWidth))
+								|| ((pelota[t].vX < 0) && (pelota[t].mX < 0)))
+						{
+							pelota[t].vX = -pelota[t].vX;
+							pelota[t].mX += dX;
+						}
+						if (((pelota[t].vY > 0) && (pelota[t].mY + pelota[t].mHeight > AngleMainEngine.mHeight))
+								|| ((pelota[t].vY < 0) && (pelota[t].mY < 0)))
+						{
+							pelota[t].vY = -pelota[t].vY;
+							pelota[t].mY += dY;
+						}
 					}
 					break;
-				}
 			}
 		}
 	}
@@ -168,9 +161,6 @@ public class Tutorial99 extends Activity
 		mView.setBeforeDraw(mGame); //Aqui le digo a la view, que Runnable.run() ha de ejecutar antes de cada frame 
 		setContentView(mView);
 		mGame.Start(); //Inicia el tema
-
-		
-	
 	}
 
 	@Override

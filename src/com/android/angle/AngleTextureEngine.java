@@ -14,8 +14,9 @@ public class AngleTextureEngine
 {
 	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
 	private static final int MAX_TEXTURES = 16;
-	public static AngleTexture[] mTextures = new AngleTexture[MAX_TEXTURES];
+	private static AngleTexture[] mTextures = new AngleTexture[MAX_TEXTURES];
 	private static int mTextureCount = 0;
+	public static boolean hasChanges=false;
 
 	AngleTextureEngine()
 	{
@@ -50,6 +51,7 @@ public class AngleTextureEngine
 		}
 		if (mTextureCount < MAX_TEXTURES)
 		{
+			hasChanges=true;
 			mTextures[mTextureCount] = new AngleTexture();
 			mTextures[mTextureCount].mResourceID = resourceId;
 			return mTextureCount++;
@@ -62,23 +64,26 @@ public class AngleTextureEngine
 	public static void loadTextures(GL10 gl)
 	{
 		if (gl != null)
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
-				GL10.GL_FASTEST);
-
-		gl.glShadeModel(GL10.GL_FLAT);
-		gl.glDisable(GL10.GL_DEPTH_TEST);
-		gl.glDisable(GL10.GL_DITHER);
-		gl.glDisable(GL10.GL_LIGHTING);
-		gl.glEnable(GL10.GL_TEXTURE_2D);
-
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT
-				| GL10.GL_DEPTH_BUFFER_BIT);
-
-		for (int t = 0; t < MAX_TEXTURES; t++)
 		{
-			if (mTextures[t] != null)
-				loadTexture(gl, t);
+			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+					GL10.GL_FASTEST);
+	
+			gl.glShadeModel(GL10.GL_FLAT);
+			gl.glDisable(GL10.GL_DEPTH_TEST);
+			gl.glDisable(GL10.GL_DITHER);
+			gl.glDisable(GL10.GL_LIGHTING);
+			gl.glEnable(GL10.GL_TEXTURE_2D);
+	
+			gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT
+					| GL10.GL_DEPTH_BUFFER_BIT);
+	
+			for (int t = 0; t < MAX_TEXTURES; t++)
+			{
+				if (mTextures[t] != null)
+					loadTexture(gl, t);
+			}
+			hasChanges=false;
 		}
 	}
 
@@ -141,5 +146,20 @@ public class AngleTextureEngine
 				}
 			}
 		}
+	}
+
+	public static void bindTexture(GL10 gl, int mTextureID)
+	{
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[mTextureID].mHWTextureID);
+	}
+
+	public static float getTextureWidth(int mTextureID)
+	{
+		return mTextures[mTextureID].mWidth;
+	}
+
+	public static float getTextureHeight(int mTextureID)
+	{
+		return mTextures[mTextureID].mHeight;
 	}
 }
