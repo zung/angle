@@ -106,7 +106,8 @@ class AngleRenderThread extends Thread
 					if (lCTM > 0)
 						AngleMainEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
 					lCTM = CTM;
-					mBeforeDraw.run();
+					if (mHasSurface && (mWidth > 0) && (mHeight > 0))
+						mBeforeDraw.run();
 				}
 				// Captures variables values synchronized
 				needCreateSurface = AngleSurfaceView.mSizeChanged;

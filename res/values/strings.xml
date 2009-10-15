@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, AngleTest!</string>
-    <string name="app_name">angle</string>
+    
+    <string name="app_name">ANGLE</string>
+<string name="tut01">01 Create/Destroy</string>
+<string name="tut02">02 Add rendering engine</string>
+<string name="tut03">03 Add game engine</string>
+<string name="tut04">04 In game load</string>
 </resources>
