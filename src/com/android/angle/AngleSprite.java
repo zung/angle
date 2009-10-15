@@ -82,15 +82,19 @@ public class AngleSprite extends AngleSimpleSprite
 	public void draw(GL10 gl)
 	{
 		
-		gl.glBindTexture(GL10.GL_TEXTURE_2D,
-				AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
+
+//		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+//		gl.glDisable(GL10.GL_TEXTURE_2D);
 
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
-		gl.glTranslatef(mX, AngleRenderEngine.mHeight - mHeight - mY, mZ);
+		gl.glTranslatef(mX, AngleMainEngine.mHeight - mHeight - mY, mZ);
 		gl.glRotatef(mRotation, 0, 0, 1);
-		gl.glColor4f(1f, 1f, 1f, 1f);	
+		gl.glColor4f(0f, 1f, 1f, 0.5f);	
+
+		gl.glBindTexture(GL10.GL_TEXTURE_2D,
+				AngleTextureEngine.mTextures[mTextureID].mHWTextureID);
 		
 		//Estas 3 alocatan memoria
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);

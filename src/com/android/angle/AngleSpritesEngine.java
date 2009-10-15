@@ -2,7 +2,7 @@ package com.android.angle;
 
 import javax.microedition.khronos.opengles.GL10;
 
-public class AngleSpriteRenderer extends AngleRenderer
+public class AngleSpritesEngine extends AngleAbstractEngine
 {
 	private static final int MAX_SPRITES = 1000;
 	private static AngleSimpleSprite[] mSprites = new AngleSimpleSprite[MAX_SPRITES];
@@ -19,26 +19,28 @@ public class AngleSpriteRenderer extends AngleRenderer
 			mSprites[s].draw(gl);
 	}
 
-	public void loadTextures()
+	public void loadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s].loadTexture();
 	}
 
-	public void afterLoadTextures()
+	public void afterLoadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s].afterLoadTexture();
 
-		AngleRenderEngine.gl.glMatrixMode(GL10.GL_MODELVIEW);
-		AngleRenderEngine.gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		AngleRenderEngine.gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+		gl.glTexEnvf(GL10.GL_TEXTURE_ENV,
+				GL10.GL_TEXTURE_ENV_MODE, GL10.GL_BLEND);
 	}
 
-	public void onDestroy()
+	public void onDestroy(GL10 gl)
 	{
-		AngleRenderEngine.gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		AngleRenderEngine.gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s] = null;
 		mSpritesCount = 0;
