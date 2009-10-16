@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteReference;
@@ -30,7 +31,7 @@ public class Tutorial06 extends Activity
 	private MyGameEngine mGame;  
 	private AngleSurfaceView mView;
 
-	class MyGameEngine implements Runnable  
+	class MyGameEngine extends AngleAbstractGameEngine  
 	{
 		//FPS Counter
 		private int frameCount = 0;
@@ -106,10 +107,10 @@ public class Tutorial06 extends Activity
 		public void onTouchEvent(MotionEvent event)
 		{
 			//Prevent event flooding
-			//Max ~62 events per second
+			//Max 20 events per second
 			try
 			{
-				Thread.sleep(16); 
+				Thread.sleep(50); 
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
