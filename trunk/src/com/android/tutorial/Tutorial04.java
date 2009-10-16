@@ -82,7 +82,7 @@ public class Tutorial04 extends Activity
 
 		mGame = new MyGameEngine();  
 
-		mSprites = new AngleSpritesEngine(); 
+		mSprites = new AngleSpritesEngine(10,0); 
 		AngleMainEngine.addEngine(mSprites); 
 	
 		mView = new AngleSurfaceView(this);  

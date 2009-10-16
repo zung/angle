@@ -30,7 +30,7 @@ public class Tutorial02 extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mSprites = new AngleSpritesEngine(); //Create the sprites engine
+		mSprites = new AngleSpritesEngine(10,0); //Create the sprites engine with maximum 10 sprites and 0 references (see tutorial 6)
 		AngleMainEngine.addEngine(mSprites); //and adds it to main engine
 	
 		//Create one simple sprite with the logo and place it at 100,100

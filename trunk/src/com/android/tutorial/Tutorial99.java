@@ -153,7 +153,7 @@ public class Tutorial99 extends Activity
 		setContentView(R.layout.main);
 
 		mGame = new MyGameEngine(); //creo un motor de juego propio
-		mSprites = new AngleSpritesEngine();
+		mSprites = new AngleSpritesEngine(500,0);
 
 		AngleMainEngine.addEngine(mSprites); //Añado un renderizador para sprites
 		

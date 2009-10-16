@@ -4,6 +4,12 @@ import android.content.Context;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * Surface view based on API demos
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleSurfaceView extends SurfaceView implements
 		SurfaceHolder.Callback
 {
@@ -42,16 +48,36 @@ public class AngleSurfaceView extends SurfaceView implements
 		mRenderThread.surfaceChanged(w, h);
 	}
 
+	/**
+	 * Must be called in Activity.onPause
+	 */
 	public void onPause()
 	{
 		mRenderThread.onPause();
 	}
 
+	/**
+	 * Must be called in Activity.onResume
+	 */
 	public void onResume()
 	{
 		mRenderThread.onResume();
 	}
 
+	/**
+	 * Must be called in Activity.onDestroy
+	 */
+	public void onDestroy()
+	{
+		mRenderThread.requestExitAndWait();
+	}
+
+	/**
+	 * Set the callback function to be called before draw
+	 * every frame
+	 *  
+	 * @param beforeDraw Runnable derived class (usually game engine).
+	 */
 	public void setBeforeDraw(Runnable beforeDraw)
 	{
 		mRenderThread.setBeforeDraw(beforeDraw);
@@ -68,11 +94,6 @@ public class AngleSurfaceView extends SurfaceView implements
 	protected void onDetachedFromWindow()
 	{
 		super.onDetachedFromWindow();
-		mRenderThread.requestExitAndWait();
-	}
-
-	public void onDestroy()
-	{
 		mRenderThread.requestExitAndWait();
 	}
 }

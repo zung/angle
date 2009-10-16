@@ -7,4 +7,5 @@
 <string name="tut03">03 Add game engine</string>
 <string name="tut04">04 In game load</string>
 <string name="tut05">05 Engine overload (Full Screen)</string>
+<string name="tut06">06 Touch input and references</string>
 </resources>

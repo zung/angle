@@ -68,7 +68,7 @@ public class Tutorial03 extends Activity
 
 		mGame = new MyGameEngine(); //Instantiation 
 
-		mSprites = new AngleSpritesEngine(); 
+		mSprites = new AngleSpritesEngine(10,0); 
 		AngleMainEngine.addEngine(mSprites); 
 	
 		//Use AngleSprite instead of AngleSimpleSprite to rotate it

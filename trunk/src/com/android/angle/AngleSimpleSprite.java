@@ -4,18 +4,37 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
-public class AngleSimpleSprite
+/**
+ * Sprite that only supports direct texture copy to surface
+ * If the dimensions are changed, the sprite will be scaled
+ * The fastest one
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
+public class AngleSimpleSprite extends AngleAbstractSprite
 {
-	public float mX;
-	public float mY;
-	public float mZ;
+	public float mX; //
+	public float mY; // Position
+	public float mZ; //
 
-	public int mWidth;
-	public int mHeight;
-	public int mResourceID;
-	public int mTextureID;
-	protected int[] mTextureCrop = new int[4];
+	public int mWidth; //
+	public int mHeight;// Dimensions
+	
+	public int mResourceID; //Resource bitmap
+	public int mTextureID;  //Texture ID on AngleTextureEngine
+	protected int[] mTextureCrop = new int[4]; //Cropping coordinates
 
+	/**
+	 * 
+	 * @param width Width in pixels
+	 * @param height Height in pixels
+	 * @param resourceId Resource bitmap
+	 * @param cropLeft Most left pixel in texture
+	 * @param cropTop Most top pixel in texture
+	 * @param cropWidth Width of the cropping rectangle in texture
+	 * @param cropHeight Height of the cropping rectangle in texture
+	 */
 	public AngleSimpleSprite(int width, int height, int resourceId, int cropLeft,
 			int cropTop, int cropWidth, int cropHeight)
 	{
@@ -55,5 +74,4 @@ public class AngleSimpleSprite
 					AngleMainEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
 		}
 	}
-
 }
