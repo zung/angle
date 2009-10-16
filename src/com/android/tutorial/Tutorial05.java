@@ -54,6 +54,11 @@ public class Tutorial05 extends Activity
 	class MyBlendSpritesEngine extends AngleSpritesEngine
 	{
 
+		public MyBlendSpritesEngine()
+		{
+			super(10, 0);
+		}
+
 		@Override
 		public void afterLoadTextures(GL10 gl)
 		{

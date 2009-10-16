@@ -2,23 +2,115 @@ package com.android.angle;
 
 import javax.microedition.khronos.opengles.GL10;
 
+
+/**
+ * Angle sprites engine
+ * Can operate in direct mode (sprites) or in indirect mode (references)
+ * If MaxReferences>0 then indirect mode is selected
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleSpritesEngine extends AngleAbstractEngine
 {
-	private static final int MAX_SPRITES = 1000;
-	private static AngleSimpleSprite[] mSprites = new AngleSimpleSprite[MAX_SPRITES];
-	private static int mSpritesCount = 0;
+	private int mMaxSprites;
+	private AngleAbstractSprite[] mSprites;
+	private int mSpritesCount;
+	private int mMaxReferences;
+	private AngleAbstractSpriteReference[] mReferences;
+	private int mReferencesCount;
 
-	public void addSprite(AngleSimpleSprite sprite)
+	/**
+	 * 
+	 * @param maxSprites	Max sprites available in engine
+	 * @param maxReferences Max references available in engine. If >0 references will be used instead of sprites.
+	 */
+	public AngleSpritesEngine (int maxSprites, int maxReferences)
 	{
-		mSprites[mSpritesCount++] = sprite;
+		mMaxSprites=maxSprites;
+		mMaxReferences=maxReferences;
+		mSpritesCount = 0;
+		mReferencesCount = 0;
+		mSprites = new AngleAbstractSprite[mMaxSprites];
+		mReferences = new AngleAbstractSpriteReference[mMaxReferences];
+	}
+	
+	/**
+	 * Adds a sprite
+	 * @param sprite Sprite to be added
+	 */
+	public void addSprite(AngleAbstractSprite sprite)
+	{
+		if (mSpritesCount<mMaxSprites)
+			mSprites[mSpritesCount++] = sprite;
+	}
+
+	/**
+	 * Removes a sprite
+	 * @param sprite Sprite to be removed
+	 */
+	public void removeSprite(AngleAbstractSprite sprite)
+	{
+		int r;
+		
+		for (r = 0; r < mSpritesCount; r++)
+			if (mSprites[r] == sprite)
+				break;
+
+		if (r < mSpritesCount)
+		{
+			mSpritesCount--;
+			for (int d=r;d<mSpritesCount;d++)
+				mSprites[d]=mSprites[d+1];
+			mSprites[mSpritesCount]=null;
+		}
+	}
+
+	/**
+	 * Adds a reference
+	 * @param reference Reference to be added
+	 */
+	public void addReference(AngleAbstractSpriteReference reference)
+	{
+		if (mReferencesCount<mMaxReferences)
+			mReferences[mReferencesCount++] = reference;
+	}
+
+	/**
+	 * Removes a reference
+	 * @param reference Reference to be removed
+	 */
+	public void removeRefernece(AngleAbstractSpriteReference reference)
+	{
+		int r;
+		
+		for (r = 0; r < mReferencesCount; r++)
+			if (mReferences[r] == reference)
+				break;
+
+		if (r < mReferencesCount)
+		{
+			mReferencesCount--;
+			for (int d=r;d<mReferencesCount;d++)
+				mReferences[d]=mReferences[d+1];
+			mReferences[mReferencesCount]=null;
+		}
 	}
 
 	public void drawFrame(GL10 gl)
 	{
 		if (!AngleTextureEngine.hasChanges)
 		{
-			for (int s = 0; s < mSpritesCount; s++)
-				mSprites[s].draw(gl);
+			if (mMaxReferences>0)
+			{
+				for (int s = 0; s < mReferencesCount; s++)
+					mReferences[s].draw(gl);
+			}
+			else
+			{
+				for (int s = 0; s < mSpritesCount; s++)
+					mSprites[s].draw(gl);
+			}
 		}
 	}
 
@@ -44,5 +136,8 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s] = null;
 		mSpritesCount = 0;
+		for (int s = 0; s < mReferencesCount; s++)
+			mReferences[s] = null;
+		mReferencesCount = 0;
 	}
 }

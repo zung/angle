@@ -7,6 +7,12 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.util.Log;
 
+/**
+ * Main render thread based on API demos render thread
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 class AngleRenderThread extends Thread
 {
 	private static final int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0,
@@ -148,7 +154,7 @@ class AngleRenderThread extends Thread
 				&& (!mDone);
 	}
 
-	public void surfaceCreated()
+	protected void surfaceCreated()
 	{
 		synchronized (this)
 		{
@@ -158,7 +164,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void surfaceDestroyed()
+	protected void surfaceDestroyed()
 	{
 		synchronized (this)
 		{
@@ -169,7 +175,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void surfaceChanged(int width, int height)
+	protected void surfaceChanged(int width, int height)
 	{
 		synchronized (this)
 		{
@@ -179,7 +185,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void onPause()
+	protected void onPause()
 	{
 		synchronized (this)
 		{
@@ -188,7 +194,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void onResume()
+	protected void onResume()
 	{
 		synchronized (this)
 		{
@@ -198,7 +204,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void onWindowFocusChanged(boolean hasFocus)
+	protected void onWindowFocusChanged(boolean hasFocus)
 	{
 		synchronized (this)
 		{
@@ -210,7 +216,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void requestExitAndWait()
+	protected void requestExitAndWait()
 	{
 		if (!mDone)
 		{
@@ -229,7 +235,7 @@ class AngleRenderThread extends Thread
 		}
 	}
 
-	public void setBeforeDraw(Runnable beforeDraw)
+	protected void setBeforeDraw(Runnable beforeDraw)
 	{
 		mBeforeDraw = beforeDraw;
 	}

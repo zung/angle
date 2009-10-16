@@ -10,6 +10,26 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.util.Log;
 
+/**
+ * Texture that uses AngleTextureEngine
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
+class AngleTexture
+{
+	public int mHWTextureID = -1;
+	public int mResourceID = -1;
+	public int mWidth = 0;
+	public int mHeight = 0;
+};
+
+/**
+ * Texture engine
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleTextureEngine
 {
 	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
@@ -20,7 +40,6 @@ public class AngleTextureEngine
 
 	AngleTextureEngine()
 	{
-		sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 	}
 
 	public static void onDestroy(GL10 gl)
@@ -65,6 +84,8 @@ public class AngleTextureEngine
 	{
 		if (gl != null)
 		{
+			sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
 					GL10.GL_FASTEST);
 	

@@ -7,23 +7,40 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+/**
+ * Sprite created with VBO. Slower than AngleSimpleSprite 
+ * but supports rotation and scale
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleSprite extends AngleSimpleSprite
 {
-	private FloatBuffer mVertexBuffer;
-	private FloatBuffer mTexCoordBuffer;
-	private CharBuffer mIndexBuffer;
+	protected FloatBuffer mVertexBuffer;
+	protected FloatBuffer mTexCoordBuffer;
+	protected CharBuffer mIndexBuffer;
 	private float mCropLeft;
 	private float mCropRight;
 	private float mCropTop;
 	private float mCropBottom;
-	public float mRotation;
+	public float mRotation; //Rotation in degrees (0º to 360º)
 
-	private static final char[] sIndexValues = new char[] 
+	protected static final char[] sIndexValues = new char[] 
 	{
 		0, 1, 2,
 		1, 2, 3,
 	};
 
+	/**
+	 * 
+	 * @param width Width in pixels
+	 * @param height Height in pixels
+	 * @param resourceId Resource bitmap
+	 * @param cropLeft Most left pixel in texture
+	 * @param cropTop Most top pixel in texture
+	 * @param cropWidth Width of the cropping rectangle in texture
+	 * @param cropHeight Height of the cropping rectangle in texture
+	 */
 	public AngleSprite(int width, int height, int resourceId, int cropLeft,
 			int cropTop, int cropWidth, int cropHeight)
 	{
