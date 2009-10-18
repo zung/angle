@@ -101,7 +101,7 @@ public class AngleSprite extends AngleSimpleSprite
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
-		gl.glTranslatef(mX, AngleMainEngine.mHeight - mY, mZ);
+		gl.glTranslatef(mX, mY, mZ);
 		gl.glRotatef(-mRotation, 0, 0, 1);
 
 		AngleTextureEngine.bindTexture(gl, mTextureID);

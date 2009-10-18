@@ -14,9 +14,9 @@ import com.android.angle.AngleSurfaceView;
  * 
  *  We learn to:
  *  -Add a game engine.
- *  -Use AgleSprite and its rotation
+ *  -Use AgleSprite and how to rotate it
  *  -Implements a FPS counter
- *  -Do the changes consistent with the time elapsed since last frame
+ *  -Make the changes consistent with the time elapsed since last frame
  *  
  * @author Ivan Pajuelo
  *
