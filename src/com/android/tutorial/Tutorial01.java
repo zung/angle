@@ -34,14 +34,14 @@ public class Tutorial01 extends Activity
 	protected void onPause()
 	{
 		mView.onPause(); //onPause and onResume must be called in order to tell the engine 
-		super.onPause(); //to render when activity is active.
+		super.onPause(); //render when activity is active.
 	}
 
 	@Override
 	protected void onResume()
 	{
 		mView.onResume();	//onPause and onResume must be called in order to tell the engine
-		super.onResume(); //to render when activity is active.
+		super.onResume(); //render when activity is active.
 	}
 	@Override
 	protected void onDestroy()

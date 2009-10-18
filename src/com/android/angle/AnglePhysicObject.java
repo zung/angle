@@ -1,21 +1,42 @@
 package com.android.angle;
 
+import javax.microedition.khronos.opengles.GL10;
+
+import android.util.Log;
+
 public class AnglePhysicObject extends AngleSpriteReference
 {
-	private static final int MAX_COLLIDERS = 0;
-	public float mMass;
+	private static final int MAX_COLLIDERS = 10;
+	public float mMass; //Masa
+	public float mBounce; //Coefficient of restitution
 	public float mVelocityX;
 	public float mVelocityY;
 	protected AngleCollider mColliders[];
 	protected int mCollidersCount;
+	public float dX; //Delta X
+	public float dY; //Delta Y
+	private int mFriction;
 	
 	public AnglePhysicObject(AngleSprite sprite)
 	{
 		super(sprite);
 		mColliders=new AngleCollider[MAX_COLLIDERS];
 		mCollidersCount=0;
+		mBounce=1;
+		mFriction=1;
+		mMass=0; //Infinite mass
+		mVelocityX=0;
+		mVelocityY=0;
 	}
-	
+
+	@Override
+	public void draw(GL10 gl)
+	{
+		super.draw(gl);
+		for (int mc=0;mc<mCollidersCount;mc++)
+			mColliders[mc].draw(gl);
+	}
+
 	public void addCollider (AngleCollider collider)
 	{
 		if (mCollidersCount<MAX_COLLIDERS)
@@ -25,15 +46,87 @@ public class AnglePhysicObject extends AngleSpriteReference
 		}
 	}
 
-	public void test(AnglePhysicObject other)
+	public boolean test(AnglePhysicObject other)
 	{
 		for (int mc=0;mc<mCollidersCount;mc++)
 		{
-			for (int oc=0;oc<other.mCollidersCount;oc++)
+			if (!mColliders[mc].mOnlyReceiveTest)
 			{
-				if (mColliders[mc].test(other.mColliders[oc]))
-					return;
+				for (int oc=0;oc<other.mCollidersCount;oc++)
+				{
+					if (mColliders[mc].test(other.mColliders[oc]))
+					{
+						return true;
+					}
+				}
 			}
 		}
+		return false;
+	}
+
+	public float getSurface()
+	{
+		return 0;
+	}
+	
+	// |
+	// |
+	// | /
+	// |/
+	// |-------->
+	// |\
+	// | \
+	// |  \
+	// |   O
+
+	public void kynetics(AnglePhysicObject other, float normal)
+	{
+		// TODO rotar el sistema -normal, hacer los cálculos (invertir vY) y volver a rotar +normal
+		normal-=Math.PI/2;
+	   float nCos=(float)Math.cos(normal);
+	   float nSin=(float)Math.sin(normal);
+	   
+	   Log.v("Kynetics","Normal="+normal);
+	   
+	   float mVelX=mVelocityX*nCos-mVelocityY*nSin;
+	   float mVelY=mVelocityY*nCos+mVelocityX*nSin;
+	   float oVelX=other.mVelocityX*nCos-other.mVelocityY*nSin;
+	   float oVelY=other.mVelocityY*nCos+other.mVelocityX*nSin;
+	   
+ 	   float e=mBounce*other.mBounce;
+	   float f=mFriction*other.mFriction;
+ 	   float momentum=mVelX*mMass+oVelX*other.mMass;
+ 	   float totalMass=mMass+other.mMass;
+ 	   float mFinalVelX=0f;
+ 	   float mFinalVelY=0f;
+ 	   float oFinalVelX=0f;
+ 	   float oFinalVelY=0f;
+ 	   if (mMass>0) //Mass is not infinite
+ 	   { 
+ 	   	//mFinalVelX=(momentum+other.mMass*e*(oVelX-mVelX))/totalMass; //wiki
+ 	   	mFinalVelX=((mMass-other.mMass*e)*mVelX+other.mMass*(1+e)*oVelX)/totalMass;
+			//mFinalVelY=mVelY*(1/f)-oVelY*(1-(1/f)); //Friction
+			mFinalVelY=mVelY;
+ 	   }
+ 	   
+//	sX=((s->Mass-d->Mass*e)*sVel.X+d->Mass*(1+e)*dVel.X)/(s->Mass+d->Mass);
+//   dX=(s->Mass*(1+e)*sVel.X+(d->Mass-s->Mass*e)*dVel.X)/(s->Mass+d->Mass);
+   
+ 	   if (other.mMass>0) //Other mass is not infinite
+ 	   {
+ 	   	//oFinalVelX=(momentum+mMass*e*(mVelX-oVelX))/totalMass; //wiki
+ 	   	oFinalVelX=(mMass*(1+e)*mVelX+(other.mMass-mMass*e)*oVelX)/totalMass;
+			//oFinalVelY=oVelY*(1/f)+mVelY*(1-(1/f)); //Friction
+			oFinalVelY=oVelY;
+ 	   }
+
+	   nCos=(float)Math.cos(-normal);
+	   nSin=(float)Math.sin(-normal);
+ 	   
+	   //devuelve el sistema a su sitio
+	   mVelocityX=mFinalVelX*nCos-mFinalVelY*nSin;
+	   mVelocityY=mFinalVelY*nCos+mFinalVelX*nSin;
+	   other.mVelocityX=oFinalVelX*nCos-oFinalVelY*nSin;
+	   mVelocityY=oFinalVelY*nCos+oFinalVelX*nSin;
 	}
 }

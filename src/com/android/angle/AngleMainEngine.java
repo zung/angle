@@ -66,7 +66,7 @@ public class AngleMainEngine
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrthof(0, width, 0, height, 0, 1);
+		gl.glOrthof(0, width, height, 0, 0, 1);
 
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glEnable(GL10.GL_BLEND);

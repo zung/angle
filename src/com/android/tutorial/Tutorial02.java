@@ -13,7 +13,7 @@ import android.os.Bundle;
  *  We learn to:
  *  -Add one rendering engine to main engine. In this case a sprites engine.
  *  -Create an AngleSimpleSprite(Width, Height, Resource, Crop Left, Crop Top, Crop Width, Crop Height)
- *  -Change position of the sprite
+ *  -Change the position of the sprite
  * 
  * @author Ivan Pajuelo
  *
@@ -21,7 +21,7 @@ import android.os.Bundle;
 public class Tutorial02 extends Activity
 {
 	private AngleSurfaceView mView;
-	private AngleSpritesEngine mSprites; //The engine where sprite will be added
+	private AngleSpritesEngine mSprites; //The engine where the sprite will be added
 	private AngleSimpleSprite mLogo;		//A simple sprite. It doesn't supports scale, rotation nor effects
 
 	@Override
@@ -33,7 +33,7 @@ public class Tutorial02 extends Activity
 		mSprites = new AngleSpritesEngine(10,0); //Create the sprites engine with maximum 10 sprites and 0 references (see tutorial 6)
 		AngleMainEngine.addEngine(mSprites); //and adds it to main engine
 	
-		//Create one simple sprite with the logo and place it at 100,100
+		//Create one simple sprite with the logo and place it at position 100,100
 		mLogo = new AngleSimpleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
 		mLogo.mX=100;
 		mLogo.mY=100;
