@@ -10,8 +10,8 @@ import android.util.Log;
 
 public class AngleCircleCollider extends AngleCollider
 {
-	private float drawLineX;
-	private float drawLineY;
+//	private float drawLineX;
+//	private float drawLineY;
 
 	public AngleCircleCollider(float x, float y, float radious)
 	{
@@ -55,8 +55,8 @@ public class AngleCircleCollider extends AngleCollider
 			normal=(float)Math.acos(dY/Math.sqrt(dX*dX+dY*dY));
 		else
 			normal=(float)(Math.PI*2-Math.acos(dY/Math.sqrt(dX*dX+dY*dY)));
-		drawLineX=(float) (mRadious*Math.sin(normal));
-		drawLineY=(float) (mRadious*Math.cos(normal));
+//		drawLineX=(float) (mRadious*Math.sin(normal));
+//		drawLineY=(float) (mRadious*Math.cos(normal));
 		return normal;
 	}
 
@@ -84,7 +84,7 @@ public class AngleCircleCollider extends AngleCollider
  		}
  		gl.glVertexPointer (2, GL10.GL_FLOAT , 0, vertices);
  		gl.glDrawArrays (GL10.GL_LINE_LOOP, 0, segments);
-
+/*
  		gl.glLoadIdentity();
 		gl.glColor4f(1f, 0f, 0f, 1f);
 	 	gl.glTranslatef(mObject.mX+mCenterX, mObject.mY+mCenterY, 0.0f);
@@ -96,7 +96,7 @@ public class AngleCircleCollider extends AngleCollider
 		vertices.put(count++,drawLineY);
  		gl.glVertexPointer (2, GL10.GL_FLOAT , 0, vertices);
 		gl.glDrawArrays (GL10.GL_LINES, 0, 2);
-		
+		*/
 	 	gl.glPopMatrix();
 
 	 	gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
