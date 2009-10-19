@@ -101,7 +101,7 @@ public class Tutorial07 extends Activity
 			{
 				mLogos[l].run();
 				//remove logo if is out of screen
-				if (mLogos[l].mY<-mLogoSprite.mWidth/2)
+				if ((mLogos[l].mX<-mLogoSprite.mWidth/2)||(mLogos[l].mY<-mLogoSprite.mWidth/2)||(mLogos[l].mX>AngleMainEngine.mWidth+mLogoSprite.mWidth/2)||(mLogos[l].mY>AngleMainEngine.mHeight+mLogoSprite.mWidth/2))
 				{
 					removeObject(mLogos[l]);
 					mLogosCount--;
