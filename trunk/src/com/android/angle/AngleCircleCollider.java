@@ -24,16 +24,13 @@ public class AngleCircleCollider extends AngleCollider
 	{
 		float normal=(float) (otherCollider.getNormal(this));
 		//Find the closest point to the center of the other collider
-		float cpX=(float) (mObject.mX+mCenterX+mRadious*Math.sin(normal));
-		float cpY=(float) (mObject.mY+mCenterY+mRadious*Math.cos(normal));
+		float cpX=(float) (mObject.mX+mCenterX+mRadious*Math.sin(Math.PI+normal));
+		float cpY=(float) (mObject.mY+mCenterY+mRadious*Math.cos(Math.PI+normal));
 		//----------------------------------------------------------
 	
-		drawLineX=(float) (mRadious*Math.sin(normal));
-		drawLineY=(float) (mRadious*Math.cos(normal));
-
 		if (otherCollider.havePoint(cpX,cpY))
 		{
-			collideWith(normal,otherCollider);
+			collideWith(normal,otherCollider);  
 			return true;
 		}
 		return false;
@@ -50,13 +47,17 @@ public class AngleCircleCollider extends AngleCollider
 	@Override
 	protected float getNormal(AngleCollider relativeCollider)
 	{
-		float dX=(mObject.mX+mCenterX)-(relativeCollider.mObject.mX+relativeCollider.mCenterX);
-		float dY=(mObject.mY+mCenterY)-(relativeCollider.mObject.mY+relativeCollider.mCenterY);
+		float dX=(relativeCollider.mObject.mX+relativeCollider.mCenterX)-(mObject.mX+mCenterX);
+		float dY=(relativeCollider.mObject.mY+relativeCollider.mCenterY)-(mObject.mY+mCenterY);
+		float normal;
 		//The normal in a circle is the direction to the center of the other collider
 		if (dX>0)
-			return (float)Math.acos(dY/Math.sqrt(dX*dX+dY*dY));
+			normal=(float)Math.acos(dY/Math.sqrt(dX*dX+dY*dY));
 		else
-			return (float)(Math.PI*2-Math.acos(dY/Math.sqrt(dX*dX+dY*dY)));
+			normal=(float)(Math.PI*2-Math.acos(dY/Math.sqrt(dX*dX+dY*dY)));
+		drawLineX=(float) (mRadious*Math.sin(normal));
+		drawLineY=(float) (mRadious*Math.cos(normal));
+		return normal;
 	}
 
 	@Override

@@ -82,7 +82,6 @@ public class AnglePhysicObject extends AngleSpriteReference
 	public void kynetics(AnglePhysicObject other, float normal)
 	{
 		// TODO rotar el sistema -normal, hacer los cálculos (invertir vY) y volver a rotar +normal
-		normal-=Math.PI/2;
 	   float nCos=(float)Math.cos(normal);
 	   float nSin=(float)Math.sin(normal);
 	   
@@ -95,7 +94,7 @@ public class AnglePhysicObject extends AngleSpriteReference
 	   
  	   float e=mBounce*other.mBounce;
 	   float f=mFriction*other.mFriction;
- 	   float momentum=mVelX*mMass+oVelX*other.mMass;
+ 	   float momentum=mVelY*mMass+oVelY*other.mMass;
  	   float totalMass=mMass+other.mMass;
  	   float mFinalVelX=0f;
  	   float mFinalVelY=0f;
@@ -104,9 +103,9 @@ public class AnglePhysicObject extends AngleSpriteReference
  	   if (mMass>0) //Mass is not infinite
  	   { 
  	   	//mFinalVelX=(momentum+other.mMass*e*(oVelX-mVelX))/totalMass; //wiki
- 	   	mFinalVelX=((mMass-other.mMass*e)*mVelX+other.mMass*(1+e)*oVelX)/totalMass;
+ 	   	mFinalVelY=((mMass-other.mMass*e)*mVelY+other.mMass*(1+e)*oVelY)/totalMass;
 			//mFinalVelY=mVelY*(1/f)-oVelY*(1-(1/f)); //Friction
-			mFinalVelY=mVelY;
+			mFinalVelX=mVelX;
  	   }
  	   
 //	sX=((s->Mass-d->Mass*e)*sVel.X+d->Mass*(1+e)*dVel.X)/(s->Mass+d->Mass);
@@ -115,10 +114,15 @@ public class AnglePhysicObject extends AngleSpriteReference
  	   if (other.mMass>0) //Other mass is not infinite
  	   {
  	   	//oFinalVelX=(momentum+mMass*e*(mVelX-oVelX))/totalMass; //wiki
- 	   	oFinalVelX=(mMass*(1+e)*mVelX+(other.mMass-mMass*e)*oVelX)/totalMass;
+ 	   	oFinalVelY=(mMass*(1+e)*mVelY+(other.mMass-mMass*e)*oVelY)/totalMass;
 			//oFinalVelY=oVelY*(1/f)+mVelY*(1-(1/f)); //Friction
-			oFinalVelY=oVelY;
+			oFinalVelX=oVelX;
  	   }
+
+ 	   Log.v("Kynetics","mFVX="+mFinalVelX);
+ 	   Log.v("Kynetics","mFVY="+mFinalVelY);
+ 	   Log.v("Kynetics","oFVX="+oFinalVelX);
+ 	   Log.v("Kynetics","oFVY="+oFinalVelY);
 
 	   nCos=(float)Math.cos(-normal);
 	   nSin=(float)Math.sin(-normal);
@@ -127,6 +131,11 @@ public class AnglePhysicObject extends AngleSpriteReference
 	   mVelocityX=mFinalVelX*nCos-mFinalVelY*nSin;
 	   mVelocityY=mFinalVelY*nCos+mFinalVelX*nSin;
 	   other.mVelocityX=oFinalVelX*nCos-oFinalVelY*nSin;
-	   mVelocityY=oFinalVelY*nCos+oFinalVelX*nSin;
+	   other.mVelocityY=oFinalVelY*nCos+oFinalVelX*nSin;
+
+	   Log.v("Kynetics","mVX="+mVelocityX);
+ 	   Log.v("Kynetics","mVY="+mVelocityY);
+ 	   Log.v("Kynetics","oVX="+other.mVelocityX);
+ 	   Log.v("Kynetics","oVY="+other.mVelocityY);
 	}
 }
