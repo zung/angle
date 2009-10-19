@@ -58,13 +58,14 @@ public class Tutorial07 extends Activity
 			mLogos=new MyLogo[MAX_LOGOS];
 			mLogosCount=0;
 
-			mLogoSprite = new AngleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
+			mLogoSprite = new AngleSprite(128/2, 56/2, R.drawable.anglelogo, 0, 25, 128, 81);
 			mSprites.addSprite(mLogoSprite);
-
+/*
 			mLogos[mLogosCount]=new MyLogo(mLogoSprite);
 			mLogos[mLogosCount].mX=160;
 			mLogos[mLogosCount].mY=100;
 			addObject(mLogos[mLogosCount++]);
+*/			
 		}
 
 		@Override
@@ -133,7 +134,14 @@ public class Tutorial07 extends Activity
 					mLogos[mLogosCount]=new MyLogo(mLogoSprite);
 					mLogos[mLogosCount].mX=event.getX();
 					mLogos[mLogosCount].mY=event.getY();
-					mLogos[mLogosCount].mVelocityY=-30;
+					float x=AngleMainEngine.mWidth/2-mLogos[mLogosCount].mX;
+					float y=AngleMainEngine.mHeight/2-mLogos[mLogosCount].mY;
+					float a=(float) Math.acos(y/Math.sqrt(x*x+y*y));
+					if (x<0)
+						a=(float) (Math.PI*2-a);
+					float force=event.getSize()*400;
+					mLogos[mLogosCount].mVelocityX=(float) (force*Math.sin(a));
+					mLogos[mLogosCount].mVelocityY=(float) (force*Math.cos(a));
 					addObject(mLogos[mLogosCount++]);
 				}
 			}
