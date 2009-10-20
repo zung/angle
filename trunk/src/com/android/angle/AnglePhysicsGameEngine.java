@@ -104,6 +104,10 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 							{
 								mObjects[o].mX-=mObjects[o].dX/steps;
 								mObjects[o].mY-=mObjects[o].dY/steps;
+								mObjects[o].dX=mObjects[o].mVelocityX*AngleMainEngine.secondsElapsed;
+								mObjects[o].dY=mObjects[o].mVelocityY*AngleMainEngine.secondsElapsed;
+								mObjects[c].dX=mObjects[c].mVelocityX*AngleMainEngine.secondsElapsed;
+								mObjects[c].dY=mObjects[c].mVelocityY*AngleMainEngine.secondsElapsed;
 								break;
 							}
 						}

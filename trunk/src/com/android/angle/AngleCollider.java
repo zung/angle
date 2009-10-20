@@ -31,7 +31,6 @@ public abstract class AngleCollider
 	protected void collideWith(float collisionNormal, AngleCollider otherCollider)
 	{
 		mObject.kynetics(otherCollider.mObject,collisionNormal);
-		//otherCollider.mObject.kynetics(mObject,getNormal(otherCollider));
 	}
 
 }

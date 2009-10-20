@@ -6,8 +6,6 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.util.Log;
-
 public class AngleCircleCollider extends AngleCollider
 {
 //	private float drawLineX;
