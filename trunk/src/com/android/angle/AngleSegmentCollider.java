@@ -29,9 +29,28 @@ public class AngleSegmentCollider extends AngleCollider
 	@Override
 	public boolean test(AngleCollider otherCollider)
 	{
-		// TODO Auto-generated method stub
+		//mOnlyReceiveTest=true so allways return false
 		return false;
+	    dirX = p2X - p1X;
+	    dirY = p2Y - p1Y;
+			diffX = cX - p1X;
+			diffY = cY - p1Y;
+			
+			    float t = (diffX*dirX)+(diffY*dirY) / (dirX*dirX)+(dirY*dirY);
+			    if (t < 0.0f)
+			        t = 0.0f;
+			    if (t > 1.0f)
+			        t = 1.0f;
+			    closestX = p1X + t * dirX;
+			    closestY = p1Y + t * dirY;
+			    dX = cX - closestX;
+			    dY = cY - closestY;
+			    float distsqr = (dX*dX)+(dY*dY);
+			    return (distsqr <= r * r);
+
 	}
+	
+	
 
 	@Override
 	//devuelve su normal sin mas. pasa del relativo
