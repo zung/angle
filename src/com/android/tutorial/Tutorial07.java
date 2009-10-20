@@ -25,20 +25,20 @@ public class Tutorial07 extends Activity
 		private long lCTM = 0;
 		//-----------
 		private AngleSpritesEngine mSprites; 
-		private static final int MAX_LOGOS = 50;
+		private static final int MAX_BallS = 50;
 		private static final int MAX_OBJECTS = 100;
 		private static final int MAX_TYPES = 10;
-		private AngleSprite mLogoSprite;  		
-		private MyLogo[] mLogos;
-		private int mLogosCount;
+		private AngleSprite mBallSprite;  		
+		private MyBall[] mBalls;
+		private int mBallsCount;
 		
 		//Create new game object class overloading the AngleSpriteReference  
-		class MyLogo extends AnglePhysicObject
+		class MyBall extends AnglePhysicObject
 		{
-			MyLogo(AngleSprite sprite)
+			MyBall(AngleSprite sprite)
 			{
 				super(sprite);
-				addCollider(new AngleCircleCollider(0,0,sprite.mWidth/2));
+				addCollider(new AngleCircleCollider(0,0,sprite.mWidth/2-4));
 				mMass=10;
 			}
 
@@ -55,17 +55,11 @@ public class Tutorial07 extends Activity
 			mSprites = new AngleSpritesEngine(MAX_TYPES, MAX_OBJECTS); 
 			AngleMainEngine.addEngine(mSprites); 
 
-			mLogos=new MyLogo[MAX_LOGOS];
-			mLogosCount=0;
+			mBalls=new MyBall[MAX_BallS];
+			mBallsCount=0;
 
-			mLogoSprite = new AngleSprite(128/2, 56/2, R.drawable.anglelogo, 0, 25, 128, 81);
-			mSprites.addSprite(mLogoSprite);
-/*
-			mLogos[mLogosCount]=new MyLogo(mLogoSprite);
-			mLogos[mLogosCount].mX=160;
-			mLogos[mLogosCount].mY=100;
-			addObject(mLogos[mLogosCount++]);
-*/			
+			mBallSprite = new AngleSprite(128/2, 128/2, R.drawable.ball, 0, 0, 128, 128);
+			mSprites.addSprite(mBallSprite);
 		}
 
 		@Override
@@ -96,18 +90,18 @@ public class Tutorial07 extends Activity
 			}
 			//--------------------------------------
 
-			//Move all logos
-			for (int l=0;l<mLogosCount;l++)
+			//Move all Balls
+			for (int l=0;l<mBallsCount;l++)
 			{
-				mLogos[l].run();
-				//remove logo if is out of screen
-				if ((mLogos[l].mX<-mLogoSprite.mWidth/2)||(mLogos[l].mY<-mLogoSprite.mWidth/2)||(mLogos[l].mX>AngleMainEngine.mWidth+mLogoSprite.mWidth/2)||(mLogos[l].mY>AngleMainEngine.mHeight+mLogoSprite.mWidth/2))
+				mBalls[l].run();
+				//remove Ball if is out of screen
+				if ((mBalls[l].mX<-mBallSprite.mWidth/2)||(mBalls[l].mY<-mBallSprite.mWidth/2)||(mBalls[l].mX>AngleMainEngine.mWidth+mBallSprite.mWidth/2)||(mBalls[l].mY>AngleMainEngine.mHeight+mBallSprite.mWidth/2))
 				{
-					removeObject(mLogos[l]);
-					mLogosCount--;
-					for (int d=l;d<mLogosCount;d++)
-						mLogos[d]=mLogos[d+1];
-					mLogos[mLogosCount]=null;
+					removeObject(mBalls[l]);
+					mBallsCount--;
+					for (int d=l;d<mBallsCount;d++)
+						mBalls[d]=mBalls[d+1];
+					mBalls[mBallsCount]=null;
 				}
 			}
 			super.run();
@@ -128,21 +122,21 @@ public class Tutorial07 extends Activity
 			//-------------------------
 			if (event.getAction()==MotionEvent.ACTION_DOWN)
 			{
-				//Add new logo at the touch position
-				if (mLogosCount<MAX_LOGOS)
+				//Add new Ball at the touch position
+				if (mBallsCount<MAX_BallS)
 				{
-					mLogos[mLogosCount]=new MyLogo(mLogoSprite);
-					mLogos[mLogosCount].mX=event.getX();
-					mLogos[mLogosCount].mY=event.getY();
-					float x=AngleMainEngine.mWidth/2-mLogos[mLogosCount].mX;
-					float y=AngleMainEngine.mHeight/2-mLogos[mLogosCount].mY;
+					mBalls[mBallsCount]=new MyBall(mBallSprite);
+					mBalls[mBallsCount].mX=event.getX();
+					mBalls[mBallsCount].mY=event.getY();
+					float x=AngleMainEngine.mWidth/2-mBalls[mBallsCount].mX;
+					float y=AngleMainEngine.mHeight/2-mBalls[mBallsCount].mY;
 					float a=(float) Math.acos(y/Math.sqrt(x*x+y*y));
 					if (x<0)
 						a=(float) (Math.PI*2-a);
 					float force=event.getSize()*400;
-					mLogos[mLogosCount].mVelocityX=(float) (force*Math.sin(a));
-					mLogos[mLogosCount].mVelocityY=(float) (force*Math.cos(a));
-					addObject(mLogos[mLogosCount++]);
+					mBalls[mBallsCount].mVelocityX=(float) (force*Math.sin(a));
+					mBalls[mBallsCount].mVelocityY=(float) (force*Math.cos(a));
+					addObject(mBalls[mBallsCount++]);
 				}
 			}
 		}
