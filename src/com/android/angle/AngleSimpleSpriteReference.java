@@ -13,7 +13,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
  */
 public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
 {
-	private AngleSimpleSprite mSprite; //Sprite referenced
+	public AngleSimpleSprite mSprite; //Sprite referenced
 
 	public float mX; //
 	public float mY; // Position
@@ -23,7 +23,7 @@ public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
 	 * 
 	 * @param sprite Sprite referenced
 	 */
-	AngleSimpleSpriteReference (AngleSimpleSprite sprite)
+	protected AngleSimpleSpriteReference (AngleSimpleSprite sprite)
 	{
 		mSprite=sprite;
 	}
