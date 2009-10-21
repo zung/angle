@@ -31,6 +31,7 @@ public class AngleSegmentCollider extends AngleCollider
 	{
 		//mOnlyReceiveTest=true so allways return false
 		return false;
+		/*
 	    dirX = p2X - p1X;
 	    dirY = p2Y - p1Y;
 			diffX = cX - p1X;
@@ -47,7 +48,7 @@ public class AngleSegmentCollider extends AngleCollider
 			    dY = cY - closestY;
 			    float distsqr = (dX*dX)+(dY*dY);
 			    return (distsqr <= r * r);
-
+*/
 	}
 	
 	

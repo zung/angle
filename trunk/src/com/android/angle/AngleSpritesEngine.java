@@ -42,7 +42,12 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	public void addSprite(AngleAbstractSprite sprite)
 	{
 		if (mSpritesCount<mMaxSprites)
+		{
+			for (int s=0;s<mSpritesCount;s++)
+				if (mSprites[mSpritesCount] == sprite)
+					return;
 			mSprites[mSpritesCount++] = sprite;
+		}
 	}
 
 	/**
@@ -73,7 +78,12 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	public void addReference(AngleAbstractSpriteReference reference)
 	{
 		if (mReferencesCount<mMaxReferences)
+		{
+			for (int s=0;s<mReferencesCount;s++)
+				if (mReferences[mReferencesCount] == reference)
+					return;
 			mReferences[mReferencesCount++] = reference;
+		}
 	}
 
 	/**
