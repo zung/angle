@@ -8,7 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
  * @author Ivan Pajuelo
  *
  */
-public abstract class AngleAbstractSprite
+public abstract class AngleAbstractSprite extends AngleVisualObject
 {
 	/**
 	 * Sprite must load its texture here

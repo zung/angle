@@ -8,11 +8,19 @@ import javax.microedition.khronos.opengles.GL10;
  * @author Ivan Pajuelo
  *
  */
-public abstract class AngleAbstractSpriteReference
+public class AngleVisualObject
 {
+	public AngleVector mCenter;
+	public float mZ;
+	
+	public AngleVisualObject()
+	{
+		mCenter=new AngleVector();
+		mZ=0;
+	}
 	/**
 	 *  
 	 * @param gl Surface where draw
 	 */
-	public abstract void draw(GL10 gl);
+	public void draw(GL10 gl){};
 }

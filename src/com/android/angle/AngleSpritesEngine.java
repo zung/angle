@@ -17,7 +17,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	private AngleAbstractSprite[] mSprites;
 	private int mSpritesCount;
 	private int mMaxReferences;
-	private AngleAbstractSpriteReference[] mReferences;
+	private AngleVisualObject[] mReferences;
 	private int mReferencesCount;
 
 	/**
@@ -32,7 +32,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		mSpritesCount = 0;
 		mReferencesCount = 0;
 		mSprites = new AngleAbstractSprite[mMaxSprites];
-		mReferences = new AngleAbstractSpriteReference[mMaxReferences];
+		mReferences = new AngleVisualObject[mMaxReferences];
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * Adds a reference
 	 * @param reference Reference to be added
 	 */
-	public void addReference(AngleAbstractSpriteReference reference)
+	public void addReference(AngleVisualObject reference)
 	{
 		if (mReferencesCount<mMaxReferences)
 		{
@@ -90,7 +90,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * Removes a reference
 	 * @param reference Reference to be removed
 	 */
-	public void removeRefernece(AngleAbstractSpriteReference reference)
+	public void removeRefernece(AngleVisualObject reference)
 	{
 		int r;
 		

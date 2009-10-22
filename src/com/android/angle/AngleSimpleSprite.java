@@ -14,10 +14,6 @@ import javax.microedition.khronos.opengles.GL11Ext;
  */
 public class AngleSimpleSprite extends AngleAbstractSprite
 {
-	public float mX; //
-	public float mY; // Position
-	public float mZ; //
-
 	public int mWidth; //
 	public int mHeight;// Dimensions
 	
@@ -40,8 +36,6 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 	{
 		mWidth = width;
 		mHeight = height;
-		mX = 0.0f;
-		mY = 0.0f;
 		mZ = 0.0f;
 		mTextureID = -1;
 		mResourceID = resourceId;
@@ -70,8 +64,8 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 			((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
 					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
 	
-			((GL11Ext) gl).glDrawTexfOES(mX,
-					AngleMainEngine.mHeight - mHeight - mY, mZ, mWidth, mHeight);
+			((GL11Ext) gl).glDrawTexfOES(mCenter.mX-mWidth/2,
+					AngleMainEngine.mHeight - mHeight/2 - mCenter.mY, mZ, mWidth, mHeight);
 		}
 	}
 }

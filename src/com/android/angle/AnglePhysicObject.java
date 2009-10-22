@@ -2,63 +2,93 @@ package com.android.angle;
 
 import javax.microedition.khronos.opengles.GL10;
 
-public class AnglePhysicObject extends AngleSpriteReference
+
+public class AnglePhysicObject
 {
-	private static final int MAX_COLLIDERS = 10;
-	private static final boolean drawColliders = false;
 	public float mMass; //Masa
 	public float mBounce; //Coefficient of restitution
-	public float mVelocityX;
-	public float mVelocityY;
-	protected AngleCollider mColliders[];
-	protected int mCollidersCount;
-	public float dX; //Delta X
-	public float dY; //Delta Y
+	public AngleVector mVelocity;
+	protected int mMaxCircleColliders;
+	protected AngleCircleCollider mCircleColliders[];
+	protected int mCircleCollidersCount;
+	protected int mMaxSegmentColliders;
+	protected AngleSegmentCollider mSegmentColliders[];
+	protected int mSegmentCollidersCount;
+	public AngleVector mDelta; 
 	private int mFriction;
+	public AngleVisualObject mVisual;
 	
-	public AnglePhysicObject(AngleSprite sprite)
+	public AnglePhysicObject(AngleVisualObject visual,int maxSegmentColliders,int maxCircleColliders)
 	{
-		super(sprite);
-		mColliders=new AngleCollider[MAX_COLLIDERS];
-		mCollidersCount=0;
+		mVisual=visual;
+		mMaxSegmentColliders=maxSegmentColliders;
+		mMaxCircleColliders=maxCircleColliders;
+		mCircleColliders=new AngleCircleCollider[mMaxCircleColliders];
+		mCircleCollidersCount=0;
+		mSegmentColliders=new AngleSegmentCollider[mMaxSegmentColliders];
+		mSegmentCollidersCount=0;
 		mBounce=1;
 		mFriction=1;
 		mMass=0; //Infinite mass
-		mVelocityX=0;
-		mVelocityY=0;
+		mVelocity=new AngleVector();
+		mDelta=new AngleVector();
 	}
 
-	@Override
-	public void draw(GL10 gl)
+	public void addCircleCollider (AngleCircleCollider collider)
 	{
-		super.draw(gl);
-		if (drawColliders)
-			for (int mc=0;mc<mCollidersCount;mc++)
-				mColliders[mc].draw(gl);
-	}
-
-	public void addCollider (AngleCollider collider)
-	{
-		if (mCollidersCount<MAX_COLLIDERS)
+		if (mCircleCollidersCount<mMaxCircleColliders)
 		{
 			collider.mObject=this;
-			mColliders[mCollidersCount++]=collider;
+			mCircleColliders[mCircleCollidersCount++]=collider;
 		}
+	}
+
+	public void addSegmentCollider (AngleSegmentCollider collider)
+	{
+		if (mSegmentCollidersCount<mMaxSegmentColliders)
+		{
+			collider.mObject=this;
+			mSegmentColliders[mSegmentCollidersCount++]=collider;
+		}
+	}
+
+	public boolean collide(AnglePhysicObject other)
+	{
+		for (int mc=0;mc<mCircleCollidersCount;mc++)
+		{
+			for (int oc=0;oc<other.mSegmentCollidersCount;oc++)
+			{
+				if (mCircleColliders[mc].test(other.mSegmentColliders[oc]))
+				{
+					kynetics(other,other.mSegmentColliders[oc].mNormal);
+					return true;
+				}
+			}
+			for (int oc=0;oc<other.mCircleCollidersCount;oc++)
+			{
+				if (mCircleColliders[mc].test(other.mCircleColliders[oc]))
+				{
+					kynetics(other,other.mCircleColliders[oc].mNormal);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean test(AnglePhysicObject other)
 	{
-		for (int mc=0;mc<mCollidersCount;mc++)
+		for (int mc=0;mc<mCircleCollidersCount;mc++)
 		{
-			if (!mColliders[mc].mOnlyReceiveTest)
+			for (int oc=0;oc<other.mSegmentCollidersCount;oc++)
 			{
-				for (int oc=0;oc<other.mCollidersCount;oc++)
-				{
-					if (mColliders[mc].test(other.mColliders[oc]))
-					{
-						return true;
-					}
-				}
+				if (mCircleColliders[mc].test(other.mSegmentColliders[oc]))
+					return true;
+			}
+			for (int oc=0;oc<other.mCircleCollidersCount;oc++)
+			{
+				if (mCircleColliders[mc].test(other.mCircleColliders[oc]))
+					return true;
 			}
 		}
 		return false;
@@ -75,10 +105,10 @@ public class AnglePhysicObject extends AngleSpriteReference
 	   float nCos=(float)Math.cos(normal);
 	   float nSin=(float)Math.sin(normal);
 	   
-	   float mVelX=mVelocityX*nCos-mVelocityY*nSin;
-	   float mVelY=mVelocityY*nCos+mVelocityX*nSin;
-	   float oVelX=other.mVelocityX*nCos-other.mVelocityY*nSin;
-	   float oVelY=other.mVelocityY*nCos+other.mVelocityX*nSin;
+	   float mVelX=mVelocity.mX*nCos-mVelocity.mY*nSin;
+	   float mVelY=mVelocity.mY*nCos+mVelocity.mX*nSin;
+	   float oVelX=other.mVelocity.mX*nCos-other.mVelocity.mY*nSin;
+	   float oVelY=other.mVelocity.mY*nCos+other.mVelocity.mX*nSin;
 	   
  	   float e=mBounce*other.mBounce;
 	   float f=mFriction*other.mFriction;
@@ -101,14 +131,27 @@ public class AnglePhysicObject extends AngleSpriteReference
  	   	//oFinalVelY=(mMass*(1+e)*mVelY+(other.mMass-mMass*e)*oVelY)/totalMass;
 			oFinalVelX=oVelX*(1/f)+mVelX*(1-(1/f)); //Friction
  	   }
+ 	   else
+ 	   	mFinalVelY=-mFinalVelY;
+
+ 	   if (mMass==0) //Mass is infinite
+ 	   	oFinalVelY=-oFinalVelY;
 
 	   nCos=(float)Math.cos(-normal);
 	   nSin=(float)Math.sin(-normal);
  	   
 	   //devuelve el sistema a su sitio
-	   mVelocityX=mFinalVelX*nCos-mFinalVelY*nSin;
-	   mVelocityY=mFinalVelY*nCos+mFinalVelX*nSin;
-	   other.mVelocityX=oFinalVelX*nCos-oFinalVelY*nSin;
-	   other.mVelocityY=oFinalVelY*nCos+oFinalVelX*nSin;
+	   mVelocity.mX=mFinalVelX*nCos-mFinalVelY*nSin;
+	   mVelocity.mY=mFinalVelY*nCos+mFinalVelX*nSin;
+	   other.mVelocity.mX=oFinalVelX*nCos-oFinalVelY*nSin;
+	   other.mVelocity.mY=oFinalVelY*nCos+oFinalVelX*nSin;
+	}
+
+	public void draw(GL10 gl)
+	{
+		for (int mc=0;mc<mCircleCollidersCount;mc++)
+			mCircleColliders[mc].draw(gl);
+		for (int mc=0;mc<mSegmentCollidersCount;mc++)
+			mSegmentColliders[mc].draw(gl);
 	}
 }

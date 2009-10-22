@@ -54,7 +54,7 @@ public class Tutorial06 extends Activity
 			public void run()
 			{
 				//Move up 80 pixels per second
-				mY-=80*AngleMainEngine.secondsElapsed;
+				mCenter.mY-=80*AngleMainEngine.secondsElapsed;
 				mRotation+=45*AngleMainEngine.secondsElapsed;
 				mRotation%=360;
 			}
@@ -92,7 +92,7 @@ public class Tutorial06 extends Activity
 			{
 				mLogos[l].run();
 				//remove logo if is out of screen
-				if (mLogos[l].mY<-mLogoSprite.mWidth/2)
+				if (mLogos[l].mCenter.mY<-mLogoSprite.mWidth/2)
 				{
 					mSprites.removeRefernece(mLogos[l]);
 					mLogosCount--;
@@ -122,8 +122,7 @@ public class Tutorial06 extends Activity
 				if (mLogosCount<MAX_LOGOS)
 				{
 					mLogos[mLogosCount]=new MyLogo(mLogoSprite);
-					mLogos[mLogosCount].mX=event.getX();
-					mLogos[mLogosCount].mY=event.getY();
+					mLogos[mLogosCount].mCenter.set(event.getX(),event.getY());
 					mSprites.addReference(mLogos[mLogosCount++]);
 				}
 			}

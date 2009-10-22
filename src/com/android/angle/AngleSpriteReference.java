@@ -9,13 +9,10 @@ import javax.microedition.khronos.opengles.GL10;
  * @author Ivan Pajuelo
  *
  */
-public class AngleSpriteReference extends AngleAbstractSpriteReference
+public class AngleSpriteReference extends AngleVisualObject
 {
 	private AngleSprite mSprite;
 
-	public float mX; //
-	public float mY; // Position
-	public float mZ; //
 	public float mRotation; // Rotation
 	
 	/**
@@ -33,7 +30,7 @@ public class AngleSpriteReference extends AngleAbstractSpriteReference
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
-		gl.glTranslatef(mX, mY, mZ);
+		gl.glTranslatef(mCenter.mX, mCenter.mY, mZ);
 		gl.glRotatef(-mRotation, 0, 0, 1);
 
 		AngleTextureEngine.bindTexture(gl, mSprite.mTextureID);

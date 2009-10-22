@@ -11,13 +11,9 @@ import javax.microedition.khronos.opengles.GL11Ext;
  * @author Ivan Pajuelo
  *
  */
-public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
+public class AngleSimpleSpriteReference extends AngleVisualObject
 {
 	public AngleSimpleSprite mSprite; //Sprite referenced
-
-	public float mX; //
-	public float mY; // Position
-	public float mZ; //
 
 	/**
 	 * 
@@ -38,8 +34,8 @@ public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
 			((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
 					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mSprite.mTextureCrop, 0);
 	
-			((GL11Ext) gl).glDrawTexfOES(mX,
-					AngleMainEngine.mHeight - mSprite.mHeight - mY, mZ, mSprite.mWidth, mSprite.mHeight);
+			((GL11Ext) gl).glDrawTexfOES(mCenter.mX-mSprite.mWidth/2,
+					AngleMainEngine.mHeight - mSprite.mHeight/2 - mCenter.mY, mZ, mSprite.mWidth, mSprite.mHeight);
 		}
 	}
 }

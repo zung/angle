@@ -6,59 +6,38 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-public class AngleCircleCollider extends AngleCollider
+public class AngleCircleCollider 
 {
-//	private float drawLineX;
-//	private float drawLineY;
+	protected AnglePhysicObject mObject;
+	protected AngleVector mCenter;
+	protected float mRadious;
+	protected float mNormal;
 
 	public AngleCircleCollider(float x, float y, float radious)
 	{
-		super(x, y, radious);
+		mCenter=new AngleVector (x,y);
+		mRadious=radious;
 	}
 	
-	@Override
-	//La normal del choque, me la devuelve el otherCollider
-	public boolean test(AngleCollider otherCollider)
+	public boolean test(AngleCircleCollider otherCollider)
 	{
-		float normal=(float) (otherCollider.getNormal(this));
-		//Find the closest point to the center of the other collider
-		float cpX=(float) (mObject.mX+mCenterX+mRadious*Math.sin(Math.PI+normal));
-		float cpY=(float) (mObject.mY+mCenterY+mRadious*Math.cos(Math.PI+normal));
-		//----------------------------------------------------------
-	
-		if (otherCollider.havePoint(cpX,cpY))
-		{
-			collideWith(normal,otherCollider);  
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean havePoint(float pX, float pY)
-	{
-		float dX=mObject.mX+mCenterX-pX;
-		float dY=mObject.mY+mCenterY-pY;
-		return (Math.sqrt(dX*dX+dY*dY)<=mRadious);
-	}
-
-	@Override
-	protected float getNormal(AngleCollider relativeCollider)
-	{
-		float dX=(relativeCollider.mObject.mX+relativeCollider.mCenterX)-(mObject.mX+mCenterX);
-		float dY=(relativeCollider.mObject.mY+relativeCollider.mCenterY)-(mObject.mY+mCenterY);
-		float normal;
+		float dX=(otherCollider.mObject.mVisual.mCenter.mX+otherCollider.mCenter.mX)-(mObject.mVisual.mCenter.mX+mCenter.mX);
+		float dY=(otherCollider.mObject.mVisual.mCenter.mY+otherCollider.mCenter.mY)-(mObject.mVisual.mCenter.mY+mCenter.mY);
+		float dist=(float)Math.sqrt(dX*dX+dY*dY);
 		//The normal in a circle is the direction to the center of the other collider
 		if (dX>0)
-			normal=(float)Math.acos(dY/Math.sqrt(dX*dX+dY*dY));
+			otherCollider.mNormal=(float)Math.acos(dY/dist);
 		else
-			normal=(float)(Math.PI*2-Math.acos(dY/Math.sqrt(dX*dX+dY*dY)));
-//		drawLineX=(float) (mRadious*Math.sin(normal));
-//		drawLineY=(float) (mRadious*Math.cos(normal));
-		return normal;
+			otherCollider.mNormal=(float)(Math.PI*2-Math.acos(dY/dist));
+
+		return (dist<mRadious+otherCollider.mRadious);
 	}
 
-	@Override
+	public boolean test(AngleSegmentCollider otherCollider)
+	{
+		return otherCollider.closestDist(this)<mRadious;
+	}
+
 	protected void draw(GL10 gl)
 	{
 		final int segments=20;
@@ -69,7 +48,7 @@ public class AngleCircleCollider extends AngleCollider
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 		gl.glColor4f(0f, 1f, 0f, 1f);
-	 	gl.glTranslatef(mObject.mX+mCenterX, mObject.mY+mCenterY, 0.0f);
+	 	gl.glTranslatef(mObject.mVisual.mCenter.mX+mCenter.mX, mObject.mVisual.mCenter.mY+mCenter.mY, 0.0f);
 	 	FloatBuffer vertices;
 		vertices = ByteBuffer.allocateDirect(segments*2*4)
 		.order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -82,22 +61,10 @@ public class AngleCircleCollider extends AngleCollider
  		}
  		gl.glVertexPointer (2, GL10.GL_FLOAT , 0, vertices);
  		gl.glDrawArrays (GL10.GL_LINE_LOOP, 0, segments);
-/*
- 		gl.glLoadIdentity();
-		gl.glColor4f(1f, 0f, 0f, 1f);
-	 	gl.glTranslatef(mObject.mX+mCenterX, mObject.mY+mCenterY, 0.0f);
-	 	vertices.clear();
-	 	count=0;
-		vertices.put(count++,0);
-		vertices.put(count++,0);
-		vertices.put(count++,drawLineX);
-		vertices.put(count++,drawLineY);
- 		gl.glVertexPointer (2, GL10.GL_FLOAT , 0, vertices);
-		gl.glDrawArrays (GL10.GL_LINES, 0, 2);
-		*/
 	 	gl.glPopMatrix();
 
 	 	gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 	}
+
 }

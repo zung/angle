@@ -2,21 +2,19 @@ package com.android.angle;
 
 public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 {
-	private AngleSpritesEngine mSprites; 
-	private int mMaxObjects;
-	private int mObjectsCount;
-	AnglePhysicObject[] mObjects;
-	public float mGravityX;
-	public float mGravityY;
+	protected int mMaxObjects;
+	protected int mObjectsCount;
+	protected AnglePhysicObject[] mObjects;
+	public AngleVector mGravity;
 	public float mViscosity;
 	
-	public AnglePhysicsGameEngine (int maxObjects, int maxTypes)
+	public AnglePhysicsGameEngine (int maxTypes, int maxObjects)
 	{
 		mMaxObjects=maxObjects;
 		mObjectsCount=0;
-		mObjects = new AnglePhysicObject[mMaxObjects]; 
-		mSprites = new AngleSpritesEngine(maxTypes, maxObjects); 
-		AngleMainEngine.addEngine(mSprites); 
+		mObjects = new AnglePhysicObject[mMaxObjects];
+		mGravity=new AngleVector();
+		mViscosity=0;
 	}
 
 	public void addObject(AnglePhysicObject object)
@@ -49,9 +47,9 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 		for (int o=0;o<mObjectsCount;o++)
 		{
 			//Gravity
-			mObjects[o].mVelocityX+=mObjects[o].mMass*mGravityX*AngleMainEngine.secondsElapsed;
-			mObjects[o].mVelocityY+=mObjects[o].mMass*mGravityY*AngleMainEngine.secondsElapsed;
-			if ((mObjects[o].mVelocityX!=0)||(mObjects[o].mVelocityY!=0))
+			mObjects[o].mVelocity.mX+=mObjects[o].mMass*mGravity.mX*AngleMainEngine.secondsElapsed;
+			mObjects[o].mVelocity.mY+=mObjects[o].mMass*mGravity.mY*AngleMainEngine.secondsElapsed;
+			if ((mObjects[o].mVelocity.mX!=0)||(mObjects[o].mVelocity.mY!=0))
 			{
 				//Air viscosity
 				if (mViscosity>0)
@@ -59,27 +57,28 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 					float surface=mObjects[o].getSurface();
 					if (surface>0)
 					{
-					float decay=mViscosity*AngleMainEngine.secondsElapsed;
-					if (mObjects[o].mVelocityX>decay)
-						mObjects[o].mVelocityX-=decay;
-					else if (mObjects[o].mVelocityX<-decay)
-						mObjects[o].mVelocityX+=decay;
+					float decay=surface*mViscosity*AngleMainEngine.secondsElapsed;
+					if (mObjects[o].mVelocity.mX>decay)
+						mObjects[o].mVelocity.mX-=decay;
+					else if (mObjects[o].mVelocity.mX<-decay)
+						mObjects[o].mVelocity.mX+=decay;
 					else
-						mObjects[o].mVelocityX=0;
-					if (mObjects[o].mVelocityY>decay)
-						mObjects[o].mVelocityY-=decay;
-					else if (mObjects[o].mVelocityY<-decay)
-						mObjects[o].mVelocityY+=decay;
+						mObjects[o].mVelocity.mX=0;
+					if (mObjects[o].mVelocity.mY>decay)
+						mObjects[o].mVelocity.mY-=decay;
+					else if (mObjects[o].mVelocity.mY<-decay)
+						mObjects[o].mVelocity.mY+=decay;
 					else
-						mObjects[o].mVelocityY=0;
+						mObjects[o].mVelocity.mY=0;
 					}
 				}
 			}
 			//Velocity
-			mObjects[o].dX=mObjects[o].mVelocityX*AngleMainEngine.secondsElapsed;
-			mObjects[o].dY=mObjects[o].mVelocityY*AngleMainEngine.secondsElapsed;
+			mObjects[o].mDelta.mX=mObjects[o].mVelocity.mX*AngleMainEngine.secondsElapsed;
+			mObjects[o].mDelta.mY=mObjects[o].mVelocity.mY*AngleMainEngine.secondsElapsed;
 		}
 		int steps=1;
+		/*
 		for (int o=0;o<mObjectsCount;o++)
 		{
 			int dX=(int) Math.abs(mObjects[o].dX);
@@ -87,27 +86,28 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 			if (dX>steps) steps=dX;
 			if (dY>steps) steps=dY;
 		}
+		*/
 		for (int s=0;s<steps;s++)
 		{
 			for (int o=0;o<mObjectsCount;o++)
 			{
-				if ((mObjects[o].dX!=0)||(mObjects[o].dY!=0))
+				if ((mObjects[o].mDelta.mX!=0)||(mObjects[o].mDelta.mY!=0))
 				{
 					//Collision
-					mObjects[o].mX+=mObjects[o].dX/steps;
-					mObjects[o].mY+=mObjects[o].dY/steps;
+					mObjects[o].mVisual.mCenter.mX+=mObjects[o].mDelta.mX/steps;
+					mObjects[o].mVisual.mCenter.mY+=mObjects[o].mDelta.mY/steps;
 					for (int c=0;c<mObjectsCount;c++)
 					{
 						if (c!=o)
 						{
-							if (mObjects[o].test(mObjects[c]))
+							if (mObjects[o].collide(mObjects[c]))
 							{
-								mObjects[o].mX-=mObjects[o].dX/steps;
-								mObjects[o].mY-=mObjects[o].dY/steps;
-								mObjects[o].dX=mObjects[o].mVelocityX*AngleMainEngine.secondsElapsed;
-								mObjects[o].dY=mObjects[o].mVelocityY*AngleMainEngine.secondsElapsed;
-								mObjects[c].dX=mObjects[c].mVelocityX*AngleMainEngine.secondsElapsed;
-								mObjects[c].dY=mObjects[c].mVelocityY*AngleMainEngine.secondsElapsed;
+								mObjects[o].mVisual.mCenter.mX-=mObjects[o].mDelta.mX/steps;
+								mObjects[o].mVisual.mCenter.mY-=mObjects[o].mDelta.mY/steps;
+								mObjects[o].mDelta.mX=mObjects[o].mVelocity.mX*AngleMainEngine.secondsElapsed;
+								mObjects[o].mDelta.mY=mObjects[o].mVelocity.mY*AngleMainEngine.secondsElapsed;
+								mObjects[c].mDelta.mX=mObjects[c].mVelocity.mX*AngleMainEngine.secondsElapsed;
+								mObjects[c].mDelta.mY=mObjects[c].mVelocity.mY*AngleMainEngine.secondsElapsed;
 								break;
 							}
 						}
