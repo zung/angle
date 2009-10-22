@@ -1,6 +1,9 @@
 package com.android.tutorial;
 
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -9,16 +12,19 @@ import com.android.angle.AngleCircleCollider;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AnglePhysicObject;
 import com.android.angle.AnglePhysicsGameEngine;
+import com.android.angle.AngleSegmentCollider;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
-import com.android.angle.AngleViewCollisionsEngine;
+import com.android.angle.AngleVisualObject;
 
-public class Tutorial07 extends Activity
+@SuppressWarnings("deprecation")
+public class Tutorial08 extends Activity
 {
 	private MyGameEngine mGame;  
-	private AngleSurfaceView mView;
+	private MyView mView;
+	private SensorManager mSensorManager;
 
 	class MyGameEngine extends AnglePhysicsGameEngine  
 	{
@@ -27,13 +33,15 @@ public class Tutorial07 extends Activity
 		private long lCTM = 0;
 		//-----------
 		private AngleSpritesEngine mSprites; 
-		private AngleViewCollisionsEngine mCollisions; 
 		private static final int MAX_BallS = 50;
 		private static final int MAX_OBJECTS = 100;
 		private static final int MAX_TYPES = 10;
+		private static final int smLoad = 1;
+		private static final int smRun = 2;
 		private AngleSprite mBallSprite;  		
 		private MyBall[] mBalls;
 		private int mBallsCount;
+		private int mStateMachine;
 		
 		//Create new game object class overloading the AngleSpriteReference  
 		class MyBall extends AnglePhysicObject 
@@ -45,6 +53,12 @@ public class Tutorial07 extends Activity
 				mMass=10;
 			}
 
+			@Override
+			public float getSurface()
+			{
+				return 29*2;
+			}
+
 			public void run()
 			{
 				AngleSpriteReference SR=(AngleSpriteReference)mVisual;
@@ -53,22 +67,24 @@ public class Tutorial07 extends Activity
 			}
 			
 		}
-
-		MyGameEngine()
+		
+		MyGameEngine(Context ctx)
 		{
 			super (MAX_TYPES, MAX_OBJECTS);
+			
 			mSprites = new AngleSpritesEngine(MAX_TYPES, MAX_OBJECTS); 
-			AngleMainEngine.addEngine(mSprites); 
-			//------------------------------------------------
-			mCollisions = new AngleViewCollisionsEngine(this); 
-			AngleMainEngine.addEngine(mCollisions);
-			//Adding this engine, the collisions will be drawn
-
+			AngleMainEngine.addEngine(mSprites);
+			
 			mBalls=new MyBall[MAX_BallS];
 			mBallsCount=0;
 
 			mBallSprite = new AngleSprite(128/2, 128/2, R.drawable.ball, 0, 0, 128, 128);
 			mSprites.addSprite(mBallSprite);
+
+			mGravity.mY=9.8f;//Gravity
+			mViscosity=0.2f; //Air viscosity
+			
+			mStateMachine=smLoad;
 		}
 
 		@Override
@@ -86,6 +102,36 @@ public class Tutorial07 extends Activity
 		}
 
 		public void run()
+		{
+			switch (mStateMachine)
+			{
+				case smLoad:
+					AnglePhysicObject mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
+					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight-1);
+					mWall.addSegmentCollider(new AngleSegmentCollider(-AngleMainEngine.mWidth/2,0,AngleMainEngine.mWidth/2,0));
+					addObject(mWall); //Down wall
+					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
+					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth/2,0);
+					mWall.addSegmentCollider(new AngleSegmentCollider(AngleMainEngine.mWidth/2,0,-AngleMainEngine.mWidth/2,0));
+					addObject(mWall); //Up wall
+					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
+					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth-1,AngleMainEngine.mHeight/2);
+					mWall.addSegmentCollider(new AngleSegmentCollider(0,AngleMainEngine.mHeight/2,0,-AngleMainEngine.mHeight/2));
+					addObject(mWall); //Right wall
+					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
+					mWall.mVisual.mCenter.set(0,AngleMainEngine.mHeight/2);
+					mWall.addSegmentCollider(new AngleSegmentCollider(0,-AngleMainEngine.mHeight/2,0,AngleMainEngine.mHeight/2));
+					addObject(mWall); //Left wall
+					mStateMachine=smRun;
+					break;
+				case smRun:
+					simulate();
+					break;
+			}
+			super.run();
+		}
+
+		private void simulate()
 		{
 			//Add FPS record to log every 100 frames
 			frameCount++;
@@ -113,7 +159,6 @@ public class Tutorial07 extends Activity
 					mBalls[mBallsCount]=null;
 				}
 			}
-			super.run();
 		}
 
 		//Place the input processing in to game engine
@@ -136,14 +181,6 @@ public class Tutorial07 extends Activity
 				{
 					mBalls[mBallsCount]=new MyBall(new AngleSpriteReference(mBallSprite));
 					mBalls[mBallsCount].mVisual.mCenter.set(event.getX(),event.getY());
-					float x=AngleMainEngine.mWidth/2-mBalls[mBallsCount].mVisual.mCenter.mX;
-					float y=AngleMainEngine.mHeight/2-mBalls[mBallsCount].mVisual.mCenter.mY;
-					float a=(float) Math.acos(y/Math.sqrt(x*x+y*y));
-					if (x<0)
-						a=(float) (Math.PI*2-a);
-					float force=event.getSize()*400;
-					mBalls[mBallsCount].mVelocity.mX=(float) (force*Math.sin(a));
-					mBalls[mBallsCount].mVelocity.mY=(float) (force*Math.cos(a));
 
 					//Ensure that there isn't any ball in this place
 					for (int b=0;b<mBallsCount;b++)
@@ -159,6 +196,29 @@ public class Tutorial07 extends Activity
 			}
 		}
 	}
+	
+	class MyView extends AngleSurfaceView implements SensorListener
+	{
+
+		public MyView(Context context)
+		{
+			super(context);
+		}
+
+		@Override
+		public void onAccuracyChanged(int sensor, int accuracy)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onSensorChanged(int sensor, float[] values)
+		{
+			mGame.mGravity.mX=values[3]*2;
+			mGame.mGravity.mY=-values[4]*2;
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -166,11 +226,12 @@ public class Tutorial07 extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mView = new AngleSurfaceView(this);  
+		mView = new MyView(this);  
 		setContentView(mView);	
-		mGame = new MyGameEngine();  
+		mGame = new MyGameEngine(this);  
 		mView.setBeforeDraw(mGame);  
-	}
+      mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE); 
+   }
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) //Get touch input events
@@ -189,9 +250,19 @@ public class Tutorial07 extends Activity
 	@Override
 	protected void onResume()
 	{
-		mView.onResume();
+      mSensorManager.registerListener(mView, 
+            SensorManager.SENSOR_ACCELEROMETER); 
+      mView.onResume();
 		super.onResume();
 	}
+
+	@Override
+	protected void onStop()
+	{
+		mSensorManager.unregisterListener(mView);
+		super.onStop();
+	}
+
 	@Override
 	protected void onDestroy()
 	{

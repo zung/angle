@@ -35,8 +35,7 @@ public class Tutorial02 extends Activity
 	
 		//Create one simple sprite with the logo and place it at position 100,100
 		mLogo = new AngleSimpleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
-		mLogo.mX=100;
-		mLogo.mY=100;
+		mLogo.mCenter.set(100,100);
 		mSprites.addSprite(mLogo); //The sprites engine will draw all the sprites added automatically
 
 		mView = new AngleSurfaceView(this);  

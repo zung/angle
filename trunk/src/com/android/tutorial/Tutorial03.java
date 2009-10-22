@@ -73,8 +73,7 @@ public class Tutorial03 extends Activity
 	
 		//Use AngleSprite instead of AngleSimpleSprite to rotate it
 		mLogo = new AngleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
-		mLogo.mX=100;
-		mLogo.mY=100;
+		mLogo.mCenter.set(100, 100);
 		mSprites.addSprite(mLogo); 
 
 		mView = new AngleSurfaceView(this);  

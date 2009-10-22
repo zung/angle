@@ -14,10 +14,11 @@
 <activity android:name="Tutorial02"></activity><activity android:name="Tutorial03"></activity>
 
 
-<activity android:name="Tutorial04"></activity><activity android:name="Tutorial05" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity><activity android:name="Tutorial06"></activity><activity android:name="Tutorial07"></activity>
+<activity android:name="Tutorial04"></activity><activity android:name="Tutorial05" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity><activity android:name="Tutorial06"></activity><activity android:name="Tutorial07" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"></activity>
 
 
 
+<activity android:name="Tutorial08" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 

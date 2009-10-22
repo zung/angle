@@ -101,8 +101,7 @@ public class Tutorial05 extends Activity
 			{
 				case smLoad: 
 					mLogo = new MyBlendSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81); //Use the overloaded sprite
-					mLogo.mX=AngleMainEngine.mWidth/2;
-					mLogo.mY=AngleMainEngine.mHeight/2;
+					mLogo.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight/2);
 					mSprites.addSprite(mLogo);
 					
 					stateMachine=smRotate;

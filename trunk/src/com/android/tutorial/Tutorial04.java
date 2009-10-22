@@ -60,8 +60,7 @@ public class Tutorial04 extends Activity
 				case smLoad: //Load sprite in runtime
 					mLogo = new AngleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
 					//Cause the engine is already initialized, we can consult its extents
-					mLogo.mX=AngleMainEngine.mWidth/2;
-					mLogo.mY=AngleMainEngine.mHeight/2;
+					mLogo.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight/2);
 					mSprites.addSprite(mLogo);
 					
 					stateMachine=smRotate;
