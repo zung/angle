@@ -51,6 +51,7 @@ public class Tutorial08 extends Activity
 				super(spriteReference,0,1);
 				addCircleCollider(new AngleCircleCollider(0,0,29));
 				mMass=10;
+				mBounce=0.8f;
 			}
 
 			@Override
@@ -109,18 +110,22 @@ public class Tutorial08 extends Activity
 					AnglePhysicObject mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight-1);
 					mWall.addSegmentCollider(new AngleSegmentCollider(-AngleMainEngine.mWidth/2,0,AngleMainEngine.mWidth/2,0));
+					mWall.mBounce=0.5f;
 					addObject(mWall); //Down wall
 					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth/2,0);
 					mWall.addSegmentCollider(new AngleSegmentCollider(AngleMainEngine.mWidth/2,0,-AngleMainEngine.mWidth/2,0));
+					mWall.mBounce=0.5f;
 					addObject(mWall); //Up wall
 					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth-1,AngleMainEngine.mHeight/2);
 					mWall.addSegmentCollider(new AngleSegmentCollider(0,AngleMainEngine.mHeight/2,0,-AngleMainEngine.mHeight/2));
+					mWall.mBounce=0.5f;
 					addObject(mWall); //Right wall
 					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(0,AngleMainEngine.mHeight/2);
 					mWall.addSegmentCollider(new AngleSegmentCollider(0,-AngleMainEngine.mHeight/2,0,AngleMainEngine.mHeight/2));
+					mWall.mBounce=0.5f;
 					addObject(mWall); //Left wall
 					mStateMachine=smRun;
 					break;
