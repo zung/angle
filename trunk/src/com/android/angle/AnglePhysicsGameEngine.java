@@ -40,9 +40,8 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 		}
 		
 	}
-	
-	@Override
-	public void run()
+
+	protected void physics()
 	{
 		for (int o=0;o<mObjectsCount;o++)
 		{
@@ -77,16 +76,20 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 			mObjects[o].mDelta.mX=mObjects[o].mVelocity.mX*AngleMainEngine.secondsElapsed;
 			mObjects[o].mDelta.mY=mObjects[o].mVelocity.mY*AngleMainEngine.secondsElapsed;
 		}
+	}
+/*	
+	protected void kynetics ()
+	{
 		int steps=1;
-		/*
+		
 		for (int o=0;o<mObjectsCount;o++)
 		{
-			int dX=(int) Math.abs(mObjects[o].dX);
-			int dY=(int) Math.abs(mObjects[o].dX);
+			int dX=(int) Math.abs(mObjects[o].mDelta.mX);
+			int dY=(int) Math.abs(mObjects[o].mDelta.mX);
 			if (dX>steps) steps=dX;
 			if (dY>steps) steps=dY;
 		}
-		*/
+		
 		for (int s=0;s<steps;s++)
 		{
 			for (int o=0;o<mObjectsCount;o++)
@@ -115,5 +118,38 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 				}
 			}
 		}
+	}
+*/	
+	protected void kynetics ()
+	{
+		for (int o=0;o<mObjectsCount;o++)
+		{
+			if ((mObjects[o].mDelta.mX!=0)||(mObjects[o].mDelta.mY!=0))
+			{
+				//Collision
+				mObjects[o].mVisual.mCenter.mX+=mObjects[o].mDelta.mX;
+				mObjects[o].mVisual.mCenter.mY+=mObjects[o].mDelta.mY;
+				for (int c=0;c<mObjectsCount;c++)
+				{
+					if (c!=o)
+					{
+						if (mObjects[o].collide(mObjects[c]))
+						{
+							mObjects[o].mVisual.mCenter.mX-=mObjects[o].mDelta.mX;
+							mObjects[o].mVisual.mCenter.mY-=mObjects[o].mDelta.mY;
+							mObjects[c].mDelta.mX=mObjects[c].mVelocity.mX*AngleMainEngine.secondsElapsed;
+							mObjects[c].mDelta.mY=mObjects[c].mVelocity.mY*AngleMainEngine.secondsElapsed;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	@Override
+	public void run()
+	{
+		physics();
+		kynetics();
 	}
 }
