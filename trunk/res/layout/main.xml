@@ -10,6 +10,7 @@
    <Button android:layout_height="wrap_content" android:id="@+id/tut06" android:layout_width="fill_parent" android:text="@string/tut06"/> 
    <Button android:layout_height="wrap_content" android:id="@+id/tut07" android:layout_width="fill_parent" android:text="@string/tut07"/> 
    <Button android:layout_height="wrap_content" android:id="@+id/tut08" android:layout_width="fill_parent" android:text="@string/tut08"/> 
+   <Button android:layout_height="wrap_content" android:id="@+id/game" android:layout_width="fill_parent" android:text="@string/game"/> 
   </LinearLayout>
  </ScrollView>
 </LinearLayout>
