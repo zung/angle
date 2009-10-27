@@ -19,10 +19,6 @@ public class AngleSprite extends AngleSimpleSprite
 	protected FloatBuffer mVertexBuffer;
 	protected FloatBuffer mTexCoordBuffer;
 	protected CharBuffer mIndexBuffer;
-	private float mCropLeft;
-	private float mCropRight;
-	private float mCropTop;
-	private float mCropBottom;
 	public float mRotation; //Rotation in degrees (0º to 360º)
 
 	protected static final char[] sIndexValues = new char[] 
@@ -48,11 +44,6 @@ public class AngleSprite extends AngleSimpleSprite
 
 		mRotation=0;
 		
-		mCropLeft=cropLeft;
-		mCropRight=cropLeft+cropWidth;
-		mCropTop=cropTop;
-		mCropBottom=cropTop+cropHeight;
-
 		mVertexBuffer = ByteBuffer.allocateDirect(48)
 		.order(ByteOrder.nativeOrder()).asFloatBuffer();
 		mTexCoordBuffer = ByteBuffer.allocateDirect(32)
@@ -80,20 +71,27 @@ public class AngleSprite extends AngleSimpleSprite
 	
 
 	@Override
-	public void afterLoadTexture()
+	protected void setFrame(int frame)
 	{
-		float W=AngleTextureEngine.getTextureWidth(mTextureID);
-		float H=AngleTextureEngine.getTextureHeight(mTextureID);
-		
-		mTexCoordBuffer.put(0,mCropLeft/W);
-		mTexCoordBuffer.put(1,mCropBottom/H);
-		mTexCoordBuffer.put(2,mCropRight/W);
-		mTexCoordBuffer.put(3,mCropBottom/H);
-		mTexCoordBuffer.put(4,mCropLeft/W);
-		mTexCoordBuffer.put(5,mCropTop/H);
-		mTexCoordBuffer.put(6,mCropRight/W);
-		mTexCoordBuffer.put(7,mCropTop/H);
+		if (frame<mFrameCount)
+		{
+			mFrame=frame;
+			float W=AngleTextureEngine.getTextureWidth(mTextureID);
+			float H=AngleTextureEngine.getTextureHeight(mTextureID);
+			float frameLeft = (mFrame%mFrameColumns)*(mCropRight-mCropLeft);
+			float frameTop = (mFrame/mFrameColumns)*(mCropBottom-mCropTop);
+				
+			mTexCoordBuffer.put(0,(mCropLeft+frameLeft)/W);
+			mTexCoordBuffer.put(1,(mCropBottom+frameTop)/H);
+			mTexCoordBuffer.put(2,(mCropRight+frameLeft)/W);
+			mTexCoordBuffer.put(3,(mCropBottom+frameTop)/H);
+			mTexCoordBuffer.put(4,(mCropLeft+frameLeft)/W);
+			mTexCoordBuffer.put(5,(mCropTop+frameTop)/H);
+			mTexCoordBuffer.put(6,(mCropRight+frameLeft)/W);
+			mTexCoordBuffer.put(7,(mCropTop+frameTop)/H);
+		}
 	}
+
 
 	@Override
 	public void draw(GL10 gl)

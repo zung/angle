@@ -32,7 +32,7 @@ public class AngleSimpleSpriteReference extends AngleVisualObject
 			AngleTextureEngine.bindTexture(gl, mSprite.mTextureID);
 	
 			((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mSprite.mTextureCrop, 0);
+					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mSprite.mTextureIV, 0);
 	
 			((GL11Ext) gl).glDrawTexfOES(mCenter.mX-mSprite.mWidth/2,
 					AngleMainEngine.mHeight - mSprite.mHeight/2 - mCenter.mY, mZ, mSprite.mWidth, mSprite.mHeight);
