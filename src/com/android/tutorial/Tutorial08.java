@@ -20,6 +20,17 @@ import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 import com.android.angle.AngleVisualObject;
 
+/**
+*
+*  Add an environment to physics engine (gravity, air)
+* 
+*  We learn to:
+*  -Use Gravity, Air viscosity and Coefficient of restitution
+*  -Use accelerometer
+* 
+* @author Ivan Pajuelo
+*
+*/
 @SuppressWarnings("deprecation")
 public class Tutorial08 extends Activity
 {
@@ -52,13 +63,13 @@ public class Tutorial08 extends Activity
 				super(spriteReference,0,1);
 				addCircleCollider(new AngleCircleCollider(0,0,29));
 				mMass=10;
-				mBounce=0.8f;
+				mBounce=0.8f; //Coefficient of restitution (1 return all the energy)
 			}
 
 			@Override
-			public float getSurface()
+			public float getSurface() //Return the surface of our object for air friction 
 			{
-				return 29*2;
+				return 29*2; //Radius * 2
 			}
 
 			public void run()
@@ -108,26 +119,28 @@ public class Tutorial08 extends Activity
 			switch (mStateMachine)
 			{
 				case smLoad:
+					//Add 4 segment colliders to simulate walls
 					AnglePhysicObject mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight-1);
 					mWall.addSegmentCollider(new AngleSegmentCollider(-AngleMainEngine.mWidth/2,0,AngleMainEngine.mWidth/2,0));
 					mWall.mBounce=0.5f;
-					addObject(mWall); //Down wall
+					//Add object with AnglePhysicsGameEngine.addObject cause walls doesn't have sprite 
+					super.addObject(mWall); //Down wall
 					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth/2,0);
 					mWall.addSegmentCollider(new AngleSegmentCollider(AngleMainEngine.mWidth/2,0,-AngleMainEngine.mWidth/2,0));
 					mWall.mBounce=0.5f;
-					addObject(mWall); //Up wall
+					super.addObject(mWall); //Up wall
 					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(AngleMainEngine.mWidth-1,AngleMainEngine.mHeight/2);
 					mWall.addSegmentCollider(new AngleSegmentCollider(0,AngleMainEngine.mHeight/2,0,-AngleMainEngine.mHeight/2));
 					mWall.mBounce=0.5f;
-					addObject(mWall); //Right wall
+					super.addObject(mWall); //Right wall
 					mWall=new AnglePhysicObject(new AngleVisualObject(), 1, 0);
 					mWall.mVisual.mCenter.set(0,AngleMainEngine.mHeight/2);
 					mWall.addSegmentCollider(new AngleSegmentCollider(0,-AngleMainEngine.mHeight/2,0,AngleMainEngine.mHeight/2));
 					mWall.mBounce=0.5f;
-					addObject(mWall); //Left wall
+					super.addObject(mWall); //Left wall
 					mStateMachine=smRun;
 					break;
 				case smRun:
@@ -203,6 +216,8 @@ public class Tutorial08 extends Activity
 		}
 	}
 	
+	//This way to use the sensors is depreciated
+	//TODO change with the new way
 	class MyView extends AngleSurfaceView implements SensorListener
 	{
 
@@ -214,8 +229,6 @@ public class Tutorial08 extends Activity
 		@Override
 		public void onAccuracyChanged(int sensor, int accuracy)
 		{
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -240,7 +253,7 @@ public class Tutorial08 extends Activity
    }
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) //Get touch input events
+	public boolean onTouchEvent(MotionEvent event) 
 	{
 		mGame.onTouchEvent(event);
 		return super.onTouchEvent(event);

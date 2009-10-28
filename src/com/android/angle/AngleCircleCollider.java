@@ -10,13 +10,13 @@ public class AngleCircleCollider
 {
 	protected AnglePhysicObject mObject;
 	protected AngleVector mCenter;
-	protected float mRadious;
+	protected float mRadius;
 	protected float mNormal;
 
-	public AngleCircleCollider(float x, float y, float radious)
+	public AngleCircleCollider(float x, float y, float radius)
 	{
 		mCenter=new AngleVector (x,y);
-		mRadious=radious;
+		mRadius=radius;
 	}
 	
 	public boolean test(AngleCircleCollider otherCollider)
@@ -30,12 +30,12 @@ public class AngleCircleCollider
 		else
 			otherCollider.mNormal=(float)(Math.PI*2-Math.acos(dY/dist));
 
-		return (dist<mRadious+otherCollider.mRadious);
+		return (dist<mRadius+otherCollider.mRadius);
 	}
 
 	public boolean test(AngleSegmentCollider otherCollider)
 	{
-		return otherCollider.closestDist(this)<mRadious;
+		return otherCollider.closestDist(this)<mRadius;
 	}
 
 	protected void draw(GL10 gl)
@@ -56,8 +56,8 @@ public class AngleCircleCollider
  		int count=0;
  		for (float i = 0; i < Math.PI*2; i+=((Math.PI*2)/segments))
  		{
-  			vertices.put(count++,(float) (Math.cos(i)*mRadious));
-  			vertices.put(count++,(float) (Math.sin(i)*mRadious));
+  			vertices.put(count++,(float) (Math.cos(i)*mRadius));
+  			vertices.put(count++,(float) (Math.sin(i)*mRadius));
  		}
  		gl.glVertexPointer (2, GL10.GL_FLOAT , 0, vertices);
  		gl.glDrawArrays (GL10.GL_LINE_LOOP, 0, segments);
