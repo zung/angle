@@ -75,13 +75,14 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * Adds a reference
 	 * @param reference Reference to be added
 	 */
-	public void addReference(AngleVisualObject reference)
+	public void addReference(AngleAbstractSpriteReference reference)
 	{
 		if (mReferencesCount<mMaxReferences)
 		{
 			for (int s=0;s<mReferencesCount;s++)
 				if (mReferences[mReferencesCount] == reference)
 					return;
+			reference.afterAdd();
 			mReferences[mReferencesCount++] = reference;
 		}
 	}
@@ -90,7 +91,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * Removes a reference
 	 * @param reference Reference to be removed
 	 */
-	public void removeRefernece(AngleVisualObject reference)
+	public void removeRefernece(AngleAbstractSpriteReference reference)
 	{
 		int r;
 		

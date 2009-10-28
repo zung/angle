@@ -22,5 +22,5 @@ public class AngleVisualObject
 	 *  
 	 * @param gl Surface where draw
 	 */
-	public void draw(GL10 gl){};
+	public void draw(GL10 gl){}
 }
