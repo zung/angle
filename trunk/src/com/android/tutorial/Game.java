@@ -12,6 +12,13 @@ import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 import com.android.angle.AngleTileEngine;
 
+/**
+*
+* In this sample we create a simple vertical shoot'em all 
+* 
+* @author Ivan Pajuelo
+*
+*/
 public class Game extends Activity
 {
 	private MyGameEngine mGame;  
@@ -19,15 +26,15 @@ public class Game extends Activity
 	
 	class MyGameEngine implements Runnable  
 	{
-		class DashEngine extends AngleSpritesEngine
+		class DashboardEngine extends AngleSpritesEngine //An engine to draw the dashboard
 		{
-			private AngleSimpleSprite mBG; 		
+			private AngleSimpleSprite mBG; //Dashboard background		
 
-			public DashEngine()
+			public DashboardEngine()
 			{
 				super(10, 0);
 				mBG=new AngleSimpleSprite(320, 64, R.drawable.tilemap, 0, 448, 320, 64);
-				mBG.mCenter.mY=mBackground.mTileHeight*12+mBG.mHeight/2;
+				mBG.mCenter.mY=mLevel.mTileHeight*12+mBG.mHeight/2;
 				mBG.mCenter.mX=mBG.mWidth/2;
 				addSprite(mBG);
 			}
@@ -38,15 +45,16 @@ public class Game extends Activity
 		private long lCTM = 0;
 		//-----------
 		private AngleSpritesEngine mSprites; 
-		private AngleTileEngine mBackground;
-		private DashEngine mDash;
+		private AngleTileEngine mLevel;
+		private DashboardEngine mDash;
 
 		private static final int smLoad = 0;
-		private static final int smRotate = 1;
+		private static final int smPlay = 1;
 		private static final int MAX_SHOTS = 50;
+		private static final long mShotColdDownTime = 70;
 		private int stateMachine=smLoad;
-		private AngleSimpleSprite mLogo;  		
-		private AngleSimpleSprite mMiniLogo; 		
+		private AngleSimpleSprite sprShip;  		
+		private AngleSimpleSprite sprShot; 		
 		private AngleSimpleSpriteReference mShip; 		
 		private AngleSimpleSpriteReference[] mShot;
 		private int mShotsCount;
@@ -54,33 +62,38 @@ public class Game extends Activity
 
 		MyGameEngine()
 		{
-			mBackground = new AngleTileEngine(R.drawable.tilemap, 15, 15*14, 32, 32, 10, 1064);
-			AngleMainEngine.addEngine(mBackground);
+			//Create a tile engine with 210 tiles and 15 columns of tiles in the texture
+			//Tile size 32x32. Map size 10*1064
+			mLevel = new AngleTileEngine(R.drawable.tilemap, 15, 210, 32, 32, 10, 1064);
+			AngleMainEngine.addEngine(mLevel);
 
+			//Engine for game sprites
 			mSprites = new AngleSpritesEngine(10,100); 
 			AngleMainEngine.addEngine(mSprites); 
 
-			mDash = new DashEngine(); 
+			//Engine for dashboard
+			mDash = new DashboardEngine(); 
 			AngleMainEngine.addEngine(mDash); 
 
-			mBackground.mViewWidth=10;
-			mBackground.mViewHeight=13;
+			//Set the view extent in tiles
+			mLevel.mViewWidth=10;
+			mLevel.mViewHeight=13;
 
-			mBackground.mTop=(mBackground.mMapHeight-mBackground.mViewHeight)*mBackground.mTileHeight;
+			//Put the top of the camera at the lowest part of the map
+			mLevel.mTop=(mLevel.mMapHeight-mLevel.mViewHeight)*mLevel.mTileHeight;
 			
-			mBackground.loadMap (getResources().openRawResource(R.raw.map));
+			mLevel.loadMap (getResources().openRawResource(R.raw.map));
 
-			mLogo = new AngleSimpleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
-			mSprites.addSprite(mLogo);
-			mMiniLogo = new AngleSimpleSprite(25, 11, R.drawable.anglelogo, 0, 25, 128, 81);
-			mSprites.addSprite(mMiniLogo);
-			mShip = new AngleSimpleSpriteReference(mLogo); 		
-			mShip.mCenter.set(160,200);
+			sprShip = new AngleSimpleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
+			mSprites.addSprite(sprShip);
+			sprShot = new AngleSimpleSprite(25, 11, R.drawable.anglelogo, 0, 25, 128, 81);
+			mSprites.addSprite(sprShot);
+			
+			mShip = new AngleSimpleSpriteReference(sprShip); 		
 			mShot = new AngleSimpleSpriteReference[MAX_SHOTS];
 			mShotsCount=0;
 		}
 
-		//Place the input processing in to game engine
 		public void onTouchEvent(MotionEvent event)
 		{
 			//Prevent event flooding
@@ -93,14 +106,14 @@ public class Game extends Activity
 				e.printStackTrace();
 			}
 			//-------------------------
-			mShip.mCenter.set(event.getX(),event.getY()-64-mLogo.mHeight/2);
+			mShip.mCenter.set(event.getX(),event.getY()-64-sprShip.mHeight/2); //Position the ship
 			if (mShotsCount<MAX_SHOTS)
 			{
 				long CTM=System.currentTimeMillis();
-				if (CTM>mShotColdDown)
+				if (CTM>mShotColdDown) //Prevent shoot in less than mShotColdDownTime milliseconds 
 				{
-					mShotColdDown=CTM+80;
-					mShot[mShotsCount]=new AngleSimpleSpriteReference(mMiniLogo);
+					mShotColdDown=CTM+mShotColdDownTime;
+					mShot[mShotsCount]=new AngleSimpleSpriteReference(sprShot);
 					mShot[mShotsCount].mCenter.set(mShip.mCenter.mX,mShip.mCenter.mY-20);
 					mSprites.addReference(mShot[mShotsCount++]);
 				}
@@ -126,12 +139,11 @@ public class Game extends Activity
 				case smLoad: //Load sprite in runtime
 					mSprites.addReference(mShip);
 					mShip.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight/2);
-					mShip.mCenter.set(160,0);
-					stateMachine=smRotate;
+					stateMachine=smPlay;
 					break;
-				case smRotate:
-					mBackground.mTop-=200*AngleMainEngine.secondsElapsed;
-					for (int s=0;s<mShotsCount;s++)
+				case smPlay:
+					mLevel.mTop-=200*AngleMainEngine.secondsElapsed; //Move the camera
+					for (int s=0;s<mShotsCount;s++) //Move the shots
 					{
 						if (mShot[s]!=null)
 						{
@@ -143,7 +155,7 @@ public class Game extends Activity
 							}
 						}
 					}
-					for (int s=0;s<mShotsCount;s++)
+					for (int s=0;s<mShotsCount;s++) //destroy null shots
 					{
 						if (mShot[s]==null)
 						{

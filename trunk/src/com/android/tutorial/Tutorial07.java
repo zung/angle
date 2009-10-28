@@ -16,19 +16,31 @@ import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 import com.android.angle.AngleViewCollisionsEngine;
 
+/**
+ *
+ *  Overload the AnglePhysicsGameEngine to create our physics game engine.
+ * 
+ *  We learn to:
+ *  -Use AnglePhysicsGameEngine and AnglePhysicsObject
+ *  -Draw colliders
+ *  -Use AnglePhysicsObject.test to test if there will be a collision.
+ * 
+ * @author Ivan Pajuelo
+ *
+ */
 public class Tutorial07 extends Activity
 {
 	private MyGameEngine mGame;  
 	private AngleSurfaceView mView;
 
-	class MyGameEngine extends AnglePhysicsGameEngine  
+	class MyGameEngine extends AnglePhysicsGameEngine //Our physics game engine  
 	{
 		//FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
 		//-----------
-		private AngleSpritesEngine mSprites; 
-		private AngleViewCollisionsEngine mCollisions; 
+		private AngleSpritesEngine mSprites; //Sprites engine 
+		private AngleViewCollisionsEngine mCollisions; //Engine to draw colliders 
 		private static final int MAX_BallS = 50;
 		private static final int MAX_OBJECTS = 100;
 		private static final int MAX_TYPES = 10;
@@ -36,18 +48,19 @@ public class Tutorial07 extends Activity
 		private MyBall[] mBalls;
 		private int mBallsCount;
 		
-		//Create new game object class overloading the AngleSpriteReference  
+		//Create new game object class overloading the AnglePhysicObject  
 		class MyBall extends AnglePhysicObject 
 		{
 			MyBall(AngleSpriteReference spriteReference)
 			{
-				super(spriteReference,0,1);
-				addCircleCollider(new AngleCircleCollider(0,0,29));
-				mMass=10;
+				super(spriteReference,0,1); //Init AnglePhysicObject with an AngleSpriteReference, 0 segment colliders and 1 circle collider 
+				addCircleCollider(new AngleCircleCollider(0,0,29)); //Add a circle collider to our object
+				mMass=10; //Set the mass
 			}
 
 			public void run()
 			{
+				//AnglePhysicObject.mVisual points to his visual object. In this case an AngleSpriteReference
 				AngleSpriteReference SR=(AngleSpriteReference)mVisual;
 				SR.mRotation+=45*AngleMainEngine.secondsElapsed;
 				SR.mRotation%=360;
@@ -64,6 +77,7 @@ public class Tutorial07 extends Activity
 			mCollisions = new AngleViewCollisionsEngine(this); 
 			AngleMainEngine.addEngine(mCollisions);
 			//Adding this engine, the collisions will be drawn
+			//Use only for debug purposes. It's very slow
 
 			mBalls=new MyBall[MAX_BallS];
 			mBallsCount=0;
@@ -117,7 +131,6 @@ public class Tutorial07 extends Activity
 			super.run();
 		}
 
-		//Place the input processing in to game engine
 		public void onTouchEvent(MotionEvent event)
 		{
 			//Prevent event flooding
@@ -137,13 +150,15 @@ public class Tutorial07 extends Activity
 				{
 					mBalls[mBallsCount]=new MyBall(new AngleSpriteReference(mBallSprite));
 					mBalls[mBallsCount].mVisual.mCenter.set(event.getX(),event.getY());
+					//Point direction to screen center
 					float x=AngleMainEngine.mWidth/2-mBalls[mBallsCount].mVisual.mCenter.mX;
 					float y=AngleMainEngine.mHeight/2-mBalls[mBallsCount].mVisual.mCenter.mY;
 					float a=(float) Math.acos(y/Math.sqrt(x*x+y*y));
 					if (x<0)
 						a=(float) (Math.PI*2-a);
-					float force=event.getSize()*400;
-					mBalls[mBallsCount].mVelocity.mX=(float) (force*Math.sin(a));
+					//--------------------------------
+					float force=50+event.getSize()*400; //Use the touch area to set the start speed
+					mBalls[mBallsCount].mVelocity.mX=(float) (force*Math.sin(a)); 
 					mBalls[mBallsCount].mVelocity.mY=(float) (force*Math.cos(a));
 
 					//Ensure that there isn't any ball in this place
