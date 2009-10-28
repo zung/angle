@@ -23,9 +23,9 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 	protected int mCropRight;
 	protected int mCropTop;
 	protected int mCropBottom;
-	protected int mFrame;
 	protected int mFrameCount;
 	protected int mFrameColumns;
+	protected int mFrame;
 	protected int[] mTextureIV = new int[4];
 
 	/**
@@ -82,6 +82,7 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 		loadTexture();
 	}
 
+	@Override
 	public void loadTexture()
 	{
 		mTextureID = AngleTextureEngine.createHWTextureFromResource(mResourceID);
@@ -112,7 +113,7 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 	
 			((GL11Ext) gl).glDrawTexfOES(mCenter.mX-mWidth/2,
-					AngleMainEngine.mHeight - mHeight/2 - mCenter.mY, mZ, mWidth, mHeight);
+					AngleMainEngine.mHeight - mCenter.mY - mHeight/2, mZ, mWidth, mHeight);
 		}
 	}
 }

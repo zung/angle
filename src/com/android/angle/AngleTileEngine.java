@@ -18,18 +18,21 @@ public class AngleTileEngine extends AngleAbstractEngine
 	public byte[] mMap;
 	public int mMapWidth;
 	public int mMapHeight;
-	public int mLeft;
-	public int mTop;
-	public int mX;
-	public int mY;
-	public int mZ;
-	private int mViewWidth;
-	private int mViewHeight;
+	public float mLeft;
+	public float mTop;
+	public float mX;
+	public float mY;
+	public float mZ;
+	public int mViewWidth;
+	public int mViewHeight;
+	public int mTilesCount;
 	
-	AngleTileEngine (int resourceID, int texturePitch, int tileWidth, int tileHeight, int mapWidth, int mapHeight)
+	public AngleTileEngine (int resourceID, int texturePitch, int tilesCount, int tileWidth, int tileHeight, int mapWidth, int mapHeight)
 	{
 		mResourceID=resourceID;
+		mTextureID = -1;
 		mTexturePitch=texturePitch;
+		mTilesCount=tilesCount;
 		mTileWidth=tileWidth;
 		mTileHeight=tileHeight;
 		mMapWidth=mapWidth;
@@ -42,8 +45,6 @@ public class AngleTileEngine extends AngleAbstractEngine
 		mZ=0;
 		mTextureCrop[2] = mTileWidth; // Wcr
 		mTextureCrop[3] = -mTileHeight; // Hcr
-		mViewWidth=AngleMainEngine.mWidth/mTileWidth;
-		mViewHeight=AngleMainEngine.mHeight/mTileHeight;
 	}
 
 	@Override
@@ -51,12 +52,11 @@ public class AngleTileEngine extends AngleAbstractEngine
 	{
 	}
 
-	//istream = getResources().openRawResource(R.raw.map);
 	public void loadMap (InputStream istream)
 	{
 		try
 		{
-			istream.read(mMap);
+			istream.read(mMap,0,mMapWidth*mMapHeight);
 		} 
 		catch (IOException e)
 		{
@@ -69,8 +69,10 @@ public class AngleTileEngine extends AngleAbstractEngine
 	{
 		if (mTextureID>=0)
 		{
-			int offsetX=mLeft%mTileWidth;
-			int offsetY=mTop%mTileHeight;
+			if (!AngleTextureEngine.hasChanges)
+			{
+			int offsetX=(int)mLeft%mTileWidth;
+			int offsetY=(int)mTop%mTileHeight;
 			int W=mViewWidth+((offsetX>0)?1:0);
 			int H=mViewHeight+((offsetY>0)?1:0);
 			AngleTextureEngine.bindTexture(gl, mTextureID);
@@ -78,11 +80,11 @@ public class AngleTileEngine extends AngleAbstractEngine
 			{
 				for (int x=0;x<W;x++)
 				{
-					int mTileIdx=y*mMapWidth+x;
+					int mTileIdx=((y+((int)mTop/mTileHeight))*mMapWidth+x+((int)mLeft/mTileWidth));
 					int mTile=0;
 					if ((mTileIdx>=0)&&(mTileIdx<mMapWidth*mMapHeight))
 						mTile=mMap[mTileIdx];
-					if (mTile>0)
+					if ((mTile>0)&&(mTile<mTilesCount))
 					{
 						mTextureCrop[0] = (mTile%mTexturePitch)*mTileWidth; // Ucr
 						mTextureCrop[1] = (mTile/mTexturePitch)*mTileHeight + mTileHeight; // Vcr
@@ -90,9 +92,10 @@ public class AngleTileEngine extends AngleAbstractEngine
 						((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
 							GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
 	
-						((GL11Ext) gl).glDrawTexfOES(mX-offsetX+x*mTileWidth,mY-offsetY+y*mTileHeight, mZ, mTileWidth, mTileHeight);
+						((GL11Ext) gl).glDrawTexfOES(mX-offsetX+x*mTileWidth,AngleMainEngine.mHeight -( mY-offsetY+y*mTileHeight), mZ, mTileWidth, mTileHeight);
 					}
 				}
+			}
 			}
 		}
 	}
