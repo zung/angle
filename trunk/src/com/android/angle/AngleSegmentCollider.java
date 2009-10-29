@@ -6,6 +6,12 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+/**
+ * Segment collider
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AngleSegmentCollider
 {
 	protected AnglePhysicObject mObject;

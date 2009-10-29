@@ -1,5 +1,11 @@
 package com.android.angle;
 
+/**
+ * Simple pseudo-physic engine
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 {
 	protected int mMaxObjects;

@@ -2,6 +2,12 @@ package com.android.angle;
 
 import javax.microedition.khronos.opengles.GL10;
 
+/**
+ * Base physic object
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AnglePhysicObject
 {
 	public float mMass; // Masa

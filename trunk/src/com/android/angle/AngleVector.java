@@ -1,5 +1,11 @@
 package com.android.angle;
 
+/**
+ * 2D vector
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AngleVector
 {
 	public float mX;

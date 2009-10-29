@@ -3,7 +3,7 @@ package com.android.angle;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Angle sprite reference base class
+ * Base class for all visual objects
  * 
  * @author Ivan Pajuelo
  * 
