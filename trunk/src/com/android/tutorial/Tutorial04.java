@@ -10,32 +10,30 @@ import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
 /**
- * Add a state machine to our new game engine so we can load the sprites after 
+ * Add a state machine to our new game engine so we can load the sprites after
  * the "game" is started.
- *
- *  We learn to:
- *  -Load sprites 'in runtime'
- *  -Get view extents
+ * 
+ * We learn to: -Load sprites 'in runtime' -Get view extents
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class Tutorial04 extends Activity
 {
-	private MyGameEngine mGame;  
+	private MyGameEngine mGame;
 	private AngleSurfaceView mView;
-	private AngleSpritesEngine mSprites; 
+	private AngleSpritesEngine mSprites;
 
-	class MyGameEngine implements Runnable  
+	class MyGameEngine implements Runnable
 	{
-		//FPS Counter
+		// FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
-		//-----------
+		// -----------
 		private static final int smLoad = 0;
 		private static final int smRotate = 1;
-		private int stateMachine=smLoad;
-		private AngleSprite mLogo; //Declare mLogo in MyGameEngine (better place) 		
+		private int stateMachine = smLoad;
+		private AngleSprite mLogo; // Declare mLogo in MyGameEngine (better place)
 
 		MyGameEngine()
 		{
@@ -43,7 +41,7 @@ public class Tutorial04 extends Activity
 
 		public void run()
 		{
-			//Add FPS record to log every 100 frames
+			// Add FPS record to log every 100 frames
 			frameCount++;
 			if (frameCount >= 100)
 			{
@@ -53,21 +51,25 @@ public class Tutorial04 extends Activity
 					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
 				lCTM = CTM;
 			}
-			//--------------------------------------
-			
-			switch (stateMachine) //Very simple state machine
+			// --------------------------------------
+
+			switch (stateMachine)
+			// Very simple state machine
 			{
-				case smLoad: //Load sprite in runtime
-					mLogo = new AngleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
-					//Cause the engine is already initialized, we can consult its extents
-					mLogo.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight/2);
+				case smLoad: // Load sprite in runtime
+					mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0,
+							128, 128);
+					// Cause the engine is already initialized, we can consult its
+					// extents
+					mLogo.mCenter.set(AngleMainEngine.mWidth / 2,
+							AngleMainEngine.mHeight / 2);
 					mSprites.addSprite(mLogo);
-					
-					stateMachine=smRotate;
+
+					stateMachine = smRotate;
 					break;
 				case smRotate:
-					mLogo.mRotation+=45*AngleMainEngine.secondsElapsed;
-					mLogo.mRotation%=360;
+					mLogo.mRotation += 45 * AngleMainEngine.secondsElapsed;
+					mLogo.mRotation %= 360;
 					break;
 			}
 		}
@@ -79,20 +81,20 @@ public class Tutorial04 extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mGame = new MyGameEngine();  
+		mGame = new MyGameEngine();
 
-		mSprites = new AngleSpritesEngine(10,0); 
-		AngleMainEngine.addEngine(mSprites); 
-	
-		mView = new AngleSurfaceView(this);  
-		setContentView(mView);	
-		mView.setBeforeDraw(mGame);  
+		mSprites = new AngleSpritesEngine(10, 0);
+		AngleMainEngine.addEngine(mSprites);
+
+		mView = new AngleSurfaceView(this);
+		setContentView(mView);
+		mView.setBeforeDraw(mGame);
 	}
 
 	@Override
 	protected void onPause()
 	{
-		mView.onPause(); 
+		mView.onPause();
 		super.onPause();
 	}
 
@@ -102,10 +104,11 @@ public class Tutorial04 extends Activity
 		mView.onResume();
 		super.onResume();
 	}
+
 	@Override
 	protected void onDestroy()
 	{
-		mView.onDestroy(); 
+		mView.onDestroy();
 		super.onDestroy();
 	}
 }

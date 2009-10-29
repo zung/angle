@@ -12,45 +12,45 @@ import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
 /**
- *  
- *	Overload AngleSpritesEngine and AngleSprite to extend they functionality.
- * To put the activity in full screen set the Theme to "@android:style/Theme.NoTitleBar.Fullscreen"
- * in AndroidManifest
- * If you also want to put your activity in landscape change screenOrientation to "landscape" 
- * in AndroidManifest
  * 
- *  We learn to:
- *  -Extend Angle functionality
- *  -Put activity in full screen
- *  -Put activity in landscape
+ * Overload AngleSpritesEngine and AngleSprite to extend they functionality. To
+ * put the activity in full screen set the Theme to
+ * "@android:style/Theme.NoTitleBar.Fullscreen" in AndroidManifest If you also
+ * want to put your activity in landscape change screenOrientation to
+ * "landscape" in AndroidManifest
+ * 
+ * We learn to: -Extend Angle functionality -Put activity in full screen -Put
+ * activity in landscape
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class Tutorial05 extends Activity
 {
-	private MyGameEngine mGame;  
+	private MyGameEngine mGame;
 	private AngleSurfaceView mView;
-	private MyBlendSpritesEngine mSprites; //Use overloaded engine 
-	
-	class MyBlendSprite extends AngleSprite //Overload AngleSprite to add blend effect 
+	private MyBlendSpritesEngine mSprites; // Use overloaded engine
+
+	class MyBlendSprite extends AngleSprite // Overload AngleSprite to add blend
+															// effect
 	{
 
 		public MyBlendSprite(int width, int height, int resourceId, int cropLeft,
 				int cropTop, int cropWidth, int cropHeight)
 		{
-			super(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight);
+			super(width, height, resourceId, cropLeft, cropTop, cropWidth,
+					cropHeight);
 		}
 
 		@Override
 		public void draw(GL10 gl)
 		{
-			gl.glColor4f(1f, 1f, 0f, 0.5f); //Little blend effect	
+			gl.glColor4f(1f, 1f, 0f, 0.5f); // Little blend effect
 			super.draw(gl);
 		}
-		
+
 	}
-	
+
 	class MyBlendSpritesEngine extends AngleSpritesEngine
 	{
 
@@ -63,21 +63,22 @@ public class Tutorial05 extends Activity
 		public void afterLoadTextures(GL10 gl)
 		{
 			super.afterLoadTextures(gl);
-			gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_BLEND); //Enable blend on textures
+			gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+					GL10.GL_BLEND); // Enable blend on textures
 		}
-		
+
 	}
 
-	class MyGameEngine implements Runnable  
+	class MyGameEngine implements Runnable
 	{
-		//FPS Counter
+		// FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
-		//-----------
+		// -----------
 		private static final int smLoad = 0;
 		private static final int smRotate = 1;
-		private int stateMachine=smLoad;
-		private AngleSprite mLogo;  		
+		private int stateMachine = smLoad;
+		private AngleSprite mLogo;
 
 		MyGameEngine()
 		{
@@ -85,7 +86,7 @@ public class Tutorial05 extends Activity
 
 		public void run()
 		{
-			//Add FPS record to log every 100 frames
+			// Add FPS record to log every 100 frames
 			frameCount++;
 			if (frameCount >= 100)
 			{
@@ -95,20 +96,22 @@ public class Tutorial05 extends Activity
 					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
 				lCTM = CTM;
 			}
-			//--------------------------------------
-			
+			// --------------------------------------
+
 			switch (stateMachine)
 			{
-				case smLoad: 
-					mLogo = new MyBlendSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81); //Use the overloaded sprite
-					mLogo.mCenter.set(AngleMainEngine.mWidth/2,AngleMainEngine.mHeight/2);
+				case smLoad:
+					mLogo = new MyBlendSprite(128, 128, R.drawable.anglelogo, 0, 0,
+							128, 128); // Use the overloaded sprite
+					mLogo.mCenter.set(AngleMainEngine.mWidth / 2,
+							AngleMainEngine.mHeight / 2);
 					mSprites.addSprite(mLogo);
-					
-					stateMachine=smRotate;
+
+					stateMachine = smRotate;
 					break;
 				case smRotate:
-					mLogo.mRotation+=45*AngleMainEngine.secondsElapsed;
-					mLogo.mRotation%=360;
+					mLogo.mRotation += 45 * AngleMainEngine.secondsElapsed;
+					mLogo.mRotation %= 360;
 					break;
 			}
 		}
@@ -120,20 +123,20 @@ public class Tutorial05 extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mGame = new MyGameEngine();  
+		mGame = new MyGameEngine();
 
-		mSprites = new MyBlendSpritesEngine(); 
-		AngleMainEngine.addEngine(mSprites); 
-	
-		mView = new AngleSurfaceView(this);  
-		setContentView(mView);	
-		mView.setBeforeDraw(mGame);  
+		mSprites = new MyBlendSpritesEngine();
+		AngleMainEngine.addEngine(mSprites);
+
+		mView = new AngleSurfaceView(this);
+		setContentView(mView);
+		mView.setBeforeDraw(mGame);
 	}
 
 	@Override
 	protected void onPause()
 	{
-		mView.onPause(); 
+		mView.onPause();
 		super.onPause();
 	}
 
@@ -143,10 +146,11 @@ public class Tutorial05 extends Activity
 		mView.onResume();
 		super.onResume();
 	}
+
 	@Override
 	protected void onDestroy()
 	{
-		mView.onDestroy(); 
+		mView.onDestroy();
 		super.onDestroy();
 	}
 }

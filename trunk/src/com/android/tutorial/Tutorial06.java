@@ -13,37 +13,35 @@ import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
 /**
- *  
- *  Create game object called MyLogo which updates its status every frame.
- *  And use references to dynamically add and remove 'sprites' from the engine
- *  without need to load them in runtime. 
  * 
- *  We learn to:
- *  -Use references instead of sprites
- *  -Catch touch events
- *  -Implement a game object
+ * Create game object called MyLogo which updates its status every frame. And
+ * use references to dynamically add and remove 'sprites' from the engine
+ * without need to load them in runtime.
+ * 
+ * We learn to: -Use references instead of sprites -Catch touch events
+ * -Implement a game object
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class Tutorial06 extends Activity
 {
-	private MyGameEngine mGame;  
+	private MyGameEngine mGame;
 	private AngleSurfaceView mView;
 
-	class MyGameEngine extends AngleAbstractGameEngine  
+	class MyGameEngine extends AngleAbstractGameEngine
 	{
-		//FPS Counter
+		// FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
-		//-----------
-		private AngleSpritesEngine mSprites; 
+		// -----------
+		private AngleSpritesEngine mSprites;
 		private static final int MAX_LOGOS = 50;
-		private AngleSprite mLogoSprite;  		
+		private AngleSprite mLogoSprite;
 		private MyLogo[] mLogos;
 		private int mLogosCount;
-		
-		//Create new game object class overloading the AngleSpriteReference  
+
+		// Create new game object class overloading the AngleSpriteReference
 		class MyLogo extends AngleSpriteReference
 		{
 			MyLogo(AngleSprite sprite)
@@ -53,29 +51,32 @@ public class Tutorial06 extends Activity
 
 			public void run()
 			{
-				//Move up 80 pixels per second
-				mCenter.mY-=80*AngleMainEngine.secondsElapsed;
-				mRotation+=45*AngleMainEngine.secondsElapsed;
-				mRotation%=360;
+				// Move up 80 pixels per second
+				mCenter.mY -= 80 * AngleMainEngine.secondsElapsed;
+				mRotation += 45 * AngleMainEngine.secondsElapsed;
+				mRotation %= 360;
 			}
 		}
 
 		MyGameEngine()
 		{
-			//Put the sprites engine into game engine
-			mSprites = new AngleSpritesEngine(10,100); //Tell sprites engine use references (100 max) instead of sprites 
-			AngleMainEngine.addEngine(mSprites); 
-			//Array of logos displayed
-			mLogos=new MyLogo[MAX_LOGOS];
-			mLogosCount=0;
-			//Create sprite in the constructor. We add references to engine later
-			mLogoSprite = new AngleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
+			// Put the sprites engine into game engine
+			mSprites = new AngleSpritesEngine(10, 100); // Tell sprites engine use
+																		// references (100 max)
+																		// instead of sprites
+			AngleMainEngine.addEngine(mSprites);
+			// Array of logos displayed
+			mLogos = new MyLogo[MAX_LOGOS];
+			mLogosCount = 0;
+			// Create sprite in the constructor. We add references to engine later
+			mLogoSprite = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0,
+					128, 128);
 			mSprites.addSprite(mLogoSprite);
 		}
 
 		public void run()
 		{
-			//Add FPS record to log every 100 frames
+			// Add FPS record to log every 100 frames
 			frameCount++;
 			if (frameCount >= 100)
 			{
@@ -85,44 +86,44 @@ public class Tutorial06 extends Activity
 					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
 				lCTM = CTM;
 			}
-			//--------------------------------------
-			
-			//Move all logos
-			for (int l=0;l<mLogosCount;l++)
+			// --------------------------------------
+
+			// Move all logos
+			for (int l = 0; l < mLogosCount; l++)
 			{
 				mLogos[l].run();
-				//remove logo if is out of screen
-				if (mLogos[l].mCenter.mY<-mLogoSprite.mWidth/2)
+				// remove logo if is out of screen
+				if (mLogos[l].mCenter.mY < -mLogoSprite.mWidth / 2)
 				{
 					mSprites.removeRefernece(mLogos[l]);
 					mLogosCount--;
-					for (int d=l;d<mLogosCount;d++)
-						mLogos[d]=mLogos[d+1];
-					mLogos[mLogosCount]=null;
+					for (int d = l; d < mLogosCount; d++)
+						mLogos[d] = mLogos[d + 1];
+					mLogos[mLogosCount] = null;
 				}
 			}
 		}
 
-		//Place the input processing in to game engine
+		// Place the input processing in to game engine
 		public void onTouchEvent(MotionEvent event)
 		{
-			//Prevent event flooding
-			//Max 20 events per second
+			// Prevent event flooding
+			// Max 20 events per second
 			try
 			{
-				Thread.sleep(50); 
+				Thread.sleep(50);
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
 			}
-			//-------------------------
-			if (event.getAction()==MotionEvent.ACTION_DOWN)
+			// -------------------------
+			if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
-				//Add new logo at the touch position
-				if (mLogosCount<MAX_LOGOS)
+				// Add new logo at the touch position
+				if (mLogosCount < MAX_LOGOS)
 				{
-					mLogos[mLogosCount]=new MyLogo(mLogoSprite);
-					mLogos[mLogosCount].mCenter.set(event.getX(),event.getY());
+					mLogos[mLogosCount] = new MyLogo(mLogoSprite);
+					mLogos[mLogosCount].mCenter.set(event.getX(), event.getY());
 					mSprites.addReference(mLogos[mLogosCount++]);
 				}
 			}
@@ -135,15 +136,15 @@ public class Tutorial06 extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mGame = new MyGameEngine();  
+		mGame = new MyGameEngine();
 
-		mView = new AngleSurfaceView(this);  
-		setContentView(mView);	
-		mView.setBeforeDraw(mGame);  
+		mView = new AngleSurfaceView(this);
+		setContentView(mView);
+		mView.setBeforeDraw(mGame);
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) //Get touch input events
+	public boolean onTouchEvent(MotionEvent event) // Get touch input events
 	{
 		mGame.onTouchEvent(event);
 		return super.onTouchEvent(event);
@@ -152,7 +153,7 @@ public class Tutorial06 extends Activity
 	@Override
 	protected void onPause()
 	{
-		mView.onPause(); 
+		mView.onPause();
 		super.onPause();
 	}
 
@@ -162,10 +163,11 @@ public class Tutorial06 extends Activity
 		mView.onResume();
 		super.onResume();
 	}
+
 	@Override
 	protected void onDestroy()
 	{
-		mView.onDestroy(); 
+		mView.onDestroy();
 		super.onDestroy();
 	}
 }

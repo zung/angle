@@ -11,7 +11,7 @@ import android.util.Log;
  * Main render thread based on API demos render thread
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 class AngleRenderThread extends Thread
 {
@@ -75,7 +75,7 @@ class AngleRenderThread extends Thread
 
 		while (!mDone)
 		{
-			
+
 			synchronized (this)
 			{
 				if (mPaused)
@@ -128,19 +128,20 @@ class AngleRenderThread extends Thread
 				Log.d("AngleRenderThread", "needResize");
 				AngleMainEngine.sizeChanged(gl, mWidth, mHeight);
 			}
-			if (mHasSurface && (AngleMainEngine.mWidth > 0) && (AngleMainEngine.mHeight > 0))
+			if (mHasSurface && (AngleMainEngine.mWidth > 0)
+					&& (AngleMainEngine.mHeight > 0))
 			{
 				AngleMainEngine.secondsElapsed = 0.0f;
 				long CTM = System.currentTimeMillis();
 				if (lCTM > 0)
 					AngleMainEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
 				lCTM = CTM;
-				
-				if (mBeforeDraw!=null)
+
+				if (mBeforeDraw != null)
 					mBeforeDraw.run();
-				
+
 				AngleMainEngine.drawFrame(gl);
-				
+
 				mEglHelper.swap();
 			}
 		}
