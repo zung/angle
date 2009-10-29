@@ -6,6 +6,12 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+/**
+ * circular collider
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AngleCircleCollider
 {
 	protected AnglePhysicObject mObject;

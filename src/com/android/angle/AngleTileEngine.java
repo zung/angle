@@ -7,6 +7,12 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
+/**
+ * Tile engine with unique tilemap of maximum 256 tiles
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AngleTileEngine extends AngleAbstractEngine
 {
 	public int mResourceID; // Resource bitmap

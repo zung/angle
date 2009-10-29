@@ -2,6 +2,12 @@ package com.android.angle;
 
 import javax.microedition.khronos.opengles.GL10;
 
+/**
+ * Engine to draw colliders
+ * 
+ * @author Ivan Pajuelo
+ * 
+ */
 public class AngleViewCollisionsEngine extends AngleAbstractEngine
 {
 	AnglePhysicsGameEngine mPhysicsEngine;
