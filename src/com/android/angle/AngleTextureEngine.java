@@ -14,7 +14,7 @@ import android.util.Log;
  * Texture that uses AngleTextureEngine
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 class AngleTexture
 {
@@ -28,7 +28,7 @@ class AngleTexture
  * Texture engine
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class AngleTextureEngine
 {
@@ -36,7 +36,7 @@ public class AngleTextureEngine
 	private static final int MAX_TEXTURES = 16;
 	private static AngleTexture[] mTextures = new AngleTexture[MAX_TEXTURES];
 	private static int mTextureCount = 0;
-	public static boolean hasChanges=false;
+	public static boolean hasChanges = false;
 
 	AngleTextureEngine()
 	{
@@ -58,7 +58,7 @@ public class AngleTextureEngine
 		}
 		for (int t = 0; t < mTextureCount; t++)
 			mTextures[t] = null;
-		mTextureCount=0;
+		mTextureCount = 0;
 	}
 
 	public static int createHWTextureFromResource(int resourceId)
@@ -70,7 +70,7 @@ public class AngleTextureEngine
 		}
 		if (mTextureCount < MAX_TEXTURES)
 		{
-			hasChanges=true;
+			hasChanges = true;
 			mTextures[mTextureCount] = new AngleTexture();
 			mTextures[mTextureCount].mResourceID = resourceId;
 			return mTextureCount++;
@@ -86,25 +86,23 @@ public class AngleTextureEngine
 		{
 			sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
-			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
-					GL10.GL_FASTEST);
-	
+			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
+
 			gl.glShadeModel(GL10.GL_FLAT);
 			gl.glDisable(GL10.GL_DEPTH_TEST);
 			gl.glDisable(GL10.GL_DITHER);
 			gl.glDisable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
-	
+
 			gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
-			gl.glClear(GL10.GL_COLOR_BUFFER_BIT
-					| GL10.GL_DEPTH_BUFFER_BIT);
-	
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
 			for (int t = 0; t < MAX_TEXTURES; t++)
 			{
 				if (mTextures[t] != null)
 					loadTexture(gl, t);
 			}
-			hasChanges=false;
+			hasChanges = false;
 		}
 	}
 
@@ -121,18 +119,18 @@ public class AngleTextureEngine
 				gl.glBindTexture(GL10.GL_TEXTURE_2D,
 						mTextures[textureId].mHWTextureID);
 
-				gl.glTexParameterf(GL10.GL_TEXTURE_2D,
-						GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-				gl.glTexParameterf(GL10.GL_TEXTURE_2D,
-						GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+				gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
+						GL10.GL_NEAREST);
+				gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
+						GL10.GL_LINEAR);
 
-				gl.glTexParameterf(GL10.GL_TEXTURE_2D,
-						GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-				gl.glTexParameterf(GL10.GL_TEXTURE_2D,
-						GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+				gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+						GL10.GL_CLAMP_TO_EDGE);
+				gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+						GL10.GL_CLAMP_TO_EDGE);
 
-				gl.glTexEnvf(GL10.GL_TEXTURE_ENV,
-						GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+				gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+						GL10.GL_REPLACE);
 
 				InputStream is = AngleMainEngine.mContext.getResources()
 						.openRawResource(mTextures[textureId].mResourceID);

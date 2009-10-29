@@ -9,22 +9,23 @@ import javax.microedition.khronos.opengles.GL11Ext;
  * AngleSpritesEngine.useReferences must be set to true
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
 {
-	public AngleSimpleSprite mSprite; //Sprite referenced
+	public AngleSimpleSprite mSprite; // Sprite referenced
 	protected int mFrame;
 	protected int[] mTextureIV = new int[4];
 
 	/**
 	 * 
-	 * @param sprite Sprite referenced
+	 * @param sprite
+	 *           Sprite referenced
 	 */
-	public AngleSimpleSpriteReference (AngleSimpleSprite sprite)
+	public AngleSimpleSpriteReference(AngleSimpleSprite sprite)
 	{
-		mSprite=sprite;
-		mFrame=0;
+		mSprite = sprite;
+		mFrame = 0;
 		mTextureIV[2] = mSprite.mTextureIV[2]; // Wcr
 		mTextureIV[3] = mSprite.mTextureIV[3]; // Hcr
 	}
@@ -37,26 +38,29 @@ public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
 
 	protected void setFrame(int frame)
 	{
-		if (frame<mSprite.mFrameCount)
+		if (frame < mSprite.mFrameCount)
 		{
-			mFrame=frame;
-			mTextureIV[0] = mSprite.mCropLeft+((mFrame%mSprite.mFrameColumns)*mTextureIV[2]);// Ucr
-			mTextureIV[1] = mSprite.mCropBottom+((mFrame/mSprite.mFrameColumns)*-mTextureIV[3]);// Vcr
+			mFrame = frame;
+			mTextureIV[0] = mSprite.mCropLeft
+					+ ((mFrame % mSprite.mFrameColumns) * mTextureIV[2]);// Ucr
+			mTextureIV[1] = mSprite.mCropBottom
+					+ ((mFrame / mSprite.mFrameColumns) * -mTextureIV[3]);// Vcr
 		}
 	}
-	
+
 	@Override
 	public void draw(GL10 gl)
 	{
-		if (mSprite.mTextureID>=0)
+		if (mSprite.mTextureID >= 0)
 		{
 			AngleTextureEngine.bindTexture(gl, mSprite.mTextureID);
-	
+
 			((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
 					GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
-	
-			((GL11Ext) gl).glDrawTexfOES(mCenter.mX-mSprite.mWidth/2,
-					AngleMainEngine.mHeight - mCenter.mY - mSprite.mHeight/2, mZ, mSprite.mWidth, mSprite.mHeight);
+
+			((GL11Ext) gl).glDrawTexfOES(mCenter.mX - mSprite.mWidth / 2,
+					AngleMainEngine.mHeight - mCenter.mY - mSprite.mHeight / 2, mZ,
+					mSprite.mWidth, mSprite.mHeight);
 		}
 	}
 }

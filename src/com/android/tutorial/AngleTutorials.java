@@ -10,7 +10,7 @@ import android.view.View.OnClickListener;
  * Set of tutorials to learn to use Angle.
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class AngleTutorials extends Activity implements OnClickListener
 {

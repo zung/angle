@@ -12,37 +12,37 @@ import com.android.angle.AngleSurfaceView;
 /**
  * In this tutorial we use a Runnable to implement a little game engine
  * 
- *  We learn to:
- *  -Add a game engine.
- *  -Use AgleSprite and how to rotate it
- *  -Implements a FPS counter
- *  -Make the changes consistent with the time elapsed since last frame
- *  
+ * We learn to: -Add a game engine. -Use AgleSprite and how to rotate it
+ * -Implements a FPS counter -Make the changes consistent with the time elapsed
+ * since last frame
+ * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class Tutorial03 extends Activity
 {
-	private MyGameEngine mGame; //Independent game engine 
+	private MyGameEngine mGame; // Independent game engine
 	private AngleSurfaceView mView;
-	private AngleSpritesEngine mSprites; 
-	private AngleSprite mLogo; //In this sample use AmgleSprite (see below)		
+	private AngleSpritesEngine mSprites;
+	private AngleSprite mLogo; // In this sample use AmgleSprite (see below)
 
-	class MyGameEngine implements Runnable //Game engine class 
+	class MyGameEngine implements Runnable // Game engine class
 	{
-		//FPS Counter
+		// FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
-		//-----------
+
+		// -----------
 
 		MyGameEngine()
 		{
 		}
 
-		//The game engine must be a Runnable to callback his method run before draw every frame 
+		// The game engine must be a Runnable to callback his method run before
+		// draw every frame
 		public void run()
 		{
-			//Add FPS record to log every 100 frames
+			// Add FPS record to log every 100 frames
 			frameCount++;
 			if (frameCount >= 100)
 			{
@@ -52,11 +52,11 @@ public class Tutorial03 extends Activity
 					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
 				lCTM = CTM;
 			}
-			//--------------------------------------
-			
-			//Rotate the logo at 45º per second
-			mLogo.mRotation+=45*AngleMainEngine.secondsElapsed;
-			mLogo.mRotation%=360;
+			// --------------------------------------
+
+			// Rotate the logo at 45º per second
+			mLogo.mRotation += 45 * AngleMainEngine.secondsElapsed;
+			mLogo.mRotation %= 360;
 		}
 	}
 
@@ -66,25 +66,26 @@ public class Tutorial03 extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mGame = new MyGameEngine(); //Instantiation 
+		mGame = new MyGameEngine(); // Instantiation
 
-		mSprites = new AngleSpritesEngine(10,0); 
-		AngleMainEngine.addEngine(mSprites); 
-	
-		//Use AngleSprite instead of AngleSimpleSprite to rotate it
-		mLogo = new AngleSprite(128, 56, R.drawable.anglelogo, 0, 25, 128, 81);
+		mSprites = new AngleSpritesEngine(10, 0);
+		AngleMainEngine.addEngine(mSprites);
+
+		// Use AngleSprite instead of AngleSimpleSprite to rotate it
+		mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
 		mLogo.mCenter.set(100, 100);
-		mSprites.addSprite(mLogo); 
+		mSprites.addSprite(mLogo);
 
-		mView = new AngleSurfaceView(this);  
-		setContentView(mView);	
-		mView.setBeforeDraw(mGame); //Tells view what method must call before draw every frame 
+		mView = new AngleSurfaceView(this);
+		setContentView(mView);
+		mView.setBeforeDraw(mGame); // Tells view what method must call before
+												// draw every frame
 	}
 
 	@Override
 	protected void onPause()
 	{
-		mView.onPause(); 
+		mView.onPause();
 		super.onPause();
 	}
 
@@ -94,10 +95,11 @@ public class Tutorial03 extends Activity
 		mView.onResume();
 		super.onResume();
 	}
+
 	@Override
 	protected void onDestroy()
 	{
-		mView.onDestroy(); 
+		mView.onDestroy();
 		super.onDestroy();
 	}
 }

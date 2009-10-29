@@ -8,7 +8,7 @@ import android.view.SurfaceView;
  * Surface view based on API demos
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class AngleSurfaceView extends SurfaceView implements
 		SurfaceHolder.Callback
@@ -73,10 +73,10 @@ public class AngleSurfaceView extends SurfaceView implements
 	}
 
 	/**
-	 * Set the callback function to be called before draw
-	 * every frame
-	 *  
-	 * @param beforeDraw Runnable derived class (usually game engine).
+	 * Set the callback function to be called before draw every frame
+	 * 
+	 * @param beforeDraw
+	 *           Runnable derived class (usually game engine).
 	 */
 	public void setBeforeDraw(Runnable beforeDraw)
 	{

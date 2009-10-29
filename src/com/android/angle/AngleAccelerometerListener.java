@@ -34,9 +34,9 @@ public class AngleAccelerometerListener implements SensorEventListener
 			{
 				aboveOrBelow = (float) ((vals[2] * kFilteringFactor) + (aboveOrBelow * (1.0 - kFilteringFactor)));
 			}
-			Log.v("ACC","direction="+direction);
-			Log.v("ACC","inclination="+inclination);
-			Log.v("ACC","aob="+aboveOrBelow);
+			Log.v("ACC", "direction=" + direction);
+			Log.v("ACC", "inclination=" + inclination);
+			Log.v("ACC", "aob=" + aboveOrBelow);
 		}
 	}
 
@@ -44,6 +44,6 @@ public class AngleAccelerometerListener implements SensorEventListener
 	public void onAccuracyChanged(Sensor sensor, int accuracy)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 }

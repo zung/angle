@@ -9,26 +9,28 @@ import android.util.Log;
  * Angle main engine
  * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class AngleMainEngine
 {
-	private static final int MAX_ENGINES = 10; //Engine limit
-	private static AngleAbstractEngine[] mEngines = new AngleAbstractEngine[MAX_ENGINES]; 
+	private static final int MAX_ENGINES = 10; // Engine limit
+	private static AngleAbstractEngine[] mEngines = new AngleAbstractEngine[MAX_ENGINES];
 	private static int mEnginesCount = 0;
-	public static int mWidth = 0; //Surface width
-	public static int mHeight = 0; //Surface height
-	public static float secondsElapsed = 0.0f; //Seconds elapsed since last frame
-	public static Context mContext; //Activity context
+	public static int mWidth = 0; // Surface width
+	public static int mHeight = 0; // Surface height
+	public static float secondsElapsed = 0.0f; // Seconds elapsed since last
+																// frame
+	public static Context mContext; // Activity context
 
 	public AngleMainEngine()
 	{
 	}
-	
+
 	/**
 	 * Add rendering engine to main engine
 	 * 
-	 * @param engine Engine to add
+	 * @param engine
+	 *           Engine to add
 	 */
 	public static void addEngine(AngleAbstractEngine engine)
 	{
@@ -41,8 +43,9 @@ public class AngleMainEngine
 	}
 
 	/**
-	 *  
-	 * @param gl Surface where draw
+	 * 
+	 * @param gl
+	 *           Surface where draw
 	 */
 	public static void drawFrame(GL10 gl)
 	{
@@ -51,13 +54,16 @@ public class AngleMainEngine
 		for (int r = 0; r < mEnginesCount; r++)
 			mEngines[r].drawFrame(gl);
 	}
-	
+
 	/**
 	 * Change the size of the surface
 	 * 
-	 * @param gl OpenGL ES surface
-	 * @param width New width
-	 * @param height New height
+	 * @param gl
+	 *           OpenGL ES surface
+	 * @param width
+	 *           New width
+	 * @param height
+	 *           New height
 	 */
 	public static void sizeChanged(GL10 gl, int width, int height)
 	{
@@ -78,7 +84,9 @@ public class AngleMainEngine
 
 	/**
 	 * Load textures of all engines
-	 * @param gl OpenGL ES surface
+	 * 
+	 * @param gl
+	 *           OpenGL ES surface
 	 */
 	public static void loadTextures(GL10 gl)
 	{
@@ -91,7 +99,9 @@ public class AngleMainEngine
 
 	/**
 	 * Destroy all engines
-	 * @param gl OpenGL ES surface
+	 * 
+	 * @param gl
+	 *           OpenGL ES surface
 	 */
 	public static void onDestroy(GL10 gl)
 	{
