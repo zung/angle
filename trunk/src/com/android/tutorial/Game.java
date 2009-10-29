@@ -116,13 +116,10 @@ public class Game extends Activity
 													// mShotColdDownTime milliseconds
 				{
 					mShotColdDown = CTM + mShotColdDownTime;
-					//synchronized (this) 
-					{ 
-						mShot[mShotsCount] = new AngleSimpleSpriteReference(sprShot);
-						mShot[mShotsCount].mCenter.set(mShip.mCenter.mX,
-								mShip.mCenter.mY - 20);
-						mSprites.addReference(mShot[mShotsCount++]);
-					}
+					mShot[mShotsCount] = new AngleSimpleSpriteReference(sprShot);
+					mShot[mShotsCount].mCenter.set(mShip.mCenter.mX,
+							mShip.mCenter.mY - 20);
+					mSprites.addReference(mShot[mShotsCount++]);
 				}
 			}
 		}
@@ -165,11 +162,8 @@ public class Game extends Activity
 							mShot[s].mCenter.mY -= 200 * AngleMainEngine.secondsElapsed;
 							if (mShot[s].mCenter.mY < -10)
 							{
-								//synchronized (this) 
-								{ 
-									mSprites.removeRefernece(mShot[s]);
-									mShot[s] = null;
-								}
+								mSprites.removeRefernece(mShot[s]);
+								mShot[s] = null;
 							}
 						}
 					}
