@@ -42,7 +42,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param sprite
 	 *           Sprite to be added
 	 */
-	public void addSprite(AngleAbstractSprite sprite)
+	public synchronized void addSprite(AngleAbstractSprite sprite)
 	{
 		if (mSpritesCount < mMaxSprites)
 		{
@@ -59,7 +59,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param sprite
 	 *           Sprite to be removed
 	 */
-	public void removeSprite(AngleAbstractSprite sprite)
+	public synchronized void removeSprite(AngleAbstractSprite sprite)
 	{
 		int r;
 
@@ -82,7 +82,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param reference
 	 *           Reference to be added
 	 */
-	public void addReference(AngleAbstractSpriteReference reference)
+	public synchronized void addReference(AngleAbstractSpriteReference reference)
 	{
 		if (mReferencesCount < mMaxReferences)
 		{
@@ -100,7 +100,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param reference
 	 *           Reference to be removed
 	 */
-	public void removeRefernece(AngleAbstractSpriteReference reference)
+	public synchronized void removeRefernece(AngleAbstractSpriteReference reference)
 	{
 		int r;
 
