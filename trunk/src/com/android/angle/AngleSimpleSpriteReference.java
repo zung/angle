@@ -11,7 +11,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
  * @author Ivan Pajuelo
  * 
  */
-public class AngleSimpleSpriteReference extends AngleAbstractSpriteReference
+public class AngleSimpleSpriteReference extends AngleAbstractReference
 {
 	public AngleSimpleSprite mSprite; // Sprite referenced
 	protected int mFrame;

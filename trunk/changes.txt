@@ -1,0 +1,6 @@
+Version 0.2
+.-ISSUE: [NullPointer] synchronized adds and removes to solve the problem
+.-Added Font and String support
+.-New class AngleFont
+.-New class AngleString
+.-Renamed AngleAbstractSpriteReference to AngleAbstractReference 

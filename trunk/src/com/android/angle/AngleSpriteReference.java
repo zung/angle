@@ -13,7 +13,7 @@ import javax.microedition.khronos.opengles.GL10;
  * @author Ivan Pajuelo
  * 
  */
-public class AngleSpriteReference extends AngleAbstractSpriteReference
+public class AngleSpriteReference extends AngleAbstractReference
 {
 	private AngleSprite mSprite;
 	protected FloatBuffer mTexCoordBuffer;
