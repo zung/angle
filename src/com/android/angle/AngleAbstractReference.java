@@ -1,12 +1,12 @@
 package com.android.angle;
 
 /**
- * Angle sprite reference base class
+ * References base class
  * 
  * @author Ivan Pajuelo
  * 
  */
-public abstract class AngleAbstractSpriteReference extends AngleVisualObject
+public abstract class AngleAbstractReference extends AngleVisualObject
 {
 	/**
 	 * Method called after adding this reference to an engine

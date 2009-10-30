@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.android.angle.AngleAbstractSpriteReference;
+import com.android.angle.AngleAbstractReference;
 import com.android.angle.AngleCircleCollider;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AnglePhysicObject;
@@ -106,7 +106,7 @@ public class Tutorial08 extends Activity
 		public void addObject(AnglePhysicObject object)
 		{
 			super.addObject(object);
-			mSprites.addReference((AngleAbstractSpriteReference) object.mVisual); // Add
+			mSprites.addReference((AngleAbstractReference) object.mVisual); // Add
 																											// sprite
 																											// to
 																											// mSprites
@@ -121,7 +121,7 @@ public class Tutorial08 extends Activity
 		{
 			super.removeObject(object);
 			mSprites
-					.removeRefernece((AngleAbstractSpriteReference) object.mVisual); // Remove
+					.removeRefernece((AngleAbstractReference) object.mVisual); // Remove
 																											// sprite
 																											// when
 																											// object

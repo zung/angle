@@ -1,15 +1,19 @@
 package com.android.tutorial;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.android.angle.AngleFont;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSimpleSprite;
 import com.android.angle.AngleSimpleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
+import com.android.angle.AngleString;
 import com.android.angle.AngleSurfaceView;
+import com.android.angle.AngleTextEngine;
 import com.android.angle.AngleTileEngine;
 
 /**
@@ -49,6 +53,7 @@ public class Game extends Activity
 		private AngleSpritesEngine mSprites;
 		private AngleTileEngine mLevel;
 		private DashboardEngine mDash;
+		private AngleTextEngine mTexts;
 
 		private static final int smLoad = 0;
 		private static final int smPlay = 1;
@@ -61,6 +66,8 @@ public class Game extends Activity
 		private AngleSimpleSpriteReference[] mShot;
 		private int mShotsCount;
 		private long mShotColdDown = 0;
+		private AngleFont mArialWhite10=null;
+		private AngleString mString=null;
 
 		MyGameEngine()
 		{
@@ -79,6 +86,10 @@ public class Game extends Activity
 			mDash = new DashboardEngine();
 			AngleMainEngine.addEngine(mDash);
 
+			// Engine for texts
+			mTexts = new AngleTextEngine(2,10);
+			AngleMainEngine.addEngine(mTexts);
+
 			// Set the view extent in tiles
 			mLevel.mViewWidth = 10;
 			mLevel.mViewHeight = 14;
@@ -93,6 +104,12 @@ public class Game extends Activity
 			mShip = new AngleSimpleSpriteReference(sprShip);
 			mShot = new AngleSimpleSpriteReference[MAX_SHOTS];
 			mShotsCount = 0;
+			
+			mArialWhite10=new AngleFont(30,Typeface.create("Arial", Typeface.NORMAL),1,255,255,255,255);
+			mTexts.addFont(mArialWhite10);
+			mString=new AngleString(mArialWhite10, 100);
+			mString.mPosition.set(10,10);
+			mTexts.addString(mString);
 		}
 
 		public void onTouchEvent(MotionEvent event)
@@ -133,7 +150,10 @@ public class Game extends Activity
 				long CTM = System.currentTimeMillis();
 				frameCount = 0;
 				if (lCTM > 0)
+				{
+					mString.set("FPS="+(100.f / ((CTM - lCTM) / 1000.f)));
 					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
+				}
 				lCTM = CTM;
 			}
 			// --------------------------------------
