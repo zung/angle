@@ -79,7 +79,6 @@ public class Tutorial04 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
 		mGame = new MyGameEngine();
 

@@ -1,12 +1,12 @@
 package com.android.tutorial;
 
+import android.app.Activity;
+import android.os.Bundle;
+
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSimpleSprite;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
-
-import android.app.Activity;
-import android.os.Bundle;
 
 /**
  * In this tutorial, we create a sprites engine and add an AngleSimpleSprite.
@@ -30,7 +30,6 @@ public class Tutorial02 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
 		mSprites = new AngleSpritesEngine(10, 0); // Create the sprites engine
 																// with maximum 10 sprites and 0

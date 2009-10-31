@@ -23,7 +23,6 @@ public class Tutorial01 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
 		mView = new AngleSurfaceView(this); // Create and set the view.
 		setContentView(mView); // All the initializations are done inside
