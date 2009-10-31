@@ -1,6 +1,7 @@
 package com.android.angle;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -20,6 +21,12 @@ public class AngleSurfaceView extends SurfaceView implements
 	public AngleSurfaceView(Context context)
 	{
 		super(context);
+		doInit(context);
+	}
+
+	public AngleSurfaceView(Context context,  AttributeSet attrs)
+	{
+		super(context,attrs);
 		doInit(context);
 	}
 
