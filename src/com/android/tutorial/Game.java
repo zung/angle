@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import com.android.angle.AngleFont;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSimpleSprite;
+import com.android.angle.AngleSimpleSpriteReference;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
@@ -16,6 +17,7 @@ import com.android.angle.AngleString;
 import com.android.angle.AngleSurfaceView;
 import com.android.angle.AngleTextEngine;
 import com.android.angle.AngleTileEngine;
+import com.android.angle.AngleVector;
 
 /**
  * 
@@ -64,6 +66,29 @@ public class Game extends Activity
 			}
 
 		};
+		
+		class MyShip extends AngleSimpleSpriteReference
+		{
+			AngleVector mDestination;
+			float Speed; 
+			public MyShip(AngleSimpleSprite sprite)
+			{
+				super(sprite);
+				mDestination=new AngleVector(); 
+				Speed=200;
+			}
+			public void run()
+			{
+				if ((int)mCenter.mX<(int)mDestination.mX)
+					mCenter.mX+=Speed*AngleMainEngine.secondsElapsed;
+				if ((int)mCenter.mX>(int)mDestination.mX)
+					mCenter.mX-=Speed*AngleMainEngine.secondsElapsed;
+				if ((int)mCenter.mY<(int)mDestination.mY)
+					mCenter.mY+=Speed*AngleMainEngine.secondsElapsed;
+				if ((int)mCenter.mY>(int)mDestination.mY)
+					mCenter.mY-=Speed*AngleMainEngine.secondsElapsed;
+			}
+		}
 
 		// FPS Counter
 		private int frameCount = 0;
@@ -78,10 +103,10 @@ public class Game extends Activity
 		private static final int MAX_SHOTS = 50;
 		private static final long mShotColdDownTime = 70;
 		private int stateMachine = smLoad;
-		private AngleSprite sprShip;
-		private AngleSprite sprShot;
-		private AngleSpriteReference mShip;
-		private AngleSpriteReference[] mShot;
+		private AngleSimpleSprite sprShip;
+		private AngleSimpleSprite sprShot;
+		private MyShip mShip;
+		private AngleSimpleSpriteReference[] mShot;
 		private int mShotsCount;
 		private long mShotColdDown = 0;
 
@@ -106,15 +131,15 @@ public class Game extends Activity
 			mLevel.mViewWidth = 10;
 			mLevel.mViewHeight = 14;
 
-			sprShip = new AngleSprite(64, 64, R.drawable.anglelogo, 0, 0,
+			sprShip = new AngleSimpleSprite(64, 64, R.drawable.anglelogo, 0, 0,
 					128, 128);
 			mSprites.addSprite(sprShip);
-			sprShot = new AngleSprite(16, 16, R.drawable.anglelogo, 0, 0,
+			sprShot = new AngleSimpleSprite(16, 16, R.drawable.anglelogo, 0, 0,
 					128, 128);
 			mSprites.addSprite(sprShot);
 
-			mShip = new AngleSpriteReference(sprShip);
-			mShot = new AngleSpriteReference[MAX_SHOTS];
+			mShip = new MyShip(sprShip);
+			mShot = new AngleSimpleSpriteReference[MAX_SHOTS];
 			mShotsCount = 0;
 		}
 
@@ -130,7 +155,7 @@ public class Game extends Activity
 				e.printStackTrace();
 			}
 			// -------------------------
-			mShip.mCenter.set(event.getX(), event.getY() - 64 - sprShip.mHeight
+			mShip.mDestination.set(event.getX(), event.getY() - 32 - sprShip.mHeight
 					/ 2); // Position the ship
 			if (mShotsCount < MAX_SHOTS)
 			{
@@ -139,7 +164,7 @@ public class Game extends Activity
 				// mShotColdDownTime milliseconds
 				{
 					mShotColdDown = CTM + mShotColdDownTime;
-					mShot[mShotsCount] = new AngleSpriteReference(sprShot);
+					mShot[mShotsCount] = new AngleSimpleSpriteReference(sprShot);
 					mShot[mShotsCount].mCenter.set(mShip.mCenter.mX,
 							mShip.mCenter.mY - 20);
 					mSprites.addReference(mShot[mShotsCount++]);
@@ -171,6 +196,8 @@ public class Game extends Activity
 					mSprites.addReference(mShip);
 					mShip.mCenter.set(AngleMainEngine.mWidth / 2,
 							AngleMainEngine.mHeight / 2);
+					mShip.mDestination.set(AngleMainEngine.mWidth / 2,
+							AngleMainEngine.mHeight / 2);
 					// Load the level map
 					mLevel.loadMap(getResources().openRawResource(R.raw.map));
 					// Put the top of the camera at the lowest part of the map
@@ -181,11 +208,12 @@ public class Game extends Activity
 				case smPlay:
 					mLevel.mTop -= 200 * AngleMainEngine.secondsElapsed; // Move the
 					// camera
+					mShip.run();
 					for (int s = 0; s < mShotsCount; s++) // Move the shots
 					{
 						if (mShot[s] != null)
 						{
-							mShot[s].mCenter.mY -= 200 * AngleMainEngine.secondsElapsed;
+							mShot[s].mCenter.mY -= 300 * AngleMainEngine.secondsElapsed;
 							if (mShot[s].mCenter.mY < -10)
 							{
 								mSprites.removeRefernece(mShot[s]);
