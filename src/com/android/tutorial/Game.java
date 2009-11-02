@@ -9,7 +9,8 @@ import android.view.MotionEvent;
 import com.android.angle.AngleFont;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSimpleSprite;
-import com.android.angle.AngleSimpleSpriteReference;
+import com.android.angle.AngleSprite;
+import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleString;
 import com.android.angle.AngleSurfaceView;
@@ -77,10 +78,10 @@ public class Game extends Activity
 		private static final int MAX_SHOTS = 50;
 		private static final long mShotColdDownTime = 70;
 		private int stateMachine = smLoad;
-		private AngleSimpleSprite sprShip;
-		private AngleSimpleSprite sprShot;
-		private AngleSimpleSpriteReference mShip;
-		private AngleSimpleSpriteReference[] mShot;
+		private AngleSprite sprShip;
+		private AngleSprite sprShot;
+		private AngleSpriteReference mShip;
+		private AngleSpriteReference[] mShot;
 		private int mShotsCount;
 		private long mShotColdDown = 0;
 
@@ -105,15 +106,15 @@ public class Game extends Activity
 			mLevel.mViewWidth = 10;
 			mLevel.mViewHeight = 14;
 
-			sprShip = new AngleSimpleSprite(64, 64, R.drawable.anglelogo, 0, 0,
+			sprShip = new AngleSprite(64, 64, R.drawable.anglelogo, 0, 0,
 					128, 128);
 			mSprites.addSprite(sprShip);
-			sprShot = new AngleSimpleSprite(16, 16, R.drawable.anglelogo, 0, 0,
+			sprShot = new AngleSprite(16, 16, R.drawable.anglelogo, 0, 0,
 					128, 128);
 			mSprites.addSprite(sprShot);
 
-			mShip = new AngleSimpleSpriteReference(sprShip);
-			mShot = new AngleSimpleSpriteReference[MAX_SHOTS];
+			mShip = new AngleSpriteReference(sprShip);
+			mShot = new AngleSpriteReference[MAX_SHOTS];
 			mShotsCount = 0;
 		}
 
@@ -138,7 +139,7 @@ public class Game extends Activity
 				// mShotColdDownTime milliseconds
 				{
 					mShotColdDown = CTM + mShotColdDownTime;
-					mShot[mShotsCount] = new AngleSimpleSpriteReference(sprShot);
+					mShot[mShotsCount] = new AngleSpriteReference(sprShot);
 					mShot[mShotsCount].mCenter.set(mShip.mCenter.mX,
 							mShip.mCenter.mY - 20);
 					mSprites.addReference(mShot[mShotsCount++]);

@@ -58,16 +58,16 @@ public class AngleSprite extends AngleSimpleSprite
 			mIndexBuffer.put(i, sIndexValues[i]);
 
 		mVertexBuffer.put(0, -mWidth / 2);
-		mVertexBuffer.put(1, -mHeight / 2);
+		mVertexBuffer.put(1, mHeight / 2);
 		mVertexBuffer.put(2, 0);
 		mVertexBuffer.put(3, mWidth / 2);
-		mVertexBuffer.put(4, -mHeight / 2);
+		mVertexBuffer.put(4, mHeight / 2);
 		mVertexBuffer.put(5, 0);
 		mVertexBuffer.put(6, -mWidth / 2);
-		mVertexBuffer.put(7, mHeight / 2);
+		mVertexBuffer.put(7, -mHeight / 2);
 		mVertexBuffer.put(8, 0);
 		mVertexBuffer.put(9, mWidth / 2);
-		mVertexBuffer.put(10, mHeight / 2);
+		mVertexBuffer.put(10, -mHeight / 2);
 		mVertexBuffer.put(11, 0);
 	}
 

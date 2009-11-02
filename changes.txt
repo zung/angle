@@ -6,4 +6,7 @@ Version 0.2
 .-New class AngleFont
 .-New class AngleString
 .-Renamed AngleAbstractSpriteReference to AngleAbstractReference
-.-Added new constructor to AngleSurfaceView to use it in designer 
+.-Added new constructor to AngleSurfaceView to use it in designer
+
+Version 0.3
+.-ISSUE: [AngleSprite upside down] Correct values in VertexBuffer 
