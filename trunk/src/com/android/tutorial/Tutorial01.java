@@ -23,17 +23,16 @@ public class Tutorial01 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
 		mView = new AngleSurfaceView(this); // Create and set the view.
 		setContentView(mView); // All the initializations are done inside
-										// AngleSurfaceView.
+		// AngleSurfaceView.
 	}
 
 	@Override
 	protected void onPause()
 	{
 		mView.onPause(); // onPause and onResume must be called in order to tell
-								// the engine
+		// the engine
 		super.onPause(); // render when activity is active.
 	}
 
@@ -41,7 +40,7 @@ public class Tutorial01 extends Activity
 	protected void onResume()
 	{
 		mView.onResume(); // onPause and onResume must be called in order to tell
-								// the engine
+		// the engine
 		super.onResume(); // render when activity is active.
 	}
 

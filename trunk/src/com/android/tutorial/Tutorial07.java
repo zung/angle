@@ -52,12 +52,12 @@ public class Tutorial07 extends Activity
 			MyBall(AngleSpriteReference spriteReference)
 			{
 				super(spriteReference, 0, 1); // Init AnglePhysicObject with an
-														// AngleSpriteReference, 0 segment
-														// colliders and 1 circle collider
+				// AngleSpriteReference, 0 segment
+				// colliders and 1 circle collider
 				addCircleCollider(new AngleCircleCollider(0, 0, 29)); // Add a
-																						// circle
-																						// collider to
-																						// our object
+				// circle
+				// collider to
+				// our object
 				mMass = 10; // Set the mass
 			}
 
@@ -76,10 +76,10 @@ public class Tutorial07 extends Activity
 		{
 			super(MAX_TYPES, MAX_OBJECTS);
 			mSprites = new AngleSpritesEngine(MAX_TYPES, MAX_OBJECTS);
-			AngleMainEngine.addEngine(mSprites);
+			mView.addEngine(mSprites);
 			// ------------------------------------------------
 			mCollisions = new AngleViewCollisionsEngine(this);
-			AngleMainEngine.addEngine(mCollisions);
+			mView.addEngine(mCollisions);
 			// Adding this engine, the collisions will be drawn
 			// Use only for debug purposes. It's very slow
 
@@ -96,26 +96,25 @@ public class Tutorial07 extends Activity
 		{
 			super.addObject(object);
 			mSprites.addReference((AngleAbstractReference) object.mVisual); // Add
-																											// sprite
-																											// to
-																											// mSprites
-																											// when
-																											// object
-																											// is
-																											// added
+			// sprite
+			// to
+			// mSprites
+			// when
+			// object
+			// is
+			// added
 		}
 
 		@Override
 		public void removeObject(AnglePhysicObject object)
 		{
 			super.removeObject(object);
-			mSprites
-					.removeRefernece((AngleAbstractReference) object.mVisual); // Remove
-																											// sprite
-																											// when
-																											// object
-																											// is
-																											// removed
+			mSprites.removeRefernece((AngleAbstractReference) object.mVisual); // Remove
+			// sprite
+			// when
+			// object
+			// is
+			// removed
 		}
 
 		public void run()
@@ -185,8 +184,8 @@ public class Tutorial07 extends Activity
 						a = (float) (Math.PI * 2 - a);
 					// --------------------------------
 					float force = 50 + event.getSize() * 400; // Use the touch area
-																			// to set the start
-																			// speed
+					// to set the start
+					// speed
 					mBalls[mBallsCount].mVelocity.mX = (float) (force * Math.sin(a));
 					mBalls[mBallsCount].mVelocity.mY = (float) (force * Math.cos(a));
 
@@ -209,9 +208,9 @@ public class Tutorial07 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
+
 		mGame = new MyGameEngine();
 		mView.setBeforeDraw(mGame);
 	}

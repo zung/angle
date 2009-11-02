@@ -61,6 +61,12 @@ public class AngleTextureEngine
 		mTextureCount = 0;
 	}
 
+	/**
+	 * 
+	 * @param resourceId
+	 *           Drawable
+	 * @return Hardware texture Id
+	 */
 	public static int createHWTextureFromResource(int resourceId)
 	{
 		for (int t = 0; t < mTextureCount; t++)

@@ -62,9 +62,9 @@ public class Tutorial06 extends Activity
 		{
 			// Put the sprites engine into game engine
 			mSprites = new AngleSpritesEngine(10, 100); // Tell sprites engine use
-																		// references (100 max)
-																		// instead of sprites
-			AngleMainEngine.addEngine(mSprites);
+			// references (100 max)
+			// instead of sprites
+			mView.addEngine(mSprites);
 			// Array of logos displayed
 			mLogos = new MyLogo[MAX_LOGOS];
 			mLogosCount = 0;
@@ -134,11 +134,10 @@ public class Tutorial06 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		mGame = new MyGameEngine();
-
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
+
+		mGame = new MyGameEngine();
 		mView.setBeforeDraw(mGame);
 	}
 

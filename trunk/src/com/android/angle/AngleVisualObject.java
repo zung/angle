@@ -10,8 +10,8 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class AngleVisualObject
 {
-	public AngleVector mCenter;
-	public float mZ;
+	public AngleVector mCenter; // Central position of the object
+	public float mZ; // Z position (0=Near, 1=Far)
 
 	public AngleVisualObject()
 	{

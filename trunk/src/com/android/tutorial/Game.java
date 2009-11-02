@@ -31,8 +31,12 @@ public class Game extends Activity
 	class MyGameEngine implements Runnable
 	{
 		class DashboardEngine extends AngleSpritesEngine // An engine to draw the
-																			// dashboard
+		// dashboard
 		{
+			private AngleTextEngine mTexts;
+			private AngleFont mArialWhite10 = null; // Our font
+			private AngleString mString = null; // Our string
+
 			private AngleSimpleSprite mBG; // Dashboard background
 
 			public DashboardEngine()
@@ -40,10 +44,24 @@ public class Game extends Activity
 				super(10, 0);
 				mBG = new AngleSimpleSprite(320, 64, R.drawable.tilemap, 0, 32,
 						320, 64);
-				mBG.mCenter.mY = mLevel.mTileHeight * 13 + mBG.mHeight / 2;
-				mBG.mCenter.mX = mBG.mWidth / 2;
+				mBG.mCenter.set(mBG.mWidth / 2, mLevel.mTileHeight * 13
+						+ mBG.mHeight / 2);
 				addSprite(mBG);
+
+				// Engine for texts
+				mTexts = new AngleTextEngine(2, 10);
+				addEngine(mTexts);
+
+				mArialWhite10 = new AngleFont(30, Typeface.create("Arial",
+						Typeface.NORMAL), 1, 255, 255, 255, 255);
+				mTexts.addFont(mArialWhite10); // Add font to text engine
+
+				mString = new AngleString(mArialWhite10, 100);
+				mString.mPosition
+						.set(50, mLevel.mTileHeight * 13 + mBG.mHeight / 2);
+				mTexts.addString(mString); // Add string to text engine
 			}
+
 		};
 
 		// FPS Counter
@@ -53,7 +71,6 @@ public class Game extends Activity
 		private AngleSpritesEngine mSprites;
 		private AngleTileEngine mLevel;
 		private DashboardEngine mDash;
-		private AngleTextEngine mTexts;
 
 		private static final int smLoad = 0;
 		private static final int smPlay = 1;
@@ -66,8 +83,6 @@ public class Game extends Activity
 		private AngleSimpleSpriteReference[] mShot;
 		private int mShotsCount;
 		private long mShotColdDown = 0;
-		private AngleFont mArialWhite10=null;
-		private AngleString mString=null;
 
 		MyGameEngine()
 		{
@@ -76,19 +91,15 @@ public class Game extends Activity
 			// Tile size 32x32. Map size 10*1000
 			mLevel = new AngleTileEngine(R.drawable.tilemap, 8, 8, 32, 32, 10,
 					1000);
-			AngleMainEngine.addEngine(mLevel);
+			mView.addEngine(mLevel);
 
 			// Engine for game sprites
 			mSprites = new AngleSpritesEngine(10, 100);
-			AngleMainEngine.addEngine(mSprites);
+			mView.addEngine(mSprites);
 
 			// Engine for dashboard
 			mDash = new DashboardEngine();
-			AngleMainEngine.addEngine(mDash);
-
-			// Engine for texts
-			mTexts = new AngleTextEngine(2,10);
-			AngleMainEngine.addEngine(mTexts);
+			mView.addEngine(mDash);
 
 			// Set the view extent in tiles
 			mLevel.mViewWidth = 10;
@@ -104,12 +115,6 @@ public class Game extends Activity
 			mShip = new AngleSimpleSpriteReference(sprShip);
 			mShot = new AngleSimpleSpriteReference[MAX_SHOTS];
 			mShotsCount = 0;
-			
-			mArialWhite10=new AngleFont(30,Typeface.create("Arial", Typeface.NORMAL),1,255,255,255,255);
-			mTexts.addFont(mArialWhite10);
-			mString=new AngleString(mArialWhite10, 100);
-			mString.mPosition.set(10,10);
-			mTexts.addString(mString);
 		}
 
 		public void onTouchEvent(MotionEvent event)
@@ -130,7 +135,7 @@ public class Game extends Activity
 			{
 				long CTM = System.currentTimeMillis();
 				if (CTM > mShotColdDown) // Prevent shoot in less than
-													// mShotColdDownTime milliseconds
+				// mShotColdDownTime milliseconds
 				{
 					mShotColdDown = CTM + mShotColdDownTime;
 					mShot[mShotsCount] = new AngleSimpleSpriteReference(sprShot);
@@ -151,7 +156,7 @@ public class Game extends Activity
 				frameCount = 0;
 				if (lCTM > 0)
 				{
-					mString.set("FPS="+(100.f / ((CTM - lCTM) / 1000.f)));
+					mDash.mString.set("FPS=" + (100.f / ((CTM - lCTM) / 1000.f)));
 					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
 				}
 				lCTM = CTM;
@@ -174,7 +179,7 @@ public class Game extends Activity
 					break;
 				case smPlay:
 					mLevel.mTop -= 200 * AngleMainEngine.secondsElapsed; // Move the
-																							// camera
+					// camera
 					for (int s = 0; s < mShotsCount; s++) // Move the shots
 					{
 						if (mShot[s] != null)
@@ -214,11 +219,10 @@ public class Game extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		mGame = new MyGameEngine();
-
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
+
+		mGame = new MyGameEngine();
 		mView.setBeforeDraw(mGame);
 	}
 

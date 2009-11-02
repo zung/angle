@@ -32,7 +32,7 @@ public class Tutorial05 extends Activity
 	private MyBlendSpritesEngine mSprites; // Use overloaded engine
 
 	class MyBlendSprite extends AngleSprite // Overload AngleSprite to add blend
-															// effect
+	// effect
 	{
 
 		public MyBlendSprite(int width, int height, int resourceId, int cropLeft,
@@ -45,7 +45,7 @@ public class Tutorial05 extends Activity
 		@Override
 		public void draw(GL10 gl)
 		{
-			gl.glColor4f(1f, 1f, 0f, 0.5f); // Little blend effect
+			gl.glColor4f(0f, 1f, 1f, 0.8f); // Little blend effect
 			super.draw(gl);
 		}
 
@@ -121,15 +121,14 @@ public class Tutorial05 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		mGame = new MyGameEngine();
-
-		mSprites = new MyBlendSpritesEngine();
-		AngleMainEngine.addEngine(mSprites);
-
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
+
+		mGame = new MyGameEngine();
 		mView.setBeforeDraw(mGame);
+
+		mSprites = new MyBlendSpritesEngine();
+		mView.addEngine(mSprites);
 	}
 
 	@Override
