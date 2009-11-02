@@ -63,12 +63,12 @@ public class Tutorial08 extends Activity
 				addCircleCollider(new AngleCircleCollider(0, 0, 29));
 				mMass = 10;
 				mBounce = 0.8f; // Coefficient of restitution (1 return all the
-										// energy)
+				// energy)
 			}
 
 			@Override
 			public float getSurface() // Return the surface of our object for air
-												// friction
+			// friction
 			{
 				return 29 * 2; // Radius * 2
 			}
@@ -87,7 +87,7 @@ public class Tutorial08 extends Activity
 			super(MAX_TYPES, MAX_OBJECTS);
 
 			mSprites = new AngleSpritesEngine(MAX_TYPES, MAX_OBJECTS);
-			AngleMainEngine.addEngine(mSprites);
+			mView.addEngine(mSprites);
 
 			mBalls = new MyBall[MAX_BallS];
 			mBallsCount = 0;
@@ -107,26 +107,25 @@ public class Tutorial08 extends Activity
 		{
 			super.addObject(object);
 			mSprites.addReference((AngleAbstractReference) object.mVisual); // Add
-																											// sprite
-																											// to
-																											// mSprites
-																											// when
-																											// object
-																											// is
-																											// added
+			// sprite
+			// to
+			// mSprites
+			// when
+			// object
+			// is
+			// added
 		}
 
 		@Override
 		public void removeObject(AnglePhysicObject object)
 		{
 			super.removeObject(object);
-			mSprites
-					.removeRefernece((AngleAbstractReference) object.mVisual); // Remove
-																											// sprite
-																											// when
-																											// object
-																											// is
-																											// removed
+			mSprites.removeRefernece((AngleAbstractReference) object.mVisual); // Remove
+			// sprite
+			// when
+			// object
+			// is
+			// removed
 		}
 
 		public void run()
@@ -277,11 +276,12 @@ public class Tutorial08 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
 		mView = new MyView(this);
 		setContentView(mView);
+
 		mGame = new MyGameEngine(this);
 		mView.setBeforeDraw(mGame);
+
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 	}
 

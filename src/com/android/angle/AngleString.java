@@ -5,88 +5,87 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 /**
- * Have the string and its position
+ * Have the string and its position. Length is automatically set when string
+ * content is changed. But can be altered to create typing effect.
  * 
  * @author Ivan Pajuelo
  * 
  */
 public class AngleString
 {
-	public AngleVector mPosition;
+	public AngleVector mPosition; // Position
 	public float mZ;
-	private int mMaxLength; 
-	private int mLength;
-	private char[] mString;
-	private AngleFont mFont;
+	private int mMaxLength; // Maximum length of the string
+	private int mLength; // Length to display
+	private char[] mString; // characters
+	private AngleFont mFont; // Font
 	protected int[] mTextureIV = new int[4];
-	
-	public AngleString (AngleFont font, int maxLength)
+
+	/**
+	 * 
+	 * @param font
+	 *           Font
+	 * @param maxLength
+	 *           Reserved length
+	 */
+	public AngleString(AngleFont font, int maxLength)
 	{
-		mPosition=new AngleVector();
-		mFont=font;
-		mMaxLength=maxLength;
-		mLength=0;
-		mString=new char[mMaxLength];//Prevent runtime allocations
+		mPosition = new AngleVector();
+		mFont = font;
+		mMaxLength = maxLength;
+		mLength = 0;
+		mString = new char[mMaxLength];// Prevent runtime allocations
 	}
-	
-	public void set (String src)
+
+	/**
+	 * Changes the string content
+	 * 
+	 * @param src
+	 */
+	public void set(String src)
 	{
-		mLength=src.length();
-		if (mLength>mMaxLength)
-			mLength=mMaxLength;
-		for (int c=0;c<mLength;c++)
-			mString[c]=src.charAt(c);
+		mLength = src.length();
+		if (mLength > mMaxLength)
+			mLength = mMaxLength;
+		for (int c = 0; c < mLength; c++)
+			mString[c] = src.charAt(c);
 	}
 
 	public void draw(GL10 gl)
 	{
-		if (mFont!=null)
+		if (mFont != null)
 		{
 			if (mFont.mHWTextureID >= 0)
 			{
 				gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mHWTextureID);
-/*
-				mTextureIV[0]=0;
-				mTextureIV[1]=256;
-				mTextureIV[2]=256;
-				mTextureIV[3]=-256;
-				
-				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-						GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 
-				((GL11Ext) gl).glDrawTexfOES(mPosition.mX,
-						AngleMainEngine.mHeight - mPosition.mY-256, mZ, 256,
-						256);
-*/				
-				float x=mPosition.mX;
-				float y=mPosition.mY;
-				for (int c=0;c<mLength;c++)
+				float x = mPosition.mX;
+				float y = mPosition.mY;
+				for (int c = 0; c < mLength; c++)
 				{
-					char chr=mString[c];
-					if (chr==' ')
+					char chr = mString[c];
+					if (chr == ' ')
 					{
-						x+=mFont.mCharWidth['_'-33];
+						x += mFont.mCharWidth['_' - 33];
 						continue;
 					}
-					if (chr=='\n')
+					if (chr == '\n')
 					{
-						y+=mFont.mHeight;
+						y += mFont.mHeight;
 						continue;
 					}
-					chr-=33;
-					mTextureIV[0]=mFont.mCharLeft[chr];
-					mTextureIV[1]=mFont.mCharTop[chr]+mFont.mHeight;
-					mTextureIV[2]=mFont.mCharWidth[chr];
-					mTextureIV[3]=-mFont.mHeight;
+					chr -= 33;
+					mTextureIV[0] = mFont.mCharLeft[chr];
+					mTextureIV[1] = mFont.mCharTop[chr] + mFont.mHeight;
+					mTextureIV[2] = mFont.mCharWidth[chr];
+					mTextureIV[3] = -mFont.mHeight;
 					((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
 							GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 
-					((GL11Ext) gl).glDrawTexfOES(x,
-							AngleMainEngine.mHeight - y - mFont.mHeight, mZ, mFont.mCharWidth[chr],
-							mFont.mHeight);
-					x+=mFont.mCharWidth[chr]+mFont.mSpace;
+					((GL11Ext) gl).glDrawTexfOES(x, AngleMainEngine.mHeight - y
+							- mFont.mHeight, mZ, mFont.mCharWidth[chr], mFont.mHeight);
+					x += mFont.mCharWidth[chr] + mFont.mSpace;
 				}
-				
 			}
 		}
 	}

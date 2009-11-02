@@ -79,15 +79,14 @@ public class Tutorial04 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		mGame = new MyGameEngine();
-
-		mSprites = new AngleSpritesEngine(10, 0);
-		AngleMainEngine.addEngine(mSprites);
-
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
+
+		mGame = new MyGameEngine();
 		mView.setBeforeDraw(mGame);
+
+		mSprites = new AngleSpritesEngine(10, 0);
+		mView.addEngine(mSprites);
 	}
 
 	@Override

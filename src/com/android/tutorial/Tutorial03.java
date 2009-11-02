@@ -64,21 +64,20 @@ public class Tutorial03 extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		mView = new AngleSurfaceView(this);
+		setContentView(mView);
 
 		mGame = new MyGameEngine(); // Instantiation
+		mView.setBeforeDraw(mGame); // Tells view what method must call before
+		// draw every frame
 
 		mSprites = new AngleSpritesEngine(10, 0);
-		AngleMainEngine.addEngine(mSprites);
+		mView.addEngine(mSprites);
 
 		// Use AngleSprite instead of AngleSimpleSprite to rotate it
 		mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
 		mLogo.mCenter.set(100, 100);
 		mSprites.addSprite(mLogo);
-
-		mView = new AngleSurfaceView(this);
-		setContentView(mView);
-		mView.setBeforeDraw(mGame); // Tells view what method must call before
-												// draw every frame
 	}
 
 	@Override

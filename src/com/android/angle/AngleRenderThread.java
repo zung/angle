@@ -31,10 +31,12 @@ class AngleRenderThread extends Thread
 	private boolean needStartEgl = true;
 	private boolean needCreateSurface = false;
 	private boolean needResize = false;
+	private AngleMainEngine mRenderEngine;
 
-	AngleRenderThread()
+	AngleRenderThread(AngleMainEngine renderEngine)
 	{
 		super();
+		mRenderEngine = renderEngine;
 		setName("AngleRenderThread");
 	}
 
@@ -120,7 +122,7 @@ class AngleRenderThread extends Thread
 			if (AngleTextureEngine.hasChanges)
 			{
 				Log.d("AngleRenderThread", "needLoadTextures");
-				AngleMainEngine.loadTextures(gl);
+				mRenderEngine.loadTextures(gl);
 			}
 			if (needResize)
 			{
@@ -140,7 +142,7 @@ class AngleRenderThread extends Thread
 				if (mBeforeDraw != null)
 					mBeforeDraw.run();
 
-				AngleMainEngine.drawFrame(gl);
+				mRenderEngine.drawFrame(gl);
 
 				mEglHelper.swap();
 			}
@@ -169,7 +171,7 @@ class AngleRenderThread extends Thread
 	{
 		synchronized (this)
 		{
-			AngleMainEngine.onDestroy(gl);
+			mRenderEngine.onDestroy(gl);
 			mContextLost = true;
 			mHasSurface = false;
 			notify();

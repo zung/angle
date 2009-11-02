@@ -3,7 +3,6 @@ package com.android.angle;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * Angle main engine
@@ -11,48 +10,22 @@ import android.util.Log;
  * @author Ivan Pajuelo
  * 
  */
-public class AngleMainEngine
+public class AngleMainEngine extends AngleAbstractEngine
 {
-	private static final int MAX_ENGINES = 10; // Engine limit
-	private static AngleAbstractEngine[] mEngines = new AngleAbstractEngine[MAX_ENGINES];
-	private static int mEnginesCount = 0;
 	public static int mWidth = 0; // Surface width
 	public static int mHeight = 0; // Surface height
 	public static float secondsElapsed = 0.0f; // Seconds elapsed since last
-																// frame
+	// frame
 	public static Context mContext; // Activity context
 
-	public AngleMainEngine()
-	{
-	}
-
-	/**
-	 * Add rendering engine to main engine
-	 * 
-	 * @param engine
-	 *           Engine to add
-	 */
-	public static void addEngine(AngleAbstractEngine engine)
-	{
-		if (mEnginesCount < MAX_ENGINES)
-		{
-			mEngines[mEnginesCount++] = engine;
-		} else
-			Log.e("AngleMainEngine", "addEngine() MAX_ENGINES reached");
-
-	}
-
 	/**
 	 * 
-	 * @param gl
-	 *           Surface where draw
+	 * @param maxEngines
+	 *           Sub-engines limit
 	 */
-	public static void drawFrame(GL10 gl)
+	public AngleMainEngine(int maxEngines)
 	{
-		gl.glLoadIdentity();
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		for (int r = 0; r < mEnginesCount; r++)
-			mEngines[r].drawFrame(gl);
+		super(maxEngines);
 	}
 
 	/**
@@ -82,19 +55,33 @@ public class AngleMainEngine
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 	}
 
+	@Override
+	public void afterLoadTextures(GL10 gl)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void drawFrame(GL10 gl)
+	{
+		gl.glLoadIdentity();
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		super.drawFrame(gl);
+	}
+
 	/**
 	 * Load textures of all engines
 	 * 
 	 * @param gl
 	 *           OpenGL ES surface
 	 */
-	public static void loadTextures(GL10 gl)
+	@Override
+	public void loadTextures(GL10 gl)
 	{
-		for (int r = 0; r < mEnginesCount; r++)
-			mEngines[r].loadTextures(gl);
+		super.loadTextures(gl);
 		AngleTextureEngine.loadTextures(gl);
-		for (int r = 0; r < mEnginesCount; r++)
-			mEngines[r].afterLoadTextures(gl);
+		super.afterLoadTextures(gl);
 	}
 
 	/**
@@ -103,14 +90,10 @@ public class AngleMainEngine
 	 * @param gl
 	 *           OpenGL ES surface
 	 */
-	public static void onDestroy(GL10 gl)
+	@Override
+	public void onDestroy(GL10 gl)
 	{
-		for (int r = 0; r < mEnginesCount; r++)
-		{
-			mEngines[r].onDestroy(gl);
-			mEngines[r] = null;
-		}
-		mEnginesCount = 0;
+		super.onDestroy(gl);
 		AngleTextureEngine.onDestroy(gl);
 		java.lang.System.gc();
 	}

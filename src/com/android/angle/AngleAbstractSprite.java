@@ -1,7 +1,5 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
-
 /**
  * Angle sprite base class
  * 
@@ -25,12 +23,4 @@ public abstract class AngleAbstractSprite extends AngleVisualObject
 	 *           OpenGL ES surface
 	 */
 	public abstract void afterLoadTexture();
-
-	/**
-	 * 
-	 * @param gl
-	 *           Surface where draw
-	 */
-	public abstract void draw(GL10 gl);
-
 }

@@ -19,20 +19,37 @@ public class AngleTileEngine extends AngleAbstractEngine
 	public int mTextureID; // Texture ID on AngleTextureEngine
 	protected int[] mTextureCrop = new int[4]; // Cropping coordinates
 	public int mTexturePitch; // Horizontal tiles in texture
-	public int mTileWidth;
-	public int mTileHeight;
-	public byte[] mMap;
-	public int mMapWidth;
-	public int mMapHeight;
-	public float mLeft;
-	public float mTop;
-	public float mX;
+	public int mTilesCount; // Number of tiles in texture
+	public int mTileWidth; // Tile width in pixels
+	public int mTileHeight; // Tile height in pixels
+	public byte[] mMap; // Tile map
+	public int mMapWidth; // Tile map width in tiles
+	public int mMapHeight; // Tile map height in tiles
+	public float mLeft; // Left corner cámera in pixels
+	public float mTop; // Top corner cámera in pixels
+	public int mViewWidth; // Camera width in tiles
+	public int mViewHeight; // Camera height in tiles
+	public float mX; // Position in screen
 	public float mY;
 	public float mZ;
-	public int mViewWidth;
-	public int mViewHeight;
-	public int mTilesCount;
 
+	/**
+	 * 
+	 * @param resourceID
+	 *           Drawable with tiles
+	 * @param texturePitch
+	 *           Horizontal tiles columns
+	 * @param tilesCount
+	 *           Number of tiles
+	 * @param tileWidth
+	 *           Tile width in pixels
+	 * @param tileHeight
+	 *           Tile height in pixels
+	 * @param mapWidth
+	 *           Width of tile map
+	 * @param mapHeight
+	 *           Height of tilemap
+	 */
 	public AngleTileEngine(int resourceID, int texturePitch, int tilesCount,
 			int tileWidth, int tileHeight, int mapWidth, int mapHeight)
 	{
@@ -54,11 +71,12 @@ public class AngleTileEngine extends AngleAbstractEngine
 		mTextureCrop[3] = -mTileHeight; // Hcr
 	}
 
-	@Override
-	public void afterLoadTextures(GL10 gl)
-	{
-	}
-
+	/**
+	 * Load a tile map from a raw stream using mMapWidth and mMapHeight
+	 * dimensions
+	 * 
+	 * @param istream
+	 */
 	public void loadMap(InputStream istream)
 	{
 		try
@@ -116,10 +134,6 @@ public class AngleTileEngine extends AngleAbstractEngine
 	public void loadTextures(GL10 gl)
 	{
 		mTextureID = AngleTextureEngine.createHWTextureFromResource(mResourceID);
-	}
-
-	@Override
-	public void onDestroy(GL10 gl)
-	{
+		super.loadTextures(gl);
 	}
 }

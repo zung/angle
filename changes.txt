@@ -1,6 +1,9 @@
 Version 0.2
 .-ISSUE: [NullPointer] synchronized adds and removes to solve the problem
+.-All engines support sub-engines
+.-Root engines are now added to AngleSurfaceView directly
 .-Added Font and String support
 .-New class AngleFont
 .-New class AngleString
-.-Renamed AngleAbstractSpriteReference to AngleAbstractReference 
+.-Renamed AngleAbstractSpriteReference to AngleAbstractReference
+.-Added new constructor to AngleSurfaceView to use it in designer 

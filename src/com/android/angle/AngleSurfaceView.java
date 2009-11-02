@@ -17,6 +17,7 @@ public class AngleSurfaceView extends SurfaceView implements
 	private static AngleRenderThread mRenderThread;
 	public static boolean mSizeChanged = true;
 	public static SurfaceHolder mSurfaceHolder;
+	private static AngleMainEngine mRenderEngine;
 
 	public AngleSurfaceView(Context context)
 	{
@@ -24,9 +25,9 @@ public class AngleSurfaceView extends SurfaceView implements
 		doInit(context);
 	}
 
-	public AngleSurfaceView(Context context,  AttributeSet attrs)
+	public AngleSurfaceView(Context context, AttributeSet attrs)
 	{
-		super(context,attrs);
+		super(context, attrs);
 		doInit(context);
 	}
 
@@ -36,7 +37,8 @@ public class AngleSurfaceView extends SurfaceView implements
 		mSurfaceHolder = getHolder();
 		mSurfaceHolder.addCallback(this);
 		mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-		mRenderThread = new AngleRenderThread();
+		mRenderEngine = new AngleMainEngine(10);
+		mRenderThread = new AngleRenderThread(mRenderEngine);
 		mRenderThread.start();
 	}
 
@@ -102,5 +104,10 @@ public class AngleSurfaceView extends SurfaceView implements
 	{
 		super.onDetachedFromWindow();
 		mRenderThread.requestExitAndWait();
+	}
+
+	public void addEngine(AngleAbstractEngine engine)
+	{
+		mRenderEngine.addEngine(engine);
 	}
 }

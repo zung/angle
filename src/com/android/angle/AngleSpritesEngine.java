@@ -131,12 +131,14 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 					mSprites[s].draw(gl);
 			}
 		}
+		super.drawFrame(gl);
 	}
 
 	public void loadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s].loadTexture();
+		super.loadTextures(gl);
 	}
 
 	public void afterLoadTextures(GL10 gl)
@@ -146,6 +148,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		super.afterLoadTextures(gl);
 	}
 
 	public void onDestroy(GL10 gl)
@@ -158,5 +161,6 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		for (int s = 0; s < mReferencesCount; s++)
 			mReferences[s] = null;
 		mReferencesCount = 0;
+		super.onDestroy(gl);
 	}
 }
