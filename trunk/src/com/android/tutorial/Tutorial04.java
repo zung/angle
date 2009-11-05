@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpritesEngine;
@@ -24,7 +25,7 @@ public class Tutorial04 extends Activity
 	private AngleSurfaceView mView;
 	private AngleSpritesEngine mSprites;
 
-	class MyGameEngine implements Runnable
+	class MyGameEngine extends AngleAbstractGameEngine
 	{
 		// FPS Counter
 		private int frameCount = 0;
@@ -35,8 +36,9 @@ public class Tutorial04 extends Activity
 		private int stateMachine = smLoad;
 		private AngleSprite mLogo; // Declare mLogo in MyGameEngine (better place)
 
-		MyGameEngine()
+		MyGameEngine(AngleSurfaceView view)
 		{
+			super(view);
 		}
 
 		public void run()
@@ -82,8 +84,7 @@ public class Tutorial04 extends Activity
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine();
-		mView.setBeforeDraw(mGame);
+		mGame = new MyGameEngine(mView);
 
 		mSprites = new AngleSpritesEngine(10, 0);
 		mView.addEngine(mSprites);

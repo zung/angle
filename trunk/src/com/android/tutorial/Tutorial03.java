@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpritesEngine;
@@ -26,7 +27,7 @@ public class Tutorial03 extends Activity
 	private AngleSpritesEngine mSprites;
 	private AngleSprite mLogo; // In this sample use AmgleSprite (see below)
 
-	class MyGameEngine implements Runnable // Game engine class
+	class MyGameEngine extends AngleAbstractGameEngine // Game engine class
 	{
 		// FPS Counter
 		private int frameCount = 0;
@@ -34,8 +35,9 @@ public class Tutorial03 extends Activity
 
 		// -----------
 
-		MyGameEngine()
+		MyGameEngine(AngleSurfaceView view)
 		{
+			super(view);
 		}
 
 		// The game engine must be a Runnable to callback his method run before
@@ -67,9 +69,8 @@ public class Tutorial03 extends Activity
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine(); // Instantiation
-		mView.setBeforeDraw(mGame); // Tells view what method must call before
-		// draw every frame
+		mGame = new MyGameEngine(mView); // Tells view what method must call before
+													// draw every frame
 
 		mSprites = new AngleSpritesEngine(10, 0);
 		mView.addEngine(mSprites);

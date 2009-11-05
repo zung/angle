@@ -11,12 +11,12 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class AngleSpritesEngine extends AngleAbstractEngine
 {
-	private int mMaxSprites;
-	private AngleAbstractSprite[] mSprites;
-	private int mSpritesCount;
-	private int mMaxReferences;
-	private AngleAbstractReference[] mReferences;
-	private int mReferencesCount;
+	protected int mMaxSprites;
+	protected AngleAbstractSprite[] mSprites;
+	protected int mSpritesCount;
+	protected int mMaxReferences;
+	protected AngleAbstractReference[] mReferences;
+	protected int mReferencesCount;
 
 	/**
 	 * 
@@ -137,29 +137,41 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	public void loadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
-			mSprites[s].loadTexture();
+			mSprites[s].loadTexture(gl);
 		super.loadTextures(gl);
 	}
 
 	public void afterLoadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
-			mSprites[s].afterLoadTexture();
+			mSprites[s].afterLoadTexture(gl);
 
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		if (gl!=null)
+		{
+			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		}
 		super.afterLoadTextures(gl);
 	}
 
 	public void onDestroy(GL10 gl)
 	{
-		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		if (gl!=null)
+		{
+			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		}
 		for (int s = 0; s < mSpritesCount; s++)
+		{
+			mSprites[s].onDestroy(gl);
 			mSprites[s] = null;
+		}
 		mSpritesCount = 0;
-		for (int s = 0; s < mReferencesCount; s++)
-			mReferences[s] = null;
+		for (int r = 0; r < mReferencesCount; r++)
+		{
+			mReferences[r].onDestroy(gl);
+			mReferences[r] = null;
+		}
 		mReferencesCount = 0;
 		super.onDestroy(gl);
 	}

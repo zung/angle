@@ -82,9 +82,9 @@ public class Tutorial08 extends Activity
 
 		}
 
-		MyGameEngine(Context ctx)
+		MyGameEngine(AngleSurfaceView view, Context ctx)
 		{
-			super(MAX_TYPES, MAX_OBJECTS);
+			super(view, MAX_TYPES, MAX_OBJECTS);
 
 			mSprites = new AngleSpritesEngine(MAX_TYPES, MAX_OBJECTS);
 			mView.addEngine(mSprites);
@@ -279,8 +279,7 @@ public class Tutorial08 extends Activity
 		mView = new MyView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine(this);
-		mView.setBeforeDraw(mGame);
+		mGame = new MyGameEngine(mView, this);
 
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 	}

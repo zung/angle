@@ -98,16 +98,16 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 		mFrame = 0;
 		mFrameCount = frameCount;
 		mFrameColumns = frameColumns;
-		loadTexture();
+		loadTexture(null);
 	}
 
 	@Override
-	public void loadTexture()
+	public void loadTexture(GL10 gl)
 	{
 		mTextureID = AngleTextureEngine.createHWTextureFromResource(mResourceID);
 	}
 
-	public void afterLoadTexture()
+	public void afterLoadTexture(GL10 gl)
 	{
 		setFrame(mFrame);
 	}

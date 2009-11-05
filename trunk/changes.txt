@@ -9,4 +9,6 @@ Version 0.2
 .-Added new constructor to AngleSurfaceView to use it in designer
 
 Version 0.3
-.-ISSUE: [AngleSprite upside down] Correct values in VertexBuffer 
+.-ISSUE: [AngleSprite upside down] Correct values in VertexBuffer
+.-ISSUE: [Some objects not freed on exit] Solved
+.-AngleSprite uses hardware buffers to avoid GC 
