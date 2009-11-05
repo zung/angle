@@ -14,8 +14,9 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 	public AngleVector mGravity;
 	public float mViscosity;
 
-	public AnglePhysicsGameEngine(int maxTypes, int maxObjects)
+	public AnglePhysicsGameEngine(AngleSurfaceView view, int maxTypes, int maxObjects)
 	{
+		super(view);
 		mMaxObjects = maxObjects;
 		mObjectsCount = 0;
 		mObjects = new AnglePhysicObject[mMaxObjects];

@@ -60,6 +60,7 @@ class AngleRenderThread extends Thread
 			Log.e("AngleRenderThread", "guarded() exception: " + e.getMessage());
 		} finally
 		{
+			mRenderEngine.onDestroy(gl);
 			sEglSemaphore.release();
 		}
 	}
@@ -73,7 +74,7 @@ class AngleRenderThread extends Thread
 
 		mDone = false;
 
-		Log.d("AngleRenderThread", "run init");
+		Log.d("AngleRenderThread", "run init "+this);
 
 		while (!mDone)
 		{
@@ -97,7 +98,10 @@ class AngleRenderThread extends Thread
 					lCTM = 0;
 				}
 				if (mDone)
+				{
+					Log.d("AngleRenderThread", "run break");
 					break;
+				}
 
 				// Captures variables values synchronized
 				needCreateSurface = AngleSurfaceView.mSizeChanged;

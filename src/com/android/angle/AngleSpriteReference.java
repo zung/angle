@@ -73,14 +73,14 @@ public class AngleSpriteReference extends AngleAbstractReference
 		gl.glRotatef(-mRotation, 0, 0, 1);
 
 		AngleTextureEngine.bindTexture(gl, mSprite.mTextureID);
-
+/*
 		// Estas 3 alocatan memoria
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mSprite.mVertexBuffer);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mSprite.mVertexValues);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
 		gl.glDrawElements(GL10.GL_TRIANGLES, AngleSprite.sIndexValues.length,
 				GL10.GL_UNSIGNED_SHORT, mSprite.mIndexBuffer);
 		// ------------------------
-
+*/
 		gl.glPopMatrix();
 	}
 

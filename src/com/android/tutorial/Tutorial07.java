@@ -72,9 +72,9 @@ public class Tutorial07 extends Activity
 
 		}
 
-		MyGameEngine()
+		MyGameEngine(AngleSurfaceView view)
 		{
-			super(MAX_TYPES, MAX_OBJECTS);
+			super(view,MAX_TYPES, MAX_OBJECTS);
 			mSprites = new AngleSpritesEngine(MAX_TYPES, MAX_OBJECTS);
 			mView.addEngine(mSprites);
 			// ------------------------------------------------
@@ -211,8 +211,7 @@ public class Tutorial07 extends Activity
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine();
-		mView.setBeforeDraw(mGame);
+		mGame = new MyGameEngine(mView);
 	}
 
 	@Override

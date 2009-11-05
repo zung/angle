@@ -44,17 +44,20 @@ public class AngleSurfaceView extends SurfaceView implements
 
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		mRenderThread.surfaceCreated();
+		if (mRenderThread != null)
+			mRenderThread.surfaceCreated();
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
-		mRenderThread.surfaceDestroyed();
+		if (mRenderThread != null)
+			mRenderThread.surfaceDestroyed();
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
 	{
-		mRenderThread.surfaceChanged(w, h);
+		if (mRenderThread != null)
+			mRenderThread.surfaceChanged(w, h);
 	}
 
 	/**
@@ -62,7 +65,8 @@ public class AngleSurfaceView extends SurfaceView implements
 	 */
 	public void onPause()
 	{
-		mRenderThread.onPause();
+		if (mRenderThread != null)
+			mRenderThread.onPause();
 	}
 
 	/**
@@ -70,7 +74,8 @@ public class AngleSurfaceView extends SurfaceView implements
 	 */
 	public void onResume()
 	{
-		mRenderThread.onResume();
+		if (mRenderThread != null)
+			mRenderThread.onResume();
 	}
 
 	/**
@@ -78,7 +83,11 @@ public class AngleSurfaceView extends SurfaceView implements
 	 */
 	public void onDestroy()
 	{
-		mRenderThread.requestExitAndWait();
+		if (mRenderThread != null)
+			mRenderThread.requestExitAndWait();
+		mRenderThread = null;
+		mRenderEngine = null;
+		System.gc();
 	}
 
 	/**
@@ -89,25 +98,29 @@ public class AngleSurfaceView extends SurfaceView implements
 	 */
 	public void setBeforeDraw(Runnable beforeDraw)
 	{
-		mRenderThread.setBeforeDraw(beforeDraw);
+		if (mRenderThread != null)
+			mRenderThread.setBeforeDraw(beforeDraw);
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus)
 	{
 		super.onWindowFocusChanged(hasFocus);
-		mRenderThread.onWindowFocusChanged(hasFocus);
+		if (mRenderThread != null)
+			mRenderThread.onWindowFocusChanged(hasFocus);
 	}
 
 	@Override
 	protected void onDetachedFromWindow()
 	{
 		super.onDetachedFromWindow();
-		mRenderThread.requestExitAndWait();
+		if (mRenderThread != null)
+			mRenderThread.requestExitAndWait();
 	}
 
 	public void addEngine(AngleAbstractEngine engine)
 	{
-		mRenderEngine.addEngine(engine);
+		if (mRenderEngine != null)
+			mRenderEngine.addEngine(engine);
 	}
 }

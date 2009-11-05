@@ -58,8 +58,9 @@ public class Tutorial06 extends Activity
 			}
 		}
 
-		MyGameEngine()
+		MyGameEngine(AngleSurfaceView view)
 		{
+			super(view);
 			// Put the sprites engine into game engine
 			mSprites = new AngleSpritesEngine(10, 100); // Tell sprites engine use
 			// references (100 max)
@@ -137,8 +138,7 @@ public class Tutorial06 extends Activity
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine();
-		mView.setBeforeDraw(mGame);
+		mGame = new MyGameEngine(mView);
 	}
 
 	@Override

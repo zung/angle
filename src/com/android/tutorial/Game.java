@@ -10,8 +10,6 @@ import com.android.angle.AngleFont;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSimpleSprite;
 import com.android.angle.AngleSimpleSpriteReference;
-import com.android.angle.AngleSprite;
-import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleString;
 import com.android.angle.AngleSurfaceView;

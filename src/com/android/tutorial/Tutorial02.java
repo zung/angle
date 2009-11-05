@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.android.angle.AngleSimpleSprite;
+import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
@@ -22,7 +23,7 @@ public class Tutorial02 extends Activity
 	private AngleSurfaceView mView;
 	private AngleSpritesEngine mSprites; // The engine where the sprite will be
 	// added
-	private AngleSimpleSprite mLogo; // A simple sprite. It doesn't supports
+	private AngleSprite mLogo; // A simple sprite. It doesn't supports
 
 	// scale, rotation nor effects
 
@@ -39,7 +40,7 @@ public class Tutorial02 extends Activity
 		mView.addEngine(mSprites); // and adds it to main engine
 
 		// Create one simple sprite with the logo and place it at position 100,100
-		mLogo = new AngleSimpleSprite(128, 128, R.drawable.anglelogo, 0, 0, 128,
+		mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0, 128,
 				128);
 		mLogo.mCenter.set(100, 100); // Set position
 		mSprites.addSprite(mLogo); // The sprites engine will draw all the sprites
