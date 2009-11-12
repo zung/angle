@@ -17,6 +17,7 @@ public class AngleMainEngine extends AngleAbstractEngine
 	public static float secondsElapsed = 0.0f; // Seconds elapsed since last
 	// frame
 	public static Context mContext; // Activity context
+	public static boolean mDirty = false;
 
 	/**
 	 * 

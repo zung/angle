@@ -3,7 +3,6 @@ package com.android.tutorial;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.android.angle.AngleSimpleSprite;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;

@@ -37,6 +37,7 @@ public class AngleTextureEngine
 	private static AngleTexture[] mTextures = new AngleTexture[MAX_TEXTURES];
 	private static int mTextureCount = 0;
 	public static boolean hasChanges = false;
+	public static boolean buffersChanged = false;
 
 	AngleTextureEngine()
 	{
@@ -90,6 +91,7 @@ public class AngleTextureEngine
 	{
 		if (gl != null)
 		{
+			Log.e("Textures","LOADED");
 			sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);

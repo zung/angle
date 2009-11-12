@@ -27,7 +27,7 @@ class AngleRenderThread extends Thread
 	private int mHeight = 0;
 	private Runnable mBeforeDraw = null;
 	private EGLHelper mEglHelper = null;
-	private static GL10 gl = null;
+	public  static GL10 gl = null;
 	private boolean needStartEgl = true;
 	private boolean needCreateSurface = false;
 	private boolean needResize = false;
@@ -127,6 +127,12 @@ class AngleRenderThread extends Thread
 			{
 				Log.d("AngleRenderThread", "needLoadTextures");
 				mRenderEngine.loadTextures(gl);
+			}
+			if (AngleTextureEngine.buffersChanged)
+			{
+				AngleTextureEngine.buffersChanged=false;
+				Log.d("AngleRenderThread", "needCreateBuffers");
+				mRenderEngine.createBuffers(gl);
 			}
 			if (needResize)
 			{

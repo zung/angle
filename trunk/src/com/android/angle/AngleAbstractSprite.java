@@ -29,4 +29,8 @@ public abstract class AngleAbstractSprite extends AngleVisualObject
 	public void onDestroy(GL10 gl)
 	{
 	}
+
+	public void createBuffers(GL10 gl)
+	{
+	}
 }

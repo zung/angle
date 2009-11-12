@@ -230,6 +230,10 @@ public class Game extends Activity
 							s--;
 						}
 					}
+					if (AngleMainEngine.mDirty)
+					{
+						mShip.mCenter.set(160,30);
+					}
 					break;
 			}
 		}
