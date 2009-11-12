@@ -88,6 +88,18 @@ public abstract class AngleAbstractEngine
 	}
 
 	/**
+	 * Buffers have changes. Check if any engine needs to do something with hardware buffers
+	 * 
+	 * @param gl
+	 *           OpenGL ES surface
+	 */
+	public void createBuffers(GL10 gl)
+	{
+		for (int r = 0; r < mEnginesCount; r++)
+			mEngines[r].createBuffers(gl);
+	}
+
+	/**
 	 * Destroy engine objects here
 	 * 
 	 * @param gl

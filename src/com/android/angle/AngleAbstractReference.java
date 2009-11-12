@@ -18,4 +18,12 @@ public abstract class AngleAbstractReference extends AngleVisualObject
 	public void onDestroy(GL10 gl)
 	{
 	}
+
+	public void createBuffers(GL10 gl)
+	{
+	}
+
+	public void afterLoadTexture(GL10 gl)
+	{
+	}
 }

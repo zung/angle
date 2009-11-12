@@ -1,10 +1,11 @@
 package com.android.angle;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+
+import android.util.Log;
 
 /**
  * Sprite reference for dynamic add an remove from sprite engine
@@ -15,10 +16,26 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class AngleSpriteReference extends AngleAbstractReference
 {
-	private AngleSprite mSprite;
-	protected FloatBuffer mTexCoordBuffer;
-	private int mFrame;
+	protected AngleSprite mSprite;
+	protected float[] mTexCoordValues;
+	protected int mTextureCoordBufferIndex;
+	protected int mFrame;
 	public float mRotation; // Rotation
+	protected boolean buffersChanged;
+
+	/**
+	 * 
+	 * @param sprite
+	 *           Sprite referenced
+	 */
+	public AngleSpriteReference(AngleSprite sprite)
+	{
+		mSprite = sprite;
+		mFrame = 0;
+		mRotation = 0;
+		mTextureCoordBufferIndex=-1;
+		mTexCoordValues=new float[8];
+	}
 
 	@Override
 	public void afterAdd()
@@ -38,29 +55,58 @@ public class AngleSpriteReference extends AngleAbstractReference
 			float frameTop = (mFrame / mSprite.mFrameColumns)
 					* (mSprite.mCropBottom - mSprite.mCropTop);
 
-			mTexCoordBuffer.put(0, (mSprite.mCropLeft + frameLeft) / W);
-			mTexCoordBuffer.put(1, (mSprite.mCropBottom + frameTop) / H);
-			mTexCoordBuffer.put(2, (mSprite.mCropRight + frameLeft) / W);
-			mTexCoordBuffer.put(3, (mSprite.mCropBottom + frameTop) / H);
-			mTexCoordBuffer.put(4, (mSprite.mCropLeft + frameLeft) / W);
-			mTexCoordBuffer.put(5, (mSprite.mCropTop + frameTop) / H);
-			mTexCoordBuffer.put(6, (mSprite.mCropRight + frameLeft) / W);
-			mTexCoordBuffer.put(7, (mSprite.mCropTop + frameTop) / H);
+			mTexCoordValues[0]= (mSprite.mCropLeft + frameLeft) / W;
+			mTexCoordValues[1]= (mSprite.mCropBottom + frameTop) / H;
+			mTexCoordValues[2]= (mSprite.mCropRight + frameLeft) / W;
+			mTexCoordValues[3]= (mSprite.mCropBottom + frameTop) / H;
+			mTexCoordValues[4]= (mSprite.mCropLeft + frameLeft) / W;
+			mTexCoordValues[5]= (mSprite.mCropTop + frameTop) / H;
+			mTexCoordValues[6]= (mSprite.mCropRight + frameLeft) / W;
+			mTexCoordValues[7]= (mSprite.mCropTop + frameTop) / H;
+
+			buffersChanged=true;
+			AngleTextureEngine.buffersChanged=true;
 		}
 	}
 
-	/**
-	 * 
-	 * @param sprite
-	 *           Sprite referenced
-	 */
-	public AngleSpriteReference(AngleSprite sprite)
+	@Override
+	public void afterLoadTexture(GL10 gl)
 	{
-		mSprite = sprite;
-		mFrame = 0;
-		mRotation = 0;
-		mTexCoordBuffer = ByteBuffer.allocateDirect(32).order(
-				ByteOrder.nativeOrder()).asFloatBuffer();
+		super.afterLoadTexture(gl);
+      mTextureCoordBufferIndex=-1;
+      setFrame (mFrame);
+	}
+
+	@Override
+	public void createBuffers(GL10 gl)
+	{
+		if (buffersChanged)
+		{
+			buffersChanged=false;
+			if (AngleRenderThread.gl instanceof GL11)
+	      {
+		      int[] buffer = new int[1];
+		      GL11 gl11 = (GL11)AngleRenderThread.gl;
+	
+		      if (mTextureCoordBufferIndex>-1)
+		      {
+			      Log.e("SpriteReference","buffer deleted");
+		      	buffer[0] = mTextureCoordBufferIndex;
+		      	gl11.glDeleteBuffers(1, buffer, 0);
+		      }
+	
+		      // Allocate and fill the texture coordinate buffer.
+		      gl11.glGenBuffers(1, buffer, 0);
+		      mTextureCoordBufferIndex = buffer[0];
+		      Log.e("ASR","Err="+gl11.glGetError());
+		      Log.e("ASR","Idx="+mTextureCoordBufferIndex);
+		      gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER,  mTextureCoordBufferIndex);
+		      gl11.glBufferData(GL11.GL_ARRAY_BUFFER, 8 * 4,	FloatBuffer.wrap(mTexCoordValues), GL11.GL_STATIC_DRAW);    
+		      gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+		      Log.e("SpriteReference","buffer created");
+	      }
+		}
+		super.createBuffers(gl);
 	}
 
 	@Override
@@ -73,15 +119,43 @@ public class AngleSpriteReference extends AngleAbstractReference
 		gl.glRotatef(-mRotation, 0, 0, 1);
 
 		AngleTextureEngine.bindTexture(gl, mSprite.mTextureID);
-/*
-		// Estas 3 alocatan memoria
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mSprite.mVertexValues);
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
-		gl.glDrawElements(GL10.GL_TRIANGLES, AngleSprite.sIndexValues.length,
-				GL10.GL_UNSIGNED_SHORT, mSprite.mIndexBuffer);
-		// ------------------------
-*/
-		gl.glPopMatrix();
+
+      if (gl instanceof GL11)
+      {
+	      GL11 gl11 = (GL11)gl;
+	
+	      gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, mSprite.mVertBufferIndex);
+	      gl11.glVertexPointer(3, GL10.GL_FLOAT, 0, 0);
+	      
+	      gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, mTextureCoordBufferIndex);
+	      gl11.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+	      
+	      gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, mSprite.mIndexBufferIndex);
+	      gl11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_SHORT, 0);
+	      
+	      gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+	      gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+      }
+
+      gl.glPopMatrix();
+	}
+
+	@Override
+	public void onDestroy(GL10 gl)
+	{
+      if (gl instanceof GL11) 
+      {
+         GL11 gl11 = (GL11)gl;
+         int[] buffer = new int[1];
+         
+	      if (mTextureCoordBufferIndex>-1)
+	      {
+	      	buffer[0] = mTextureCoordBufferIndex;
+	      	gl11.glDeleteBuffers(1, buffer, 0);
+	      }
+         
+      }
+		super.onDestroy(gl);
 	}
 
 }

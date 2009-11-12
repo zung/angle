@@ -4,6 +4,8 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
+import android.util.Log;
+
 /**
  * Sprite that only supports direct texture copy to surface If the dimensions
  * are changed, the sprite will be scaled The fastest one
@@ -105,6 +107,7 @@ public class AngleSimpleSprite extends AngleAbstractSprite
 	public void loadTexture(GL10 gl)
 	{
 		mTextureID = AngleTextureEngine.createHWTextureFromResource(mResourceID);
+		Log.v("SSB","Loaded texture "+mTextureID);
 	}
 
 	public void afterLoadTexture(GL10 gl)

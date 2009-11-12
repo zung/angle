@@ -78,12 +78,14 @@ public class Tutorial05 extends Activity
 		// -----------
 		private static final int smLoad = 0;
 		private static final int smRotate = 1;
+		private static final int MAX_LOGOS = 10;
 		private int stateMachine = smLoad;
-		private AngleSprite mLogo;
+		private AngleSprite[] mLogos;
 
 		MyGameEngine(AngleSurfaceView view)
 		{
 			super (view);
+			mLogos = new AngleSprite[MAX_LOGOS]; 
 		}
 
 		public void run()
@@ -103,17 +105,30 @@ public class Tutorial05 extends Activity
 			switch (stateMachine)
 			{
 				case smLoad:
-					mLogo = new MyBlendSprite(128, 128, R.drawable.anglelogo, 0, 0,
-							128, 128); // Use the overloaded sprite
-					mLogo.mCenter.set(AngleMainEngine.mWidth / 2,
-							AngleMainEngine.mHeight / 2);
-					mSprites.addSprite(mLogo);
-
+					for (int l=0;l<MAX_LOGOS;l++)
+					{
+						mLogos[l] = new MyBlendSprite(128, 128, R.drawable.anglelogo, 0, 0,
+								128, 128); // Use the overloaded sprite
+						mLogos[l].mCenter.set(AngleMainEngine.mWidth / 2-100+(int)(Math.random()*200),
+								AngleMainEngine.mHeight / 2-200+(int)(Math.random()*400));
+						mSprites.addSprite(mLogos[l]);
+					}
 					stateMachine = smRotate;
 					break;
 				case smRotate:
-					mLogo.mRotation += 45 * AngleMainEngine.secondsElapsed;
-					mLogo.mRotation %= 360;
+					for (int l=0;l<MAX_LOGOS;l++)
+					{
+						mLogos[l].mRotation += 45 * AngleMainEngine.secondsElapsed;
+						mLogos[l].mRotation %= 360;
+					}
+					if (AngleMainEngine.mDirty)
+					{
+						for (int l=0;l<MAX_LOGOS;l++)
+						{
+							mLogos[l].mCenter.set(AngleMainEngine.mWidth / 2-100,
+									AngleMainEngine.mHeight / 2);
+						}
+					}
 					break;
 			}
 		}

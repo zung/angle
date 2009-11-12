@@ -8,7 +8,7 @@ package com.android.angle;
  */
 public abstract class AngleAbstractGameEngine implements Runnable
 {
-	private AngleSurfaceView mView;
+	protected AngleSurfaceView mView;
 
 	public AngleAbstractGameEngine (AngleSurfaceView view)
 	{

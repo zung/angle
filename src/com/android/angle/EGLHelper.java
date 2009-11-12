@@ -1,5 +1,6 @@
 package com.android.angle;
 
+import javax.microedition.khronos.egl.EGL;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -7,6 +8,7 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.view.SurfaceHolder;
 
@@ -103,6 +105,8 @@ public class EGLHelper
 		 * current and bound to a surface.
 		 */
 		mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext);
+		if (mEgl.eglGetError()==EGL11.EGL_CONTEXT_LOST)
+			AngleMainEngine.mDirty=true;
 
 		GL gl = mEglContext.getGL();
 		return gl;
@@ -127,23 +131,25 @@ public class EGLHelper
 
 	public void finish()
 	{
+		boolean success=true;
 		if (mEglSurface != null)
 		{
-			mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
+			success&=mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
 					EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-			mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
+			success&=mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
 			mEglSurface = null;
 		}
 		if (mEglContext != null)
 		{
-			mEgl.eglDestroyContext(mEglDisplay, mEglContext);
+			success&=mEgl.eglDestroyContext(mEglDisplay, mEglContext);
 			mEglContext = null;
 		}
 		if (mEglDisplay != null)
 		{
-			mEgl.eglTerminate(mEglDisplay);
+			success&=mEgl.eglTerminate(mEglDisplay);
 			mEglDisplay = null;
 		}
+		AngleMainEngine.mDirty=!success;
 	}
 
 	EGL10 mEgl;

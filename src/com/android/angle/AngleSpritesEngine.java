@@ -117,9 +117,10 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		}
 	}
 
+	@Override
 	public void drawFrame(GL10 gl)
 	{
-		if (!AngleTextureEngine.hasChanges)
+		if ((!AngleTextureEngine.hasChanges)&&(!AngleTextureEngine.buffersChanged))
 		{
 			if (mMaxReferences > 0)
 			{
@@ -134,6 +135,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		super.drawFrame(gl);
 	}
 
+	@Override
 	public void loadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
@@ -141,10 +143,13 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		super.loadTextures(gl);
 	}
 
+	@Override
 	public void afterLoadTextures(GL10 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s].afterLoadTexture(gl);
+		for (int s = 0; s < mReferencesCount; s++)
+			mReferences[s].afterLoadTexture(gl);
 
 		if (gl!=null)
 		{
@@ -152,6 +157,21 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		}
 		super.afterLoadTextures(gl);
+	}
+
+	@Override
+	public void createBuffers(GL10 gl)
+	{
+		if (mMaxReferences > 0)
+		{
+			for (int s = 0; s < mReferencesCount; s++)
+				mReferences[s].createBuffers(gl);
+		} else
+		{
+			for (int s = 0; s < mSpritesCount; s++)
+				mSprites[s].createBuffers(gl);
+		}
+		super.createBuffers(gl);
 	}
 
 	public void onDestroy(GL10 gl)
