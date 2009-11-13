@@ -1,6 +1,7 @@
 package com.android.angle;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -122,5 +123,10 @@ public class AngleSurfaceView extends SurfaceView implements
 	{
 		if (mRenderEngine != null)
 			mRenderEngine.addEngine(engine);
+	}
+
+	public void notifyTo(Handler handler)
+	{
+		mRenderThread.mHandler=handler;
 	}
 }

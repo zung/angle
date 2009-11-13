@@ -88,7 +88,7 @@ public class AngleSpriteReference extends AngleAbstractReference
 		      int[] buffer = new int[1];
 		      GL11 gl11 = (GL11)AngleRenderThread.gl;
 	
-		      if (mTextureCoordBufferIndex>-1)
+		      if (gl11.glIsBuffer(mTextureCoordBufferIndex))
 		      {
 			      Log.e("SpriteReference","buffer deleted");
 		      	buffer[0] = mTextureCoordBufferIndex;
@@ -148,10 +148,11 @@ public class AngleSpriteReference extends AngleAbstractReference
          GL11 gl11 = (GL11)gl;
          int[] buffer = new int[1];
          
-	      if (mTextureCoordBufferIndex>-1)
+	      if (gl11.glIsBuffer(mTextureCoordBufferIndex))
 	      {
 	      	buffer[0] = mTextureCoordBufferIndex;
 	      	gl11.glDeleteBuffers(1, buffer, 0);
+	      	mTextureCoordBufferIndex = -1;
 	      }
          
       }

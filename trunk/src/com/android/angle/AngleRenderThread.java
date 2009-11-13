@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.os.Handler;
 import android.util.Log;
 
 /**
@@ -32,6 +33,7 @@ class AngleRenderThread extends Thread
 	private boolean needCreateSurface = false;
 	private boolean needResize = false;
 	private AngleMainEngine mRenderEngine;
+	public Handler mHandler = null;
 
 	AngleRenderThread(AngleMainEngine renderEngine)
 	{
@@ -148,6 +150,9 @@ class AngleRenderThread extends Thread
 				if (lCTM > 0)
 					AngleMainEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
 				lCTM = CTM;
+				
+				if (AngleMainEngine.mDirty)
+					mHandler.sendEmptyMessage(AngleMainEngine.MSG_CONTEXT_LOST);
 
 				if (mBeforeDraw != null)
 					mBeforeDraw.run();

@@ -12,6 +12,7 @@ import android.content.Context;
  */
 public class AngleMainEngine extends AngleAbstractEngine
 {
+	public static final int MSG_CONTEXT_LOST = 1;
 	public static int mWidth = 0; // Surface width
 	public static int mHeight = 0; // Surface height
 	public static float secondsElapsed = 0.0f; // Seconds elapsed since last
