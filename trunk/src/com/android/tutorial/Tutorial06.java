@@ -8,7 +8,6 @@ import android.view.MotionEvent;
 import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSprite;
-import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
@@ -26,6 +25,7 @@ import com.android.angle.AngleSurfaceView;
  */
 public class Tutorial06 extends Activity
 {
+	/*
 	private MyGameEngine mGame;
 	private AngleSurfaceView mView;
 
@@ -168,4 +168,5 @@ public class Tutorial06 extends Activity
 		mView.onDestroy();
 		super.onDestroy();
 	}
+	*/
 }

@@ -8,8 +8,6 @@ import android.view.MotionEvent;
 
 import com.android.angle.AngleFont;
 import com.android.angle.AngleMainEngine;
-import com.android.angle.AngleSimpleSprite;
-import com.android.angle.AngleSimpleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleString;
 import com.android.angle.AngleSurfaceView;
@@ -26,9 +24,10 @@ import com.android.angle.AngleVector;
  */
 public class Game extends Activity
 {
-	private MyGameEngine mGame;
+	
+	//private MyGameEngine mGame;
 	private AngleSurfaceView mView;
-
+/*
 	class MyGameEngine implements Runnable
 	{
 		class DashboardEngine extends AngleSpritesEngine // An engine to draw the
@@ -245,7 +244,7 @@ public class Game extends Activity
 		mGame.onTouchEvent(event);
 		return super.onTouchEvent(event);
 	}
-
+*/
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -253,8 +252,8 @@ public class Game extends Activity
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine();
-		mView.setBeforeDraw(mGame);
+		//mGame = new MyGameEngine();
+		//mView.setBeforeDraw(mGame);
 	}
 
 	@Override

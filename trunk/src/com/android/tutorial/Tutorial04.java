@@ -7,6 +7,8 @@ import android.util.Log;
 import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AngleSprite;
+import com.android.angle.AngleSpriteX;
+import com.android.angle.AngleSpriteXLayout;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
@@ -14,7 +16,9 @@ import com.android.angle.AngleSurfaceView;
  * Add a state machine to our new game engine so we can load the sprites after
  * the "game" is started.
  * 
- * We learn to: -Load sprites 'in runtime' -Get view extents
+ * We learn to: 
+ * -Load sprites 'in runtime' 
+ * -Get view extents
  * 
  * @author Ivan Pajuelo
  * 
@@ -23,22 +27,27 @@ public class Tutorial04 extends Activity
 {
 	private MyGameEngine mGame;
 	private AngleSurfaceView mView;
-	private AngleSpritesEngine mSprites;
 
 	class MyGameEngine extends AngleAbstractGameEngine
 	{
+		private AngleSpritesEngine mSprites;
+		private AngleSpriteXLayout mLogoLayout;
+		private AngleSpriteX mLogo; 
+		private static final int smLoad = 0;
+		private static final int smRotate = 1;
+		private int stateMachine = smLoad;
+
 		// FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
 		// -----------
-		private static final int smLoad = 0;
-		private static final int smRotate = 1;
-		private int stateMachine = smLoad;
-		private AngleSprite mLogo; // Declare mLogo in MyGameEngine (better place)
 
 		MyGameEngine(AngleSurfaceView view)
 		{
 			super(view);
+			mSprites = new AngleSpritesEngine(10, 10);
+			mLogoLayout = new AngleSpriteXLayout(mSprites, 128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
+			addEngine(mSprites);
 		}
 
 		public void run()
@@ -59,13 +68,9 @@ public class Tutorial04 extends Activity
 			// Very simple state machine
 			{
 				case smLoad: // Load sprite in runtime
-					mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0,
-							128, 128);
-					// Cause the engine is already initialized, we can consult its
-					// extents
-					mLogo.mCenter.set(AngleMainEngine.mWidth / 2,
-							AngleMainEngine.mHeight / 2);
-					mSprites.addSprite(mLogo);
+					mLogo=new AngleSpriteX(mSprites,mLogoLayout);
+					// Cause the engine is already initialized, we can consult its extents
+					mLogo.mCenter.set(AngleMainEngine.mWidth / 2, AngleMainEngine.mHeight / 2);
 
 					stateMachine = smRotate;
 					break;
@@ -86,8 +91,7 @@ public class Tutorial04 extends Activity
 
 		mGame = new MyGameEngine(mView);
 
-		mSprites = new AngleSpritesEngine(10, 0);
-		mView.addEngine(mSprites);
+		mView.setGameEngine(mGame);
 	}
 
 	@Override

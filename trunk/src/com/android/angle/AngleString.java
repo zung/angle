@@ -1,6 +1,5 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
@@ -11,15 +10,18 @@ import javax.microedition.khronos.opengles.GL11Ext;
  * @author Ivan Pajuelo
  * 
  */
-public class AngleString
+public class AngleString extends AngleVisualObject
 {
+	public static final int aLeft = 0;
+	public static final int aCenter = 1;
+	public static final int aRight = 2;
 	public AngleVector mPosition; // Position
-	public float mZ;
 	private int mMaxLength; // Maximum length of the string
 	private int mLength; // Length to display
 	private char[] mString; // characters
 	private AngleFont mFont; // Font
 	protected int[] mTextureIV = new int[4];
+	public int mAlignment;
 
 	/**
 	 * 
@@ -28,13 +30,15 @@ public class AngleString
 	 * @param maxLength
 	 *           Reserved length
 	 */
-	public AngleString(AngleFont font, int maxLength)
+	public AngleString(AngleTextEngine engine, AngleFont font, int maxLength)
 	{
 		mPosition = new AngleVector();
 		mFont = font;
 		mMaxLength = maxLength;
 		mLength = 0;
 		mString = new char[mMaxLength];// Prevent runtime allocations
+		mAlignment = aLeft;
+		engine.addString(this);
 	}
 
 	/**
@@ -51,42 +55,125 @@ public class AngleString
 			mString[c] = src.charAt(c);
 	}
 
-	public void draw(GL10 gl)
+	public void draw(GL11 gl)
 	{
 		if (mFont != null)
 		{
-			if (mFont.mHWTextureID >= 0)
+			if (mFont.mTexture != null)
 			{
-				gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mHWTextureID);
+				gl.glBindTexture(GL11.GL_TEXTURE_2D, mFont.mTexture.mHWTextureID);
 
-				float x = mPosition.mX;
+				float x = getXPosition(0);
 				float y = mPosition.mY;
 				for (int c = 0; c < mLength; c++)
 				{
-					char chr = mString[c];
-					if (chr == ' ')
-					{
-						x += mFont.mCharWidth['_' - 33];
-						continue;
-					}
-					if (chr == '\n')
+					if (mString[c] == '\n')
 					{
 						y += mFont.mHeight;
+						x = getXPosition(c + 1);
 						continue;
 					}
-					chr -= 33;
-					mTextureIV[0] = mFont.mCharLeft[chr];
+					char chr = mFont.getChar(mString[c]);
+					if (chr == (char) -1)
+					{
+						x += mFont.mSpaceWidth;
+						continue;
+					}
+					int chrWidth = mFont.mCharRight[chr] - mFont.mCharLeft[chr];
+					mTextureIV[0] = mFont.mCharX[chr];
 					mTextureIV[1] = mFont.mCharTop[chr] + mFont.mHeight;
-					mTextureIV[2] = mFont.mCharWidth[chr];
+					mTextureIV[2] = chrWidth;
 					mTextureIV[3] = -mFont.mHeight;
-					((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-							GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
+					((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 
-					((GL11Ext) gl).glDrawTexfOES(x, AngleMainEngine.mHeight - y
-							- mFont.mHeight, mZ, mFont.mCharWidth[chr], mFont.mHeight);
-					x += mFont.mCharWidth[chr] + mFont.mSpace;
+					((GL11Ext) gl).glDrawTexfOES(x + mFont.mCharLeft[chr], AngleMainEngine.mHeight - y - mFont.mHeight, mZ, chrWidth,
+							mFont.mHeight);
+					x += mFont.mCharRight[chr] + mFont.mSpace;
 				}
 			}
 		}
+	}
+
+	private float getXPosition(int c)
+	{
+		if (mAlignment == aRight)
+			return mPosition.mX - getLineWidth(c);
+		else if (mAlignment == aCenter)
+			return mPosition.mX - getLineWidth(c) / 2;
+		return mPosition.mX;
+	}
+
+	private int getLineWidth(int c)
+	{
+		int ret = 0;
+		for (; c < mLength; c++)
+		{
+			if (mString[c] == '\n')
+				break;
+			char chr = mFont.getChar(mString[c]);
+			if (chr == (char) -1)
+			{
+				ret += mFont.mSpaceWidth;
+				continue;
+			}
+			ret += mFont.mCharRight[chr] + mFont.mSpace;
+			if (c == 0)
+				ret -= mFont.mCharLeft[chr];
+		}
+		return ret;
+	}
+
+	public int getWidth()
+	{
+		int ret = 0;
+		int maxRet = 0;
+		for (int c = 0; c < mLength; c++)
+		{
+			if (mString[c] == '\n')
+			{
+				if (ret > maxRet)
+					maxRet = ret;
+				ret = 0;
+				continue;
+			}
+			char chr = mFont.getChar(mString[c]);
+			if (chr == (char) -1)
+			{
+				ret += mFont.mSpaceWidth;
+				continue;
+			}
+			ret += mFont.mCharRight[chr] + mFont.mSpace;
+			if (c == 0)
+				ret -= mFont.mCharLeft[chr];
+		}
+		if (ret > maxRet)
+			maxRet = ret;
+		return maxRet;
+	}
+
+	public int getHeight()
+	{
+		int ret = mFont.mHeight;
+		for (int c = 0; c < mLength; c++)
+		{
+			if (mString[c] == '\n')
+			{
+				ret += mFont.mHeight;
+				continue;
+			}
+		}
+		return ret;
+	}
+
+	public boolean test(float x, float y)
+	{
+		float left = getXPosition(0);
+		if (x >= left)
+			if (y >= mPosition.mY)
+				if (x < left + getWidth())
+					if (y < mPosition.mY + getHeight())
+						return true;
+		return false;
+
 	}
 }

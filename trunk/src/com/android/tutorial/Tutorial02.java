@@ -3,26 +3,32 @@ package com.android.tutorial;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleSprite;
+import com.android.angle.AngleSpriteLayout;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
 /**
- * In this tutorial, we create a sprites engine and add an AngleSimpleSprite.
+ * In this tutorial, we create a sprites engine and add an AngleSprite.
  * 
- * We learn to: -Add one rendering engine to main engine. In this case a sprites
- * engine. -Create an AngleSimpleSprite(Width, Height, Resource, Crop Left, Crop
- * Top, Crop Width, Crop Height) -Change the position of the sprite
+ * We learn to:
+ * -Create a basic game engine 
+ * -Add one rendering engine to main game engine. In this case a sprites engine. 
+ * -Create an AngleSprite(Engine, Width, Height, ResourceId, 
+ *                        Crop Left, Crop Top, Crop Width, Crop Height) 
+ * -Change the position of the sprite
  * 
  * @author Ivan Pajuelo
  * 
  */
 public class Tutorial02 extends Activity
 {
-	private AngleSurfaceView mView;
-	private AngleSpritesEngine mSprites; // The engine where the sprite will be
-	// added
-	private AngleSprite mLogo; // A simple sprite. It doesn't supports
+	private AngleSurfaceView mView; //Main view
+	private AngleAbstractGameEngine mGame; //Simplest game engine. Only renders
+	private AngleSpritesEngine mSprites; //The engine where the sprite will be added
+	private AngleSpriteLayout mLogoLayout; //The layout (see below)
+	private AngleSprite mLogo; //The sprite (see below)
 
 	// scale, rotation nor effects
 
@@ -32,18 +38,27 @@ public class Tutorial02 extends Activity
 		super.onCreate(savedInstanceState);
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
+		
+		//1st we need a game engine that contains the rendering engines tree
+		mGame=new AngleAbstractGameEngine(mView);
 
-		mSprites = new AngleSpritesEngine(10, 0); // Create the sprites engine
-		// with maximum 10 sprites and 0
-		// references (see tutorial 6)
-		mView.addEngine(mSprites); // and adds it to main engine
+		// Create a sprites engine with maximum of 10 layouts and 10 sprites
+		mSprites = new AngleSpritesEngine(10, 10); 
+		
+		// and adds it to our game engine
+		mGame.addEngine(mSprites); 
 
-		// Create one simple sprite with the logo and place it at position 100,100
-		mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0, 128,
-				128);
-		mLogo.mCenter.set(100, 100); // Set position
-		mSprites.addSprite(mLogo); // The sprites engine will draw all the sprites
-		// added automatically
+		
+		// Create a layout that describes how the sprite will be rendered (the layout will be automatically added to mSprites)
+		mLogoLayout = new AngleSpriteLayout(mSprites, 128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
+		// Create a sprite that use this layout (the sprite will be automatically added to mSprites and render if visible)
+		mLogo = new AngleSprite (mSprites, mLogoLayout);
+		// Set position
+		mLogo.mCenter.set(100, 100); 
+
+		//Set the game engine to run and render
+		//In this sample (AngleAbstractGameEngine) only render
+		mView.setGameEngine(mGame);  
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Base physic object
@@ -23,8 +23,7 @@ public class AnglePhysicObject
 	private int mFriction;
 	public AngleVisualObject mVisual;
 
-	public AnglePhysicObject(AngleVisualObject visual, int maxSegmentColliders,
-			int maxCircleColliders)
+	public AnglePhysicObject(AngleVisualObject visual, int maxSegmentColliders, int maxCircleColliders)
 	{
 		mVisual = visual;
 		mMaxSegmentColliders = maxSegmentColliders;
@@ -127,8 +126,7 @@ public class AnglePhysicObject
 		float oFinalVelY = 0f;
 		if (mMass > 0) // Mass is not infinite
 		{
-			mFinalVelY = (momentum + other.mMass * e * (oVelY - mVelY))
-					/ totalMass;
+			mFinalVelY = (momentum + other.mMass * e * (oVelY - mVelY)) / totalMass;
 			// mFinalVelY=((mMass-other.mMass*e)*mVelY+other.mMass*(1+e)*oVelY)/totalMass;
 			mFinalVelX = mVelX * (1 / f) - oVelX * (1 - (1 / f)); // Friction
 		}
@@ -138,7 +136,8 @@ public class AnglePhysicObject
 			oFinalVelY = (momentum + mMass * e * (mVelY - oVelY)) / totalMass;
 			// oFinalVelY=(mMass*(1+e)*mVelY+(other.mMass-mMass*e)*oVelY)/totalMass;
 			oFinalVelX = oVelX * (1 / f) + mVelX * (1 - (1 / f)); // Friction
-		} else
+		}
+		else
 			mFinalVelY = -mFinalVelY;
 
 		if (mMass == 0) // Mass is infinite
@@ -154,7 +153,7 @@ public class AnglePhysicObject
 		other.mVelocity.mY = oFinalVelY * nCos + oFinalVelX * nSin;
 	}
 
-	public void draw(GL10 gl)
+	public void draw(GL11 gl)
 	{
 		for (int mc = 0; mc < mCircleCollidersCount; mc++)
 			mCircleColliders[mc].draw(gl);

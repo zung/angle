@@ -3,7 +3,6 @@ package com.android.angle;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
@@ -16,7 +15,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
 public class AngleTileEngine extends AngleAbstractEngine
 {
 	public int mResourceID; // Resource bitmap
-	public int mTextureID; // Texture ID on AngleTextureEngine
+	public AngleTexture mTexture;
 	protected int[] mTextureCrop = new int[4]; // Cropping coordinates
 	public int mTexturePitch; // Horizontal tiles in texture
 	public int mTilesCount; // Number of tiles in texture
@@ -50,11 +49,10 @@ public class AngleTileEngine extends AngleAbstractEngine
 	 * @param mapHeight
 	 *           Height of tilemap
 	 */
-	public AngleTileEngine(int resourceID, int texturePitch, int tilesCount,
-			int tileWidth, int tileHeight, int mapWidth, int mapHeight)
+	public AngleTileEngine(int resourceID, int texturePitch, int tilesCount, int tileWidth, int tileHeight, int mapWidth, int mapHeight)
 	{
 		mResourceID = resourceID;
-		mTextureID = -1;
+		mTexture = null;
 		mTexturePitch = texturePitch;
 		mTilesCount = tilesCount;
 		mTileWidth = tileWidth;
@@ -82,47 +80,42 @@ public class AngleTileEngine extends AngleAbstractEngine
 		try
 		{
 			istream.read(mMap, 0, mMapWidth * mMapHeight);
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void drawFrame(GL10 gl)
+	public void drawFrame(GL11 gl)
 	{
-		if (mTextureID >= 0)
+		if (mTexture != null)
 		{
-			if (!AngleTextureEngine.hasChanges)
+			if (!AngleMainEngine.mTexturesLost)
 			{
 				int offsetX = (int) mLeft % mTileWidth;
 				int offsetY = (int) mTop % mTileHeight;
 				int W = mViewWidth + ((offsetX > 0) ? 1 : 0);
 				int H = mViewHeight + ((offsetY > 0) ? 1 : 0);
-				AngleTextureEngine.bindTexture(gl, mTextureID);
+				gl.glBindTexture(GL11.GL_TEXTURE_2D, mTexture.mHWTextureID);
 				for (int y = 0; y < H; y++)
 				{
 					for (int x = 0; x < W; x++)
 					{
-						int mTileIdx = ((y + ((int) mTop / mTileHeight)) * mMapWidth
-								+ x + ((int) mLeft / mTileWidth));
+						int mTileIdx = ((y + ((int) mTop / mTileHeight)) * mMapWidth + x + ((int) mLeft / mTileWidth));
 						int mTile = 0;
 						if ((mTileIdx >= 0) && (mTileIdx < mMapWidth * mMapHeight))
 							mTile = mMap[mTileIdx];
 						if (mTile < mTilesCount)
 						{
 							mTextureCrop[0] = (mTile % mTexturePitch) * mTileWidth; // Ucr
-							mTextureCrop[1] = (mTile / mTexturePitch) * mTileHeight
-									+ mTileHeight; // Vcr
+							mTextureCrop[1] = (mTile / mTexturePitch) * mTileHeight + mTileHeight; // Vcr
 
-							((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-									GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
+							((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureCrop, 0);
 
-							((GL11Ext) gl).glDrawTexfOES(
-									mX - offsetX + x * mTileWidth,
-									AngleMainEngine.mHeight
-											- (mY - offsetY + y * mTileHeight), mZ,
-									mTileWidth, mTileHeight);
+							((GL11Ext) gl).glDrawTexfOES(mX - offsetX + x * mTileWidth,
+									AngleMainEngine.mHeight - (mY - offsetY + y * mTileHeight), mZ, mTileWidth, mTileHeight);
 						}
 					}
 				}
@@ -131,9 +124,9 @@ public class AngleTileEngine extends AngleAbstractEngine
 	}
 
 	@Override
-	public void loadTextures(GL10 gl)
+	public void beforeLoadTextures(GL11 gl)
 	{
-		mTextureID = AngleTextureEngine.createHWTextureFromResource(mResourceID);
-		super.loadTextures(gl);
+		mTexture = AngleTextureEngine.createTextureFromResourceId(mResourceID);
+		super.beforeLoadTextures(gl);
 	}
 }

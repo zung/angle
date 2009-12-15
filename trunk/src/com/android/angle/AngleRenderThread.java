@@ -2,8 +2,8 @@ package com.android.angle;
 
 import java.util.concurrent.Semaphore;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.egl.EGL11;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.os.Handler;
 import android.util.Log;
@@ -14,10 +14,9 @@ import android.util.Log;
  * @author Ivan Pajuelo
  * 
  */
-class AngleRenderThread extends Thread
+public class AngleRenderThread extends Thread
 {
-	private static final int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0,
-			EGL10.EGL_NONE };
+	private static final int[] configSpec = { EGL11.EGL_DEPTH_SIZE, 0, EGL11.EGL_NONE };
 	private static final Semaphore sEglSemaphore = new Semaphore(1);
 	private boolean mDone = false;
 	private boolean mPaused = true;
@@ -26,14 +25,14 @@ class AngleRenderThread extends Thread
 	private boolean mContextLost = true;
 	private int mWidth = 0;
 	private int mHeight = 0;
-	private Runnable mBeforeDraw = null;
+	protected AngleAbstractGameEngine mGameEngine = null;
 	private EGLHelper mEglHelper = null;
-	public  static GL10 gl = null;
-	private boolean needStartEgl = true;
-	private boolean needCreateSurface = false;
+	public static GL11 gl = null;
+	private boolean needStartEgl = false;
 	private boolean needResize = false;
 	private AngleMainEngine mRenderEngine;
 	public Handler mHandler = null;
+	private AngleAbstractGameEngine mNewGameEngine = null;
 
 	AngleRenderThread(AngleMainEngine renderEngine)
 	{
@@ -50,17 +49,19 @@ class AngleRenderThread extends Thread
 			try
 			{
 				sEglSemaphore.acquire();
-			} catch (InterruptedException e)
+			}
+			catch (InterruptedException e)
 			{
-				Log.e("AngleRenderThread", "sEglSemaphore.acquire() exception: "
-						+ e.getMessage());
+				Log.e("AngleRenderThread", "sEglSemaphore.acquire() exception: " + e.getMessage());
 				return;
 			}
 			guardedRun();
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			Log.e("AngleRenderThread", "guarded() exception: " + e.getMessage());
-		} finally
+		}
+		finally
 		{
 			mRenderEngine.onDestroy(gl);
 			sEglSemaphore.release();
@@ -76,18 +77,15 @@ class AngleRenderThread extends Thread
 
 		mDone = false;
 
-		Log.d("AngleRenderThread", "run init "+this);
-
 		while (!mDone)
 		{
-
 			synchronized (this)
 			{
 				if (mPaused)
 				{
 					mEglHelper.finish();
 					needStartEgl = true;
-					Log.d("AngleRenderThread", "PAUSED...");
+					Log.d("AngleRenderThread", "Paused!");
 				}
 				if (needToWait())
 				{
@@ -106,33 +104,41 @@ class AngleRenderThread extends Thread
 				}
 
 				// Captures variables values synchronized
-				needCreateSurface = AngleSurfaceView.mSizeChanged;
-				AngleSurfaceView.mSizeChanged = false;
+				if (AngleSurfaceView.mSizeChanged)
+				{
+					AngleSurfaceView.mSizeChanged = false;
+					gl = null;
+				}
 			}
+			if (mNewGameEngine != null)
+				changeGameEngine(gl);
 			if (needStartEgl)
 			{
 				needStartEgl = false;
 				Log.d("AngleRenderThread", "Need Start EGL");
 				mEglHelper.start(configSpec);
-				needCreateSurface = true;
-				AngleTextureEngine.hasChanges = true;
+				gl = null;
 			}
-			if (needCreateSurface)
+			if (gl == null)
 			{
-				needCreateSurface = false;
+				AngleMainEngine.mTexturesLost = true;
+				AngleMainEngine.mBuffersLost = true;
 				Log.d("AngleRenderThread", "needCreateSurface");
-				gl = (GL10) mEglHelper
-						.createSurface(AngleSurfaceView.mSurfaceHolder);
+				gl = (GL11) mEglHelper.createSurface(AngleSurfaceView.mSurfaceHolder);
+				AngleTextureEngine.genTextures(gl);
 				needResize = true;
+				lCTM=0;
 			}
-			if (AngleTextureEngine.hasChanges)
+			if (AngleMainEngine.mTexturesLost)
 			{
 				Log.d("AngleRenderThread", "needLoadTextures");
-				mRenderEngine.loadTextures(gl);
+				mRenderEngine.beforeLoadTextures(gl);
+				AngleTextureEngine.loadTextures();
+				mRenderEngine.afterLoadTextures(gl);
 			}
-			if (AngleTextureEngine.buffersChanged)
+			if (AngleMainEngine.mBuffersLost)
 			{
-				AngleTextureEngine.buffersChanged=false;
+				AngleMainEngine.mBuffersLost = false;
 				Log.d("AngleRenderThread", "needCreateBuffers");
 				mRenderEngine.createBuffers(gl);
 			}
@@ -142,34 +148,53 @@ class AngleRenderThread extends Thread
 				Log.d("AngleRenderThread", "needResize");
 				AngleMainEngine.sizeChanged(gl, mWidth, mHeight);
 			}
-			if (mHasSurface && (AngleMainEngine.mWidth > 0)
-					&& (AngleMainEngine.mHeight > 0))
+			if ((gl!=null) && (!AngleMainEngine.mBuffersLost) && (!AngleMainEngine.mTexturesLost))
 			{
-				AngleMainEngine.secondsElapsed = 0.0f;
-				long CTM = System.currentTimeMillis();
-				if (lCTM > 0)
-					AngleMainEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
-				lCTM = CTM;
-				
-				if (AngleMainEngine.mDirty)
-					mHandler.sendEmptyMessage(AngleMainEngine.MSG_CONTEXT_LOST);
-
-				if (mBeforeDraw != null)
-					mBeforeDraw.run();
-
-				mRenderEngine.drawFrame(gl);
-
-				mEglHelper.swap();
+				if (mHasSurface && (AngleMainEngine.mWidth > 0) && (AngleMainEngine.mHeight > 0))
+				{
+					AngleMainEngine.secondsElapsed = 0.0f;
+					long CTM = System.currentTimeMillis();
+					if (lCTM > 0)
+						AngleMainEngine.secondsElapsed = (CTM - lCTM) / 1000.f;
+					lCTM = CTM;
+	
+					if (AngleMainEngine.mContextLost)
+					{
+						mHandler.sendEmptyMessage(AngleMainEngine.MSG_CONTEXT_LOST);
+						mPaused = true;
+					}
+	
+					if (mGameEngine != null)
+						mGameEngine.run();
+	
+					mRenderEngine.drawFrame(gl);
+	
+					mEglHelper.swap();
+				}
 			}
 		}
 
 		mEglHelper.finish();
 	}
 
+	private void changeGameEngine(GL11 gl)
+	{
+		if (mGameEngine != null)
+		{
+			mGameEngine.onDestroy(gl);
+			mGameEngine = null;
+			System.gc();
+		}
+		mGameEngine = mNewGameEngine;
+		mNewGameEngine = null;
+		mRenderEngine.setRootEngine(gl, mGameEngine.mRootEngine);
+		mEglHelper.finish();
+		needStartEgl = true;
+	}
+
 	private boolean needToWait()
 	{
-		return (mPaused || (!mHasFocus) || (!mHasSurface) || mContextLost)
-				&& (!mDone);
+		return (mPaused || (!mHasFocus) || (!mHasSurface) || mContextLost) && (!mDone);
 	}
 
 	protected void surfaceCreated()
@@ -209,6 +234,7 @@ class AngleRenderThread extends Thread
 		{
 			Log.d("AngleRenderThread", "PAUSED!!!");
 			mPaused = true;
+			notify();
 		}
 	}
 
@@ -246,16 +272,16 @@ class AngleRenderThread extends Thread
 			try
 			{
 				join();
-			} catch (InterruptedException ex)
+			}
+			catch (InterruptedException ex)
 			{
 				Thread.currentThread().interrupt();
 			}
 		}
 	}
 
-	protected void setBeforeDraw(Runnable beforeDraw)
+	protected void setGameEngine(AngleAbstractGameEngine gameEngine)
 	{
-		mBeforeDraw = beforeDraw;
+		mNewGameEngine = gameEngine;
 	}
-
 }

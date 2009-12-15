@@ -2,7 +2,10 @@ package com.android.angle;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -12,13 +15,13 @@ import android.view.SurfaceView;
  * @author Ivan Pajuelo
  * 
  */
-public class AngleSurfaceView extends SurfaceView implements
-		SurfaceHolder.Callback
+public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 {
-	private static AngleRenderThread mRenderThread;
+	public static AngleRenderThread mRenderThread;
 	public static boolean mSizeChanged = true;
 	public static SurfaceHolder mSurfaceHolder;
 	private static AngleMainEngine mRenderEngine;
+	private PowerManager.WakeLock mWakeLock;
 
 	public AngleSurfaceView(Context context)
 	{
@@ -41,6 +44,16 @@ public class AngleSurfaceView extends SurfaceView implements
 		mRenderEngine = new AngleMainEngine(10);
 		mRenderThread = new AngleRenderThread(mRenderEngine);
 		mRenderThread.start();
+		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+		mWakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Angle");
+	}
+
+	public void setAwake(boolean awake)
+	{
+		if (awake)
+			mWakeLock.acquire();
+		else
+			mWakeLock.release();
 	}
 
 	public void surfaceCreated(SurfaceHolder holder)
@@ -91,18 +104,6 @@ public class AngleSurfaceView extends SurfaceView implements
 		System.gc();
 	}
 
-	/**
-	 * Set the callback function to be called before draw every frame
-	 * 
-	 * @param beforeDraw
-	 *           Runnable derived class (usually game engine).
-	 */
-	public void setBeforeDraw(Runnable beforeDraw)
-	{
-		if (mRenderThread != null)
-			mRenderThread.setBeforeDraw(beforeDraw);
-	}
-
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus)
 	{
@@ -119,14 +120,48 @@ public class AngleSurfaceView extends SurfaceView implements
 			mRenderThread.requestExitAndWait();
 	}
 
-	public void addEngine(AngleAbstractEngine engine)
-	{
-		if (mRenderEngine != null)
-			mRenderEngine.addEngine(engine);
-	}
-
 	public void notifyTo(Handler handler)
 	{
-		mRenderThread.mHandler=handler;
+		mRenderThread.mHandler = handler;
 	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		if (mRenderThread != null)
+			if (mRenderThread.mGameEngine != null)
+				return mRenderThread.mGameEngine.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		if (mRenderThread != null)
+			if (mRenderThread.mGameEngine != null)
+				return mRenderThread.mGameEngine.onKeyDown(keyCode, event);
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onTrackballEvent(MotionEvent event)
+	{
+		if (mRenderThread != null)
+			if (mRenderThread.mGameEngine != null)
+				return mRenderThread.mGameEngine.onTrackballEvent(event);
+		return super.onTrackballEvent(event);
+	}
+
+	/**
+	 * Set the callback function to be called before draw every frame
+	 * 
+	 * @param beforeDraw
+	 *           Runnable derived class (usually game engine).
+	 */
+	public void setGameEngine(AngleAbstractGameEngine gameEngine)
+	{
+		if (mRenderThread != null)
+			mRenderThread.setGameEngine(gameEngine);
+	}
+
 }
