@@ -6,42 +6,54 @@ import android.util.Log;
 
 import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
-import com.android.angle.AngleSprite;
+import com.android.angle.AngleSpriteX;
+import com.android.angle.AngleSpriteXLayout;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 
 /**
- * In this tutorial we use a Runnable to implement a little game engine
+ * In this tutorial we will implement a little game engine with fps count
  * 
- * We learn to: -Add a game engine. -Use AgleSprite and how to rotate it
- * -Implements a FPS counter -Make the changes consistent with the time elapsed
- * since last frame
+ * We learn to: 
+ * -Create overloaded game engine. 
+ * -Use AgleSpriteX and how to rotate it
+ * -Implements a FPS counter 
+ * -Make the changes consistent with the time elapsed
+ *  since last frame
  * 
  * @author Ivan Pajuelo
  * 
  */
 public class Tutorial03 extends Activity
 {
-	private MyGameEngine mGame; // Independent game engine
 	private AngleSurfaceView mView;
-	private AngleSpritesEngine mSprites;
-	private AngleSprite mLogo; // In this sample use AmgleSprite (see below)
+	private MyGameEngine mGame;
 
 	class MyGameEngine extends AngleAbstractGameEngine // Game engine class
 	{
+		private AngleSpritesEngine mSprites;
+		private AngleSpriteXLayout mLogoLayout; 
+		private AngleSpriteX mLogo; // In this sample use AmgleSpriteX (see below)
+
 		// FPS Counter
 		private int frameCount = 0;
 		private long lCTM = 0;
-
 		// -----------
 
 		MyGameEngine(AngleSurfaceView view)
 		{
 			super(view);
+			mSprites = new AngleSpritesEngine(10, 10);
+			addEngine(mSprites);
+
+			mLogoLayout = new AngleSpriteXLayout(mSprites, 128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
+			// Use AngleSprite instead of AngleSimpleSprite to rotate it
+			mLogo=new AngleSpriteX(mSprites, mLogoLayout);
+			mLogo.mCenter.set(100, 100);
 		}
 
-		// The game engine must be a Runnable to callback his method run before
-		// draw every frame
+		// This method will be called before draw every frame
+		@Override
 		public void run()
 		{
 			// Add FPS record to log every 100 frames
@@ -69,16 +81,9 @@ public class Tutorial03 extends Activity
 		mView = new AngleSurfaceView(this);
 		setContentView(mView);
 
-		mGame = new MyGameEngine(mView); // Tells view what method must call before
-													// draw every frame
-
-		mSprites = new AngleSpritesEngine(10, 0);
-		mView.addEngine(mSprites);
-
-		// Use AngleSprite instead of AngleSimpleSprite to rotate it
-		mLogo = new AngleSprite(128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
-		mLogo.mCenter.set(100, 100);
-		mSprites.addSprite(mLogo);
+		mGame = new MyGameEngine(mView); 
+		
+		mView.setGameEngine(mGame);
 	}
 
 	@Override

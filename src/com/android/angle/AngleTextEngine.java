@@ -1,6 +1,6 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Engine to draw strings of text
@@ -114,24 +114,25 @@ public class AngleTextEngine extends AngleAbstractEngine
 		}
 	}
 
-	public void drawFrame(GL10 gl)
+	public void drawFrame(GL11 gl)
 	{
-		if (!AngleTextureEngine.hasChanges)
+		if (!AngleMainEngine.mTexturesLost)
 		{
 			for (int s = 0; s < mStringsCount; s++)
-				mStrings[s].draw(gl);
+				if (mStrings[s].mVisible)
+					mStrings[s].draw(gl);
 		}
 		super.drawFrame(gl);
 	}
-
-	public void loadTextures(GL10 gl)
+/*
+	public void beforeLoadTextures(GL11 gl)
 	{
 		for (int s = 0; s < mFontsCount; s++)
 			mFonts[s].loadTexture(gl);
-		super.loadTextures(gl);
+		super.beforeLoadTextures(gl);
 	}
-
-	public void onDestroy(GL10 gl)
+*/
+	public void onDestroy(GL11 gl)
 	{
 		for (int s = 0; s < mFontsCount; s++)
 			mFonts[s] = null;

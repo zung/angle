@@ -1,6 +1,6 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Engine to draw colliders
@@ -18,7 +18,7 @@ public class AngleViewCollisionsEngine extends AngleAbstractEngine
 	}
 
 	@Override
-	public void drawFrame(GL10 gl)
+	public void drawFrame(GL11 gl)
 	{
 		for (int o = 0; o < mPhysicsEngine.mObjectsCount; o++)
 			mPhysicsEngine.mObjects[o].draw(gl);

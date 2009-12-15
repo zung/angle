@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.android.angle.AngleAbstractReference;
 import com.android.angle.AngleCircleCollider;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AnglePhysicObject;
 import com.android.angle.AnglePhysicsGameEngine;
 import com.android.angle.AngleSprite;
-import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 import com.android.angle.AngleViewCollisionsEngine;
@@ -28,6 +26,7 @@ import com.android.angle.AngleViewCollisionsEngine;
  */
 public class Tutorial07 extends Activity
 {
+	/*
 	private MyGameEngine mGame;
 	private AngleSurfaceView mView;
 
@@ -241,4 +240,5 @@ public class Tutorial07 extends Activity
 		mView.onDestroy();
 		super.onDestroy();
 	}
+	*/
 }

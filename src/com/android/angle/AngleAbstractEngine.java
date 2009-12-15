@@ -1,6 +1,6 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.util.Log;
 
@@ -10,7 +10,7 @@ import android.util.Log;
  * @author Ivan Pajuelo
  * 
  */
-public abstract class AngleAbstractEngine
+public class AngleAbstractEngine
 {
 	private static final int sMaxEngines = 10; // Default sub-engines slots
 	private int mMaxEngines; // Engine limit
@@ -45,11 +45,33 @@ public abstract class AngleAbstractEngine
 	public void addEngine(AngleAbstractEngine engine)
 	{
 		if (mEnginesCount < mMaxEngines)
-		{
 			mEngines[mEnginesCount++] = engine;
-		} else
+		else
 			Log.e("AngleAbstractEngine", "addEngine() MaxEngines reached");
 
+	}
+
+	/**
+	 * Remove rendering engine from main engine
+	 * 
+	 * @param engine
+	 *           Engine to remove
+	 */
+	protected void removeEngine(AngleAbstractEngine engine)
+	{
+		int r;
+
+		for (r = 0; r < mEnginesCount; r++)
+			if (mEngines[r] == engine)
+				break;
+
+		if (r < mEnginesCount)
+		{
+			mEnginesCount--;
+			for (int d = r; d < mEnginesCount; d++)
+				mEngines[d] = mEngines[d + 1];
+			mEngines[mEnginesCount] = null;
+		}
 	}
 
 	/**
@@ -57,7 +79,7 @@ public abstract class AngleAbstractEngine
 	 * @param gl
 	 *           Surface where draw
 	 */
-	public void drawFrame(GL10 gl)
+	public void drawFrame(GL11 gl)
 	{
 		for (int r = 0; r < mEnginesCount; r++)
 			mEngines[r].drawFrame(gl);
@@ -69,10 +91,10 @@ public abstract class AngleAbstractEngine
 	 * @param gl
 	 *           OpenGL ES surface
 	 */
-	public void loadTextures(GL10 gl)
+	public void beforeLoadTextures(GL11 gl)
 	{
 		for (int r = 0; r < mEnginesCount; r++)
-			mEngines[r].loadTextures(gl);
+			mEngines[r].beforeLoadTextures(gl);
 	}
 
 	/**
@@ -81,19 +103,20 @@ public abstract class AngleAbstractEngine
 	 * @param gl
 	 *           OpenGL ES surface
 	 */
-	public void afterLoadTextures(GL10 gl)
+	public void afterLoadTextures(GL11 gl)
 	{
 		for (int r = 0; r < mEnginesCount; r++)
 			mEngines[r].afterLoadTextures(gl);
 	}
 
 	/**
-	 * Buffers have changes. Check if any engine needs to do something with hardware buffers
+	 * Buffers have changes. Check if any engine needs to do something with
+	 * hardware buffers
 	 * 
 	 * @param gl
 	 *           OpenGL ES surface
 	 */
-	public void createBuffers(GL10 gl)
+	public void createBuffers(GL11 gl)
 	{
 		for (int r = 0; r < mEnginesCount; r++)
 			mEngines[r].createBuffers(gl);
@@ -105,7 +128,7 @@ public abstract class AngleAbstractEngine
 	 * @param gl
 	 *           OpenGL ES surface
 	 */
-	public void onDestroy(GL10 gl)
+	public void onDestroy(GL11 gl)
 	{
 		for (int r = 0; r < mEnginesCount; r++)
 		{

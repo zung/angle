@@ -30,6 +30,12 @@ import android.view.SurfaceHolder;
 
 public class EGLHelper
 {
+	EGL10 mEgl;
+	EGLDisplay mEglDisplay;
+	EGLSurface mEglSurface;
+	EGLConfig mEglConfig;
+	EGLContext mEglContext;
+
 	public EGLHelper()
 	{
 
@@ -67,8 +73,7 @@ public class EGLHelper
 		 * Create an OpenGL ES context. This must be done only once, an OpenGL
 		 * context is a somewhat heavy object.
 		 */
-		mEglContext = mEgl.eglCreateContext(mEglDisplay, mEglConfig,
-				EGL10.EGL_NO_CONTEXT, null);
+		mEglContext = mEgl.eglCreateContext(mEglDisplay, mEglConfig, EGL10.EGL_NO_CONTEXT, null);
 
 		mEglSurface = null;
 	}
@@ -87,24 +92,22 @@ public class EGLHelper
 			/*
 			 * Unbind and destroy the old EGL surface, if there is one.
 			 */
-			mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
-					EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+			mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
 			mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
 		}
 
 		/*
 		 * Create an EGL surface we can render into.
 		 */
-		mEglSurface = mEgl.eglCreateWindowSurface(mEglDisplay, mEglConfig,
-				holder, null);
+		mEglSurface = mEgl.eglCreateWindowSurface(mEglDisplay, mEglConfig, holder, null);
 
 		/*
 		 * Before we can issue GL commands, we need to make sure the context is
 		 * current and bound to a surface.
 		 */
 		mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext);
-		if (mEgl.eglGetError()==EGL11.EGL_CONTEXT_LOST)
-			AngleMainEngine.mDirty=true;
+		if (mEgl.eglGetError() == EGL11.EGL_CONTEXT_LOST)
+			AngleMainEngine.mContextLost = true;
 
 		GL gl = mEglContext.getGL();
 		return gl;
@@ -129,30 +132,23 @@ public class EGLHelper
 
 	public void finish()
 	{
-		boolean success=true;
+		boolean success = true;
 		if (mEglSurface != null)
 		{
-			success&=mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
-					EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-			success&=mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
+			success &= mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+			success &= mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
 			mEglSurface = null;
 		}
 		if (mEglContext != null)
 		{
-			success&=mEgl.eglDestroyContext(mEglDisplay, mEglContext);
+			success &= mEgl.eglDestroyContext(mEglDisplay, mEglContext);
 			mEglContext = null;
 		}
 		if (mEglDisplay != null)
 		{
-			success&=mEgl.eglTerminate(mEglDisplay);
+			success &= mEgl.eglTerminate(mEglDisplay);
 			mEglDisplay = null;
 		}
-		AngleMainEngine.mDirty=!success;
+		AngleMainEngine.mContextLost = !success;
 	}
-
-	EGL10 mEgl;
-	EGLDisplay mEglDisplay;
-	EGLSurface mEglSurface;
-	EGLConfig mEglConfig;
-	EGLContext mEglContext;
 }

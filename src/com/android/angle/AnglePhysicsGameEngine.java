@@ -53,10 +53,8 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 		for (int o = 0; o < mObjectsCount; o++)
 		{
 			// Gravity
-			mObjects[o].mVelocity.mX += mObjects[o].mMass * mGravity.mX
-					* AngleMainEngine.secondsElapsed;
-			mObjects[o].mVelocity.mY += mObjects[o].mMass * mGravity.mY
-					* AngleMainEngine.secondsElapsed;
+			mObjects[o].mVelocity.mX += mObjects[o].mMass * mGravity.mX * AngleMainEngine.secondsElapsed;
+			mObjects[o].mVelocity.mY += mObjects[o].mMass * mGravity.mY * AngleMainEngine.secondsElapsed;
 			if ((mObjects[o].mVelocity.mX != 0) || (mObjects[o].mVelocity.mY != 0))
 			{
 				// Air viscosity
@@ -65,8 +63,7 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 					float surface = mObjects[o].getSurface();
 					if (surface > 0)
 					{
-						float decay = surface * mViscosity
-								* AngleMainEngine.secondsElapsed;
+						float decay = surface * mViscosity * AngleMainEngine.secondsElapsed;
 						if (mObjects[o].mVelocity.mX > decay)
 							mObjects[o].mVelocity.mX -= decay;
 						else if (mObjects[o].mVelocity.mX < -decay)
@@ -83,10 +80,8 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 				}
 			}
 			// Velocity
-			mObjects[o].mDelta.mX = mObjects[o].mVelocity.mX
-					* AngleMainEngine.secondsElapsed;
-			mObjects[o].mDelta.mY = mObjects[o].mVelocity.mY
-					* AngleMainEngine.secondsElapsed;
+			mObjects[o].mDelta.mX = mObjects[o].mVelocity.mX * AngleMainEngine.secondsElapsed;
+			mObjects[o].mDelta.mY = mObjects[o].mVelocity.mY * AngleMainEngine.secondsElapsed;
 		}
 	}
 
@@ -133,10 +128,8 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 						{
 							mObjects[o].mVisual.mCenter.mX -= mObjects[o].mDelta.mX;
 							mObjects[o].mVisual.mCenter.mY -= mObjects[o].mDelta.mY;
-							mObjects[c].mDelta.mX = mObjects[c].mVelocity.mX
-									* AngleMainEngine.secondsElapsed;
-							mObjects[c].mDelta.mY = mObjects[c].mVelocity.mY
-									* AngleMainEngine.secondsElapsed;
+							mObjects[c].mDelta.mX = mObjects[c].mVelocity.mX * AngleMainEngine.secondsElapsed;
+							mObjects[c].mDelta.mY = mObjects[c].mVelocity.mY * AngleMainEngine.secondsElapsed;
 							break;
 						}
 					}

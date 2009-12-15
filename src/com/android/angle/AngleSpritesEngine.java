@@ -1,6 +1,6 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Angle sprites engine Can operate in direct mode (sprites) or in indirect mode
@@ -11,29 +11,33 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class AngleSpritesEngine extends AngleAbstractEngine
 {
+	protected int mMaxLayouts;
+	protected AngleSpriteLayout[] mLayouts;
+	protected int mLayoutsCount;
 	protected int mMaxSprites;
 	protected AngleAbstractSprite[] mSprites;
 	protected int mSpritesCount;
-	protected int mMaxReferences;
-	protected AngleAbstractReference[] mReferences;
-	protected int mReferencesCount;
+	protected AngleAbstractSprite[] mTSSprites;
+	protected int mTSSpritesCount;
 
 	/**
 	 * 
 	 * @param maxSprites
 	 *           Max sprites available in engine
-	 * @param maxReferences
+	 * @param maxSprites
 	 *           Max references available in engine. If >0 references will be
 	 *           used instead of sprites.
 	 */
-	public AngleSpritesEngine(int maxSprites, int maxReferences)
+	public AngleSpritesEngine(int maxLayouts, int maxSprites)
 	{
+		mMaxLayouts = maxLayouts;
 		mMaxSprites = maxSprites;
-		mMaxReferences = maxReferences;
+		mLayoutsCount = 0;
 		mSpritesCount = 0;
-		mReferencesCount = 0;
+		mTSSpritesCount = 0;
+		mLayouts = new AngleSpriteLayout[mMaxLayouts];
 		mSprites = new AngleAbstractSprite[mMaxSprites];
-		mReferences = new AngleAbstractReference[mMaxReferences];
+		mTSSprites = new AngleAbstractSprite[mMaxSprites];
 	}
 
 	/**
@@ -42,7 +46,53 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param sprite
 	 *           Sprite to be added
 	 */
-	public synchronized void addSprite(AngleAbstractSprite sprite)
+	public void addLayout(AngleSpriteLayout layout)
+	{
+		if (mLayoutsCount < mMaxLayouts)
+		{
+			for (int s = 0; s < mLayoutsCount; s++)
+				if (mLayouts[mLayoutsCount] == layout)
+					return;
+			mLayouts[mLayoutsCount++] = layout;
+		}
+	}
+
+	/**
+	 * Removes a sprite
+	 * 
+	 * @param sprite
+	 *           Sprite to be removed
+	 */
+	public void removeLayout(AngleSpriteLayout layout)
+	{
+		int r;
+
+		for (r = 0; r < mLayoutsCount; r++)
+			if (mLayouts[r] == layout)
+				break;
+
+		if (r < mLayoutsCount)
+		{
+			mLayoutsCount--;
+			for (int d = r; d < mLayoutsCount; d++)
+				mLayouts[d] = mLayouts[d + 1];
+			mLayouts[mLayoutsCount] = null;
+		}
+	}
+
+	/**
+	 * Adds a reference
+	 * 
+	 * @param sprite
+	 *           Reference to be added
+	 */
+	public void addSprite(AngleAbstractSprite sprite)
+	{
+		if (mTSSpritesCount < mMaxSprites)
+			mTSSprites[mTSSpritesCount++] = sprite;
+	}
+
+	public void tsAddSprite(AngleAbstractSprite sprite)
 	{
 		if (mSpritesCount < mMaxSprites)
 		{
@@ -54,10 +104,10 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	}
 
 	/**
-	 * Removes a sprite
+	 * Removes a reference
 	 * 
 	 * @param sprite
-	 *           Sprite to be removed
+	 *           Reference to be removed
 	 */
 	public synchronized void removeSprite(AngleAbstractSprite sprite)
 	{
@@ -76,123 +126,71 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 		}
 	}
 
-	/**
-	 * Adds a reference
-	 * 
-	 * @param reference
-	 *           Reference to be added
-	 */
-	public synchronized void addReference(AngleAbstractReference reference)
-	{
-		if (mReferencesCount < mMaxReferences)
-		{
-			for (int s = 0; s < mReferencesCount; s++)
-				if (mReferences[mReferencesCount] == reference)
-					return;
-			reference.afterAdd();
-			mReferences[mReferencesCount++] = reference;
-		}
-	}
-
-	/**
-	 * Removes a reference
-	 * 
-	 * @param reference
-	 *           Reference to be removed
-	 */
-	public synchronized void removeRefernece(AngleAbstractReference reference)
-	{
-		int r;
-
-		for (r = 0; r < mReferencesCount; r++)
-			if (mReferences[r] == reference)
-				break;
-
-		if (r < mReferencesCount)
-		{
-			mReferencesCount--;
-			for (int d = r; d < mReferencesCount; d++)
-				mReferences[d] = mReferences[d + 1];
-			mReferences[mReferencesCount] = null;
-		}
-	}
-
 	@Override
-	public void drawFrame(GL10 gl)
+	public void drawFrame(GL11 gl)
 	{
-		if ((!AngleTextureEngine.hasChanges)&&(!AngleTextureEngine.buffersChanged))
+		if (mTSSpritesCount>0)
 		{
-			if (mMaxReferences > 0)
+			synchronized(this)
 			{
-				for (int s = 0; s < mReferencesCount; s++)
-					mReferences[s].draw(gl);
-			} else
-			{
-				for (int s = 0; s < mSpritesCount; s++)
-					mSprites[s].draw(gl);
+				for (int s = 0; s < mTSSpritesCount; s++)
+					tsAddSprite (mTSSprites[s]);
+				mTSSpritesCount=0;
 			}
+		}
+		if ((!AngleMainEngine.mTexturesLost) && (!AngleMainEngine.mBuffersLost))
+		{
+			for (int s = 0; s < mSpritesCount; s++)
+				if (mSprites[s].mVisible)
+					mSprites[s].draw(gl);
 		}
 		super.drawFrame(gl);
 	}
 
 	@Override
-	public void loadTextures(GL10 gl)
-	{
-		for (int s = 0; s < mSpritesCount; s++)
-			mSprites[s].loadTexture(gl);
-		super.loadTextures(gl);
-	}
-
-	@Override
-	public void afterLoadTextures(GL10 gl)
+	public void afterLoadTextures(GL11 gl)
 	{
 		for (int s = 0; s < mSpritesCount; s++)
 			mSprites[s].afterLoadTexture(gl);
-		for (int s = 0; s < mReferencesCount; s++)
-			mReferences[s].afterLoadTexture(gl);
 
-		if (gl!=null)
+		if (gl != null)
 		{
-			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+			gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+			gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 		}
 		super.afterLoadTextures(gl);
 	}
 
 	@Override
-	public void createBuffers(GL10 gl)
+	public void createBuffers(GL11 gl)
 	{
-		if (mMaxReferences > 0)
-		{
-			for (int s = 0; s < mReferencesCount; s++)
-				mReferences[s].createBuffers(gl);
-		} else
-		{
-			for (int s = 0; s < mSpritesCount; s++)
-				mSprites[s].createBuffers(gl);
-		}
+		for (int s = 0; s < mLayoutsCount; s++)
+			mLayouts[s].createBuffers(gl);
+		for (int s = 0; s < mSpritesCount; s++)
+			mSprites[s].createBuffers(gl);
 		super.createBuffers(gl);
 	}
 
-	public void onDestroy(GL10 gl)
+	@Override
+	public void onDestroy(GL11 gl)
 	{
-		if (gl!=null)
+		if (gl != null)
 		{
-			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+			gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+			gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
 		}
-		for (int s = 0; s < mSpritesCount; s++)
+		for (int s = 0; s < mLayoutsCount; s++)
 		{
-			mSprites[s].onDestroy(gl);
-			mSprites[s] = null;
+			mLayouts[s].onDestroy(gl);
+			mLayouts[s] = null;
+		}
+		mLayoutsCount = 0;
+		for (int r = 0; r < mSpritesCount; r++)
+		{
+			mSprites[r].onDestroy(gl);
+			mSprites[r] = null;
 		}
 		mSpritesCount = 0;
-		for (int r = 0; r < mReferencesCount; r++)
-		{
-			mReferences[r].onDestroy(gl);
-			mReferences[r] = null;
-		}
-		mReferencesCount = 0;
 		super.onDestroy(gl);
 	}
 }

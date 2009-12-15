@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.android.angle.AngleAbstractReference;
 import com.android.angle.AngleCircleCollider;
 import com.android.angle.AngleMainEngine;
 import com.android.angle.AnglePhysicObject;
 import com.android.angle.AnglePhysicsGameEngine;
 import com.android.angle.AngleSegmentCollider;
 import com.android.angle.AngleSprite;
-import com.android.angle.AngleSpriteReference;
 import com.android.angle.AngleSpritesEngine;
 import com.android.angle.AngleSurfaceView;
 import com.android.angle.AngleVisualObject;
@@ -33,6 +31,7 @@ import com.android.angle.AngleVisualObject;
 @SuppressWarnings("deprecation")
 public class Tutorial08 extends Activity
 {
+	/*
 	private MyGameEngine mGame;
 	private MyView mView;
 	private SensorManager mSensorManager;
@@ -320,4 +319,5 @@ public class Tutorial08 extends Activity
 		mView.onDestroy();
 		super.onDestroy();
 	}
+	*/
 }

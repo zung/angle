@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Segment collider
@@ -31,32 +31,30 @@ public class AngleSegmentCollider
 		calculate();
 	}
 
-	public void draw(GL10 gl)
+	public void draw(GL11 gl)
 	{
 		FloatBuffer vertices;
-		vertices = ByteBuffer.allocateDirect(2 * 2 * 4).order(
-				ByteOrder.nativeOrder()).asFloatBuffer();
+		vertices = ByteBuffer.allocateDirect(2 * 2 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
-		gl.glDisable(GL10.GL_TEXTURE_2D);
-		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL11.GL_TEXTURE_2D);
+		gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 		gl.glColor4f(1f, 0f, 0f, 1f);
-		gl.glTranslatef(mObject.mVisual.mCenter.mX, mObject.mVisual.mCenter.mY,
-				0.0f);
+		gl.glTranslatef(mObject.mVisual.mCenter.mX, mObject.mVisual.mCenter.mY, 0.0f);
 		vertices.clear();
 		int count = 0;
 		vertices.put(count++, mA.mX);
 		vertices.put(count++, mA.mY);
 		vertices.put(count++, mB.mX);
 		vertices.put(count++, mB.mY);
-		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertices);
-		gl.glDrawArrays(GL10.GL_LINES, 0, 2);
+		gl.glVertexPointer(2, GL11.GL_FLOAT, 0, vertices);
+		gl.glDrawArrays(GL11.GL_LINES, 0, 2);
 		gl.glPopMatrix();
 
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+		gl.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
 	private void calculate()
@@ -76,8 +74,7 @@ public class AngleSegmentCollider
 	public float closestDist(AngleCircleCollider other)
 	{
 		return Math
-				.abs((((mDir.mX) * ((other.mObject.mVisual.mCenter.mY + other.mCenter.mY)
-						- mObject.mVisual.mCenter.mY + mA.mY)) - ((mDir.mY) * ((other.mObject.mVisual.mCenter.mX + other.mCenter.mX)
+				.abs((((mDir.mX) * ((other.mObject.mVisual.mCenter.mY + other.mCenter.mY) - mObject.mVisual.mCenter.mY + mA.mY)) - ((mDir.mY) * ((other.mObject.mVisual.mCenter.mX + other.mCenter.mX)
 						- mObject.mVisual.mCenter.mX + mA.mX)))
 						/ mLength);
 	}
