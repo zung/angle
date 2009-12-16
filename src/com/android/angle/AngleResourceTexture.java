@@ -20,6 +20,7 @@ public class AngleResourceTexture extends AngleTexture
 
 	public Bitmap create()
 	{
+		//Log.e("Texture", "HID:"+mHWTextureID+", RID:"+mResourceID);
 		sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
 		InputStream is = AngleMainEngine.mContext.getResources().openRawResource(mResourceID);
 		Bitmap bitmap;

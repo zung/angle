@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.android.angle.AngleAbstractGameEngine;
 import com.android.angle.AngleMainEngine;
-import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteX;
 import com.android.angle.AngleSpriteXLayout;
 import com.android.angle.AngleSpritesEngine;

@@ -7,6 +7,8 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL11;
 
+import android.util.Log;
+
 /**
  * Sprite reference for dynamic add an remove from sprite engine
  * AngleSpritesEngine.useReferences must be set to true

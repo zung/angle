@@ -5,16 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import javax.microedition.khronos.opengles.GL11;
-
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.Bitmap.Config;
-import android.opengl.GLUtils;
 import android.util.Log;
 
 /**
