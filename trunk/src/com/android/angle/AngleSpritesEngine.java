@@ -17,27 +17,23 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	protected int mMaxSprites;
 	protected AngleAbstractSprite[] mSprites;
 	protected int mSpritesCount;
-	protected AngleAbstractSprite[] mTSSprites;
-	protected int mTSSpritesCount;
 
 	/**
 	 * 
 	 * @param maxSprites
 	 *           Max sprites available in engine
-	 * @param maxSprites
+	 * @param maxReferences
 	 *           Max references available in engine. If >0 references will be
 	 *           used instead of sprites.
 	 */
-	public AngleSpritesEngine(int maxLayouts, int maxSprites)
+	public AngleSpritesEngine(int maxLayouts, int maxReferences)
 	{
 		mMaxLayouts = maxLayouts;
-		mMaxSprites = maxSprites;
+		mMaxSprites = maxReferences;
 		mLayoutsCount = 0;
 		mSpritesCount = 0;
-		mTSSpritesCount = 0;
 		mLayouts = new AngleSpriteLayout[mMaxLayouts];
 		mSprites = new AngleAbstractSprite[mMaxSprites];
-		mTSSprites = new AngleAbstractSprite[mMaxSprites];
 	}
 
 	/**
@@ -46,7 +42,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param sprite
 	 *           Sprite to be added
 	 */
-	public void addLayout(AngleSpriteLayout layout)
+	public synchronized void addLayout(AngleSpriteLayout layout)
 	{
 		if (mLayoutsCount < mMaxLayouts)
 		{
@@ -63,7 +59,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param sprite
 	 *           Sprite to be removed
 	 */
-	public void removeLayout(AngleSpriteLayout layout)
+	public synchronized void removeLayout(AngleSpriteLayout layout)
 	{
 		int r;
 
@@ -86,13 +82,7 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	 * @param sprite
 	 *           Reference to be added
 	 */
-	public void addSprite(AngleAbstractSprite sprite)
-	{
-		if (mTSSpritesCount < mMaxSprites)
-			mTSSprites[mTSSpritesCount++] = sprite;
-	}
-
-	public void tsAddSprite(AngleAbstractSprite sprite)
+	public synchronized void addSprite(AngleAbstractSprite sprite)
 	{
 		if (mSpritesCount < mMaxSprites)
 		{
@@ -129,15 +119,6 @@ public class AngleSpritesEngine extends AngleAbstractEngine
 	@Override
 	public void drawFrame(GL11 gl)
 	{
-		if (mTSSpritesCount>0)
-		{
-			synchronized(this)
-			{
-				for (int s = 0; s < mTSSpritesCount; s++)
-					tsAddSprite (mTSSprites[s]);
-				mTSSpritesCount=0;
-			}
-		}
 		if ((!AngleMainEngine.mTexturesLost) && (!AngleMainEngine.mBuffersLost))
 		{
 			for (int s = 0; s < mSpritesCount; s++)
