@@ -13,7 +13,7 @@ import android.content.Context;
 public class AngleMainEngine extends AngleAbstractEngine
 {
 	public static final int MSG_CONTEXT_LOST = 1;
-	public static final boolean sUseHWBuffers = true;
+	public static final boolean sUseHWBuffers = false;
 	private static final int sMaxHWBuffers = 300;
 	public static int mWidth = 0; // Surface width
 	public static int mHeight = 0; // Surface height

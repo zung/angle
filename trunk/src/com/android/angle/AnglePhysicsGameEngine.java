@@ -138,7 +138,6 @@ public class AnglePhysicsGameEngine extends AngleAbstractGameEngine
 		}
 	}
 
-	@Override
 	public void run()
 	{
 		physics();
