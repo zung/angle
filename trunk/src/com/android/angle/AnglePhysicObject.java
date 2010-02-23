@@ -10,7 +10,6 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class AnglePhysicObject extends AngleObject
 {
-	private static final boolean sDrawColliders = false;
 	public float mMass; // Masa
 	public float mBounce; // Coefficient of restitution
 	public AngleVector mVelocity;
@@ -155,17 +154,12 @@ public class AnglePhysicObject extends AngleObject
 	}
 
 	
-	@Override
-	public void draw(GL10 gl)
+	public void drawColliders(GL10 gl)
 	{
-		if (sDrawColliders)
-		{
-			for (int mc = 0; mc < mCircleCollidersCount; mc++)
-				mCircleColliders[mc].draw(gl);
-			for (int mc = 0; mc < mSegmentCollidersCount; mc++)
-				mSegmentColliders[mc].draw(gl);
-		}
-		super.draw(gl);
+		for (int mc = 0; mc < mCircleCollidersCount; mc++)
+			mCircleColliders[mc].draw(gl);
+		for (int mc = 0; mc < mSegmentCollidersCount; mc++)
+			mSegmentColliders[mc].draw(gl);
 	}
 
 }

@@ -12,3 +12,9 @@ Version 0.3
 .-ISSUE: [AngleSprite upside down] Correct values in VertexBuffer
 .-ISSUE: [Some objects not freed on exit] Solved
 .-AngleSprite uses hardware buffers to avoid GC 
+
+Version 0.4
+.-Engine rewriten.
+.-Thread-safe
+.-Stable OpenGL ES.
+.-Added music and sound support.

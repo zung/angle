@@ -39,8 +39,11 @@ public class AngleSoundSystem
 		{
 			stopMusic();
 			Thread.sleep(100);
-			mSoundPool.release();
-			mSoundPool=null;
+			if (mSoundPool!=null)
+			{
+				mSoundPool.release();
+				mSoundPool=null;
+			}
 		}
 		catch (InterruptedException e)
 		{
@@ -111,15 +114,18 @@ public class AngleSoundSystem
 	
 	public int loadSound (int resId)
 	{
-		return mSoundPool.load(mActivity, resId, 0);
+		if (mSoundPool!=null)
+			return mSoundPool.load(mActivity, resId, 0);
+		return -1;
 	}
 	
 	public int loadSound (String fileName, int priority)
 	{
-		int id = 0;
+		int id = -1;
 		try
 		{
-			id = mSoundPool.load(mActivity.getAssets().openFd(fileName), priority);
+			if (mSoundPool!=null)
+				id = mSoundPool.load(mActivity.getAssets().openFd(fileName), priority);
 		}
 		catch (IOException e)
 		{
@@ -129,10 +135,12 @@ public class AngleSoundSystem
 	}
 	public void playSound(int id)
 	{
-		mSoundPool.play(id, 1, 1, 0, 0, 1);
+		if (mSoundPool!=null)
+			mSoundPool.play(id, 1, 1, 0, 0, 1);
 	}
 	public void playSound(int id, float leftVolume, float rightVolume, int priority, int loop, float rate)
 	{
-		mSoundPool.play(id, leftVolume, rightVolume, priority, loop, rate);
+		if (mSoundPool!=null)
+			mSoundPool.play(id, leftVolume, rightVolume, priority, loop, rate);
 	}
 };

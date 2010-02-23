@@ -269,9 +269,9 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		}
 		for (int t=0;t<mChildsCount;t++)
 		{
-			if (mChilds[t].die)
+			if (mChilds[t].mDie)
 			{
-				mChilds[t].die=false;
+				mChilds[t].mDie=false;
 				mChilds[t].mParent=null;
 				mChildsCount--;
 				for (int d = t; d < mChildsCount; d++)
@@ -301,7 +301,7 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	 */
 	public void removeObject(AngleObject object)
 	{
-		object.die=true;
+		object.mDie=true;
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	public void removeObject(int idx)
 	{
 		if (idx<mChildsCount)
-			mChilds[idx].die=true;
+			mChilds[idx].mDie=true;
 	}
 	//---------------------------------------------
 	//-- ####################################### --
