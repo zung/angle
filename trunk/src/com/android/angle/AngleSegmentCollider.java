@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 /**
@@ -31,7 +32,7 @@ public class AngleSegmentCollider
 		calculate();
 	}
 
-	public void draw(GL11 gl)
+	public void draw(GL10 gl)
 	{
 		FloatBuffer vertices;
 		vertices = ByteBuffer.allocateDirect(2 * 2 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -42,7 +43,7 @@ public class AngleSegmentCollider
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 		gl.glColor4f(1f, 0f, 0f, 1f);
-		gl.glTranslatef(mObject.mVisual.mCenter.mX, mObject.mVisual.mCenter.mY, 0.0f);
+		gl.glTranslatef(mObject.mPosition.mX, mObject.mPosition.mY, 0.0f);
 		vertices.clear();
 		int count = 0;
 		vertices.put(count++, mA.mX);
@@ -74,8 +75,8 @@ public class AngleSegmentCollider
 	public float closestDist(AngleCircleCollider other)
 	{
 		return Math
-				.abs((((mDir.mX) * ((other.mObject.mVisual.mCenter.mY + other.mCenter.mY) - mObject.mVisual.mCenter.mY + mA.mY)) - ((mDir.mY) * ((other.mObject.mVisual.mCenter.mX + other.mCenter.mX)
-						- mObject.mVisual.mCenter.mX + mA.mX)))
+				.abs((((mDir.mX) * ((other.mObject.mPosition.mY + other.mCenter.mY) - mObject.mPosition.mY + mA.mY)) - ((mDir.mY) * ((other.mObject.mPosition.mX + other.mCenter.mX)
+						- mObject.mPosition.mX + mA.mX)))
 						/ mLength);
 	}
 }

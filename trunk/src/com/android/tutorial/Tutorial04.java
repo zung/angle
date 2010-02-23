@@ -1,116 +1,97 @@
 package com.android.tutorial;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
-import com.android.angle.AngleAbstractGameEngine;
-import com.android.angle.AngleMainEngine;
-import com.android.angle.AngleSpriteX;
-import com.android.angle.AngleSpriteXLayout;
-import com.android.angle.AngleSpritesEngine;
-import com.android.angle.AngleSurfaceView;
+import com.android.angle.AngleActivity;
+import com.android.angle.AngleRotatingSprite;
+import com.android.angle.AngleSpriteLayout;
+import com.android.angle.AngleUI;
+import com.android.angle.FPSCounter;
 
 /**
- * Add a state machine to our new game engine so we can load the sprites after
- * the "game" is started.
+ * Cretate an user interface (AngleUI)
  * 
- * We learn to: 
- * -Load sprites 'in runtime' 
- * -Get view extents
  * 
  * @author Ivan Pajuelo
  * 
  */
-public class Tutorial04 extends Activity
+public class Tutorial04 extends AngleActivity
 {
-	private MyGameEngine mGame;
-	private AngleSurfaceView mView;
-
-	class MyGameEngine extends AngleAbstractGameEngine
+	private class MyAnimatedSprite extends AngleRotatingSprite
 	{
-		private AngleSpritesEngine mSprites;
-		private AngleSpriteXLayout mLogoLayout;
-		private AngleSpriteX mLogo; 
-		private static final int smLoad = 0;
-		private static final int smRotate = 1;
-		private int stateMachine = smLoad;
+		private static final float sRotationSpeed = 20;
+		private static final float sAlphaSpeed = 0.5f;
+		private float mAplhaDir;
 
-		// FPS Counter
-		private int frameCount = 0;
-		private long lCTM = 0;
-		// -----------
-
-		MyGameEngine(AngleSurfaceView view)
+		public MyAnimatedSprite(AngleSpriteLayout layout)
 		{
-			super(view);
-			mSprites = new AngleSpritesEngine(10, 10);
-			mLogoLayout = new AngleSpriteXLayout(mSprites, 128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
-			addEngine(mSprites);
+			super(layout);
+			mAplhaDir=sAlphaSpeed;
 		}
 
-		public void run()
+		@Override
+		public void step(float secondsElapsed)
 		{
-			// Add FPS record to log every 100 frames
-			frameCount++;
-			if (frameCount >= 100)
+			mRotation+=secondsElapsed*sRotationSpeed;
+			mAlpha+=secondsElapsed*mAplhaDir;
+			if (mAlpha>1)
 			{
-				long CTM = System.currentTimeMillis();
-				frameCount = 0;
-				if (lCTM > 0)
-					Log.v("FPS", "" + (100.f / ((CTM - lCTM) / 1000.f)));
-				lCTM = CTM;
+				mAlpha=1;
+				mAplhaDir=-sAlphaSpeed;
 			}
-			// --------------------------------------
-
-			switch (stateMachine)
-			// Very simple state machine
+			if (mAlpha<0)
 			{
-				case smLoad: // Load sprite in runtime
-					mLogo=new AngleSpriteX(mSprites,mLogoLayout);
-					// Cause the engine is already initialized, we can consult its extents
-					mLogo.mCenter.set(AngleMainEngine.mWidth / 2, AngleMainEngine.mHeight / 2);
-
-					stateMachine = smRotate;
-					break;
-				case smRotate:
-					mLogo.mRotation += 45 * AngleMainEngine.secondsElapsed;
-					mLogo.mRotation %= 360;
-					break;
+				mAlpha=0;
+				mAplhaDir=sAlphaSpeed;
 			}
+			super.step(secondsElapsed);
 		}
-	}
+		
+	};
+	
+	private class MyDemo extends AngleUI
+	{
+		//Now our rolling sprite(s) will be in our new UI
+		AngleSpriteLayout mLogoLayout;
+		
+		public MyDemo(AngleActivity activity)
+		{
+			super(activity);
+			mLogoLayout = new AngleSpriteLayout(mGLSurfaceView, 128, 128, R.drawable.anglelogo);
+		}
 
+		@Override
+		public boolean onTouchEvent(MotionEvent event)
+		{
+			if (event.getAction()==MotionEvent.ACTION_DOWN)
+			{
+				//Add new MyAnimatedSprite on touch position 
+				MyAnimatedSprite mLogo = new MyAnimatedSprite (mLogoLayout);
+				mLogo.mPosition.set(event.getX(), event.getY());
+				//Access mGLSurfaceView using mActivity
+				mActivity.mGLSurfaceView.addObject(mLogo);
+				return true;
+			}
+			return super.onTouchEvent(event);
+		}
+		
+	};
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		mView = new AngleSurfaceView(this);
-		setContentView(mView);
+		
+		//Add FPS counter. See logcat
+		mGLSurfaceView.addObject(new FPSCounter());
 
-		mGame = new MyGameEngine(mView);
-
-		mView.setGameEngine(mGame);
-	}
-
-	@Override
-	protected void onPause()
-	{
-		mView.onPause();
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume()
-	{
-		mView.onResume();
-		super.onResume();
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		mView.onDestroy();
-		super.onDestroy();
+		FrameLayout mMainLayout=new FrameLayout(this);
+		mMainLayout.addView(mGLSurfaceView);
+		setContentView(mMainLayout);
+		
+		//Set current UI (create inline)
+		setUI(new MyDemo(this));
 	}
 }

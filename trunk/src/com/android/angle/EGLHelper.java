@@ -11,32 +11,18 @@ import javax.microedition.khronos.opengles.GL;
 import android.view.SurfaceHolder;
 
 /**
- * Copyright (C) 2008 Google Inc.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * 
- * EGLHelper class extracted from GLView
+ * An EGL helper class.
  */
 
-public class EGLHelper
+class EglHelper
 {
 	EGL10 mEgl;
-	EGLDisplay mEglDisplay;
-	EGLSurface mEglSurface;
 	EGLConfig mEglConfig;
 	EGLContext mEglContext;
+	EGLDisplay mEglDisplay;
+	EGLSurface mEglSurface;
 
-	public EGLHelper()
+	public EglHelper()
 	{
 
 	}
@@ -105,11 +91,20 @@ public class EGLHelper
 		 * Before we can issue GL commands, we need to make sure the context is
 		 * current and bound to a surface.
 		 */
+		try
+		{
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext);
-		if (mEgl.eglGetError() == EGL11.EGL_CONTEXT_LOST)
-			AngleMainEngine.mContextLost = true;
+//		if (mEgl.eglGetError() == EGL11.EGL_CONTEXT_LOST)
+//			android.os.Process.killProcess(android.os.Process.myPid());
 
 		GL gl = mEglContext.getGL();
+
 		return gl;
 	}
 
@@ -132,23 +127,22 @@ public class EGLHelper
 
 	public void finish()
 	{
-		boolean success = true;
 		if (mEglSurface != null)
 		{
-			success &= mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-			success &= mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
+			mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+			mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
 			mEglSurface = null;
 		}
 		if (mEglContext != null)
 		{
-			success &= mEgl.eglDestroyContext(mEglDisplay, mEglContext);
+			mEgl.eglDestroyContext(mEglDisplay, mEglContext);
 			mEglContext = null;
 		}
 		if (mEglDisplay != null)
 		{
-			success &= mEgl.eglTerminate(mEglDisplay);
+			mEgl.eglTerminate(mEglDisplay);
 			mEglDisplay = null;
 		}
-		AngleMainEngine.mContextLost = !success;
 	}
+
 }

@@ -18,8 +18,6 @@ import android.util.Log;
 public class AngleFont
 {
 	private static final short DEFAULT_FONT_CHARS = 93;
-//	protected Bitmap mBitmap;
-//	protected int mHWTextureID;
 	protected AngleTexture mTexture;
 	protected float mFontSize;
 	protected Typeface mTypeface;
@@ -38,54 +36,96 @@ public class AngleFont
 	protected short mHeight;
 	protected short mSpace;
 	protected short mSpaceWidth;
+	protected short mLineat;
+	private AngleTextureEngine mTextureEngine;
 
-	public AngleFont(AngleTextEngine engine, float fontSize, Typeface typeface, int space, int red, int green, int blue, int alpha)
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param fontSize	Size of the font
+	 * @param typeface	Typeface
+	 * @param space		Space between characters
+	 * @param red			Color of the font (Red)
+	 * @param green		Color of the font (Green)
+	 * @param blue			Color of the font (Blue)
+	 * @param alpha		Color of the font (Alpha channel)
+	 */
+	public AngleFont(AngleSurfaceView view, float fontSize, Typeface typeface, int space, int red, int green, int blue, int alpha)
 	{
+		mTextureEngine=view.getTextureEngine();
 		doInit(fontSize, typeface, DEFAULT_FONT_CHARS, (short) space, red, green, blue, alpha);
 		for (int c = 0; c < mCharCount; c++)
 			mCodePoints[c] = 33 + c;
 		mBorder=1;
-		mTexture=AngleTextureEngine.createTextureFromFont(this);
-		//calculeTexture(1);
-		engine.addFont(this);
+		mTexture=mTextureEngine.createTextureFromFont(this);
 	}
 
-	public AngleFont(AngleTextEngine engine, float fontSize, Typeface typeface, int charCount, int border, int space, int red, int green,
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param fontSize	Size of the font
+	 * @param typeface	Typeface
+	 * @param charCount	Number of characters into font
+	 * @param border		Border of every character
+	 * @param space		Space between characters
+	 * @param red			Color of the font (Red)
+	 * @param green		Color of the font (Green)
+	 * @param blue			Color of the font (Blue)
+	 * @param alpha		Color of the font (Alpha channel)
+	 */
+	public AngleFont(AngleSurfaceView view, float fontSize, Typeface typeface, int charCount, int border, int space, int red, int green,
 			int blue, int alpha)
 	{
+		mTextureEngine=view.getTextureEngine();
 		doInit(fontSize, typeface, (short) charCount, (short) space, red, green, blue, alpha);
 		for (int c = 0; c < mCharCount; c++)
 			mCodePoints[c] = 33 + c;
 		mBorder=border;
-		mTexture=AngleTextureEngine.createTextureFromFont(this);
-		//calculeTexture(border);
-		engine.addFont(this);
+		mTexture=mTextureEngine.createTextureFromFont(this);
 	}
 
-	public AngleFont(AngleTextEngine engine, float fontSize, Typeface typeface, char[] chars, int border, int space, int red, int green,
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param fontSize	Size of the font
+	 * @param typeface	Typeface
+	 * @param chars		String with characters into font 
+	 * @param border		Border of every character
+	 * @param space		Space between characters
+	 * @param red			Color of the font (Red)
+	 * @param green		Color of the font (Green)
+	 * @param blue			Color of the font (Blue)
+	 * @param alpha		Color of the font (Alpha channel)
+	 */
+	public AngleFont(AngleSurfaceView view, float fontSize, Typeface typeface, char[] chars, int border, int space, int red, int green,
 			int blue, int alpha)
 	{
+		mTextureEngine=view.getTextureEngine();
 		doInit(fontSize, typeface, (short) chars.length, (short) space, red, green, blue, alpha);
 		for (int c = 0; c < chars.length; c++)
 			mCodePoints[c] = (int) chars[c];
 		mBorder=border;
-		mTexture=AngleTextureEngine.createTextureFromFont(this);
-		//calculeTexture(border);
-		engine.addFont(this);
+		mTexture=mTextureEngine.createTextureFromFont(this);
 	}
 
-	public AngleFont(AngleTextEngine engine, String asset, int resourceId, int space)
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param asset		FNT file (to load font from) 
+	 * @param resourceId PNG file (to load font from)
+	 * @param space		Space between characters
+	 */
+	public AngleFont(AngleSurfaceView view, String asset, int resourceId, int space)
 	{
+		mTextureEngine=view.getTextureEngine();
 		loadFrom(asset);
-		mTexture=AngleTextureEngine.createTextureFromResourceId(resourceId);
+		mTexture=mTextureEngine.createTextureFromResourceId(resourceId);
 		mSpace = (short) space;
-		engine.addFont(this);
 	}
 
 	private void doInit(short charCount)
 	{
 		mCharCount = charCount;
-		//mHWTextureID = -1;
 		mTexture=null;
 		mCodePoints = new int[mCharCount];
 		mCharX = new short[mCharCount];
@@ -106,116 +146,12 @@ public class AngleFont
 		mGreen = green;
 		mBlue = blue;
 	}
-/*
-	private void calculeTexture(int mBorder)
-	{
-		Paint paint = new Paint();
-		paint.setTypeface(mTypeface);
-		paint.setTextSize(mFontSize);
-		paint.setARGB(mAlpha, mRed, mGreen, mBlue);
-		paint.setAntiAlias(true);
 
-		Rect rect = new Rect();
-		int totalWidth = 0;
-		mHeight = 0;
-		int minTop = 1000;
-		int maxBottom = -1000;
-		for (int c = 0; c < mCharCount; c++)
-		{
-			paint.getTextBounds(new String(mCodePoints, c, 1), 0, 1, rect);
-			mCharLeft[c] = (short) rect.left;
-			mCharRight[c] = (short) (rect.right + mBorder);
-			totalWidth += mCharRight[c] - mCharLeft[c];
-			if (rect.top < minTop)
-				minTop = rect.top;
-			if (rect.bottom > maxBottom)
-				maxBottom = rect.bottom;
-		}
-		mHeight = (short) ((maxBottom - minTop) + mBorder);
-		int area = mHeight * totalWidth;
-		int mTextSizeX = 0;
-		while ((area > ((1 << mTextSizeX) * (1 << mTextSizeX))) && (mTextSizeX < 11))
-			mTextSizeX++;
-		if (mTextSizeX < 11)
-		{
-			short x = 0;
-			short y = 0;
-			for (int c = 0; c < mCharCount; c++)
-			{
-				if (x + (mCharRight[c] - mCharLeft[c]) > (1 << mTextSizeX))
-				{
-					x = 0;
-					y += mHeight;
-				}
-				if (y + mHeight > (1 << mTextSizeX))
-				{
-					if (mTextSizeX < 11)
-					{
-						mTextSizeX++;
-						x = 0;
-						y = 0;
-						c = -1;
-						continue;
-					}
-					else
-						break;
-				}
-				mCharX[c] = x;
-				mCharTop[c] = y;
-				x += (mCharRight[c] - mCharLeft[c]);
-			}
-			paint.getTextBounds(" ", 0, 1, rect);
-			mSpaceWidth = (short) (rect.right - rect.left + mBorder);
-		}
-		if (mTextSizeX < 11)
-		{
-			int mTextSizeY = 0;
-			while ((mCharTop[mCharCount - 1] + mHeight) > (1 << mTextSizeY))
-				mTextSizeY++;
-			mBitmap = Bitmap.createBitmap((1 << mTextSizeX), (1 << mTextSizeY), Config.ARGB_8888);
-
-			Canvas canvas = new Canvas(mBitmap);
-
-			for (int c = 0; c < mCharCount; c++)
-			{
-				canvas.drawText(new String(mCodePoints, c, 1), 0, 1, mCharX[c] - mCharLeft[c] + (mBorder / 2), mCharTop[c] - minTop
-						+ (mBorder / 2), paint);
-			}
-		}
-	}
-/*
-	public void loadTexture(GL11 gl)
-	{
-		int[] mTextureIDs = new int[1];
-
-		gl.glGenTextures(1, mTextureIDs, 0);
-
-		mHWTextureID = mTextureIDs[0];
-		gl.glBindTexture(GL11.GL_TEXTURE_2D, mHWTextureID);
-		gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-		gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
-		gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
-		gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
-
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
-
-		if (mBitmap != null)
-		{
-			GLUtils.texImage2D(GL11.GL_TEXTURE_2D, 0, mBitmap, 0);
-
-			int error = gl.glGetError();
-			if (error != GL11.GL_NO_ERROR)
-				Log.e("AngleFont", "loadTexture GLError: " + error);
-		}
-		else
-		{
-			Log.e("AngleFont", "Font too large");
-			gl.glDeleteTextures(1, mTextureIDs, 0);
-			mHWTextureID = -1;
-		}
-	}
-*/
+	/**
+	 * Save texture to the root of the SD card using 2 files. 1 PNG with graphics and 1 FNT with data.
+	 * Edit the PNG and use it as a drawable resource and put the FNT into asset folder to reload edited font.  
+	 * @param fileName
+	 */
 	public void saveTo(String fileName)
 	{
 		Bitmap bitmap=mTexture.create();
@@ -227,11 +163,12 @@ public class AngleFont
 				bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 				stream.flush();
 				stream.close();
-				ByteBuffer out = ByteBuffer.allocate(8 + mCharCount * 12);
+				ByteBuffer out = ByteBuffer.allocate(10 + mCharCount * 12);
 				out.putShort(mCharCount);
 				out.putShort(mHeight);
 				out.putShort(mSpace);
 				out.putShort(mSpaceWidth);
+				out.putShort(mLineat);
 				for (int c = 0; c < mCharCount; c++)
 				{
 					out.putInt(mCodePoints[c]);
@@ -254,38 +191,19 @@ public class AngleFont
 		}
 	}
 
-	public void loadFrom(String asset)
+	private void loadFrom(String asset)
 	{
-/*		
-		final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
-		sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		InputStream is = AngleMainEngine.mContext.getResources().openRawResource(resourceId);
-		try
-		{
-			mBitmap = BitmapFactory.decodeStream(is, null, sBitmapOptions);
-		}
-		finally
-		{
-			try
-			{
-				is.close();
-			}
-			catch (IOException e)
-			{
-				Log.e("AngleFont", "loadFrom::InputStream.close error: " + e.getMessage());
-			}
-		}
-*/
 		InputStream is=null;
 		try
 		{
-			is = AngleMainEngine.mContext.getAssets().open(asset);
-			ByteBuffer in = ByteBuffer.allocate(8);
+			is = AngleSurfaceView.mContext.getAssets().open(asset);
+			ByteBuffer in = ByteBuffer.allocate(10);
 			is.read(in.array());
 			doInit(in.getShort(0));
 			mHeight = in.getShort(2);
 			mSpace = in.getShort(4);
 			mSpaceWidth = in.getShort(6);
+			mLineat = in.getShort(8);
 			in = ByteBuffer.allocate(mCharCount * 12);
 			is.read(in.array());
 			for (int c = 0; c < mCharCount; c++)
@@ -314,7 +232,7 @@ public class AngleFont
 		}
 	}
 
-	public char getChar(char chr)
+	protected char getChar(char chr)
 	{
 		for (int c = 0; c < mCharCount; c++)
 		{

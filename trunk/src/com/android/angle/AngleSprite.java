@@ -1,58 +1,60 @@
 package com.android.angle;
 
+import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 /**
- * Sprite reference for dynamic add an remove from sprite engine
- * AngleSpritesEngine.useReferences must be set to true
+ * Fastest sprite with no rotation support
  * 
  * @author Ivan Pajuelo
  * 
  */
 public class AngleSprite extends AngleAbstractSprite
 {
-	public AngleSpriteLayout mLayout; // Sprite referenced
-	public int mFrame;
-	public float mScale;
-	protected int[] mTextureIV = new int[4];
-
+	protected int[] mTextureIV; //Texture coordinates
+	
 	/**
 	 * 
 	 * @param layout
 	 *           Sprite referenced
 	 */
-	public AngleSprite(AngleSpritesEngine engine, AngleSpriteLayout layout)
+	public AngleSprite(AngleSpriteLayout layout)
 	{
-		mLayout = layout;
+		super(layout);
+		mTextureIV = new int[4];
+		mTextureIV[2] = mLayout.roCropWidth; // Wcr
+		mTextureIV[3] = -mLayout.roCropHeight; // Hcr
 		setFrame(0);
-		mScale = 1;
-		mTextureIV[2] = mLayout.mCropWidth; // Wcr
-		mTextureIV[3] = -mLayout.mCropHeight; // Hcr
-		engine.addSprite(this);
 	}
 
+	@Override
 	public void setFrame(int frame)
 	{
 		if (frame < mLayout.mFrameCount)
 		{
-			mFrame = frame;
-			mTextureIV[0] = mLayout.mCropLeft + ((mFrame % mLayout.mFrameColumns) * mLayout.mCropWidth);// Ucr
-			mTextureIV[1] = (mLayout.mCropTop + mLayout.mCropHeight) + ((mFrame / mLayout.mFrameColumns) * mLayout.mCropHeight);// Vcr
+			roFrame = frame;
+			mTextureIV[0] = mLayout.roCropLeft + ((roFrame % mLayout.mFrameColumns) * mLayout.roCropWidth);// Ucr
+			mTextureIV[1] = (mLayout.roCropTop + mLayout.roCropHeight) + ((roFrame / mLayout.mFrameColumns) * mLayout.roCropHeight);// Vcr
 		}
 	}
 
 	@Override
-	public void draw(GL11 gl)
+	public void draw(GL10 gl)
 	{
-		if (mLayout.mTexture != null)
+		if (mLayout.roTexture != null)
 		{
-			gl.glBindTexture(GL11.GL_TEXTURE_2D, mLayout.mTexture.mHWTextureID);
+			if (mLayout.roTexture.mHWTextureID>-1)
+			{
+				gl.glBindTexture(GL10.GL_TEXTURE_2D, mLayout.roTexture.mHWTextureID);
+			   gl.glColor4f(mRed,mGreen,mBlue,mAlpha);
 
-			gl.glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
-
-			((GL11Ext) gl).glDrawTexfOES(mCenter.mX - (mLayout.mWidth * mScale) / 2, AngleMainEngine.mHeight - mCenter.mY
-					- (mLayout.mHeight * mScale) / 2, mZ, mLayout.mWidth * mScale, mLayout.mHeight * mScale);
+				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
+	
+				((GL11Ext) gl).glDrawTexfOES(mPosition.mX - (mLayout.roPivot.mX*mScale.mX), 
+						AngleSurfaceView.roHeight-((mPosition.mY - (mLayout.roPivot.mY*mScale.mY))+(mLayout.roHeight * mScale.mY)), mZ, mLayout.roWidth * mScale.mX, mLayout.roHeight * mScale.mY);
+			}
 		}
+		super.draw(gl);
 	}
 }

@@ -6,12 +6,18 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
 
+/**
+ * Texture created using font characters
+ * @author Ivan
+ *
+ */
 public class AngleFontTexture extends AngleTexture
 {
 	AngleFont mFont;
 	
-	AngleFontTexture (AngleFont font)
+	AngleFontTexture (AngleTextureEngine textureEngine, AngleFont font)
 	{
+		super(textureEngine);
 		mFont=font;
 	}
 
@@ -27,7 +33,7 @@ public class AngleFontTexture extends AngleTexture
 
 		Rect rect = new Rect();
 		int totalWidth = 0;
-		mHeight = 0;
+		mFont.mHeight = 0;
 		int minTop = 1000;
 		int maxBottom = -1000;
 		for (int c = 0; c < mFont.mCharCount; c++)
@@ -41,8 +47,9 @@ public class AngleFontTexture extends AngleTexture
 			if (rect.bottom > maxBottom)
 				maxBottom = rect.bottom;
 		}
-		mHeight = (short) ((maxBottom - minTop) + mFont.mBorder);
-		int area = mHeight * totalWidth;
+		mFont.mHeight = (short) ((maxBottom - minTop) + mFont.mBorder);
+		mFont.mLineat = (short) (minTop - mFont.mBorder/2);
+		int area = mFont.mHeight * totalWidth;
 		int mTextSizeX = 0;
 		while ((area > ((1 << mTextSizeX) * (1 << mTextSizeX))) && (mTextSizeX < 11))
 			mTextSizeX++;
@@ -55,9 +62,9 @@ public class AngleFontTexture extends AngleTexture
 				if (x + (mFont.mCharRight[c] - mFont.mCharLeft[c]) > (1 << mTextSizeX))
 				{
 					x = 0;
-					y += mHeight;
+					y += mFont.mHeight;
 				}
-				if (y + mHeight > (1 << mTextSizeX))
+				if (y + mFont.mHeight > (1 << mTextSizeX))
 				{
 					if (mTextSizeX < 11)
 					{
@@ -80,17 +87,19 @@ public class AngleFontTexture extends AngleTexture
 		if (mTextSizeX < 11)
 		{
 			int mTextSizeY = 0;
-			while ((mFont.mCharTop[mFont.mCharCount - 1] + mHeight) > (1 << mTextSizeY))
+			while ((mFont.mCharTop[mFont.mCharCount - 1] + mFont.mHeight) > (1 << mTextSizeY))
 				mTextSizeY++;
-			mBitmap = Bitmap.createBitmap((1 << mTextSizeX), (1 << mTextSizeY), Config.ARGB_8888);
+			Bitmap paintBitmap = Bitmap.createBitmap((1 << mTextSizeX), (1 << mTextSizeY), Config.ARGB_8888);
 
-			Canvas canvas = new Canvas(mBitmap);
+			Canvas canvas = new Canvas(paintBitmap);
 
 			for (int c = 0; c < mFont.mCharCount; c++)
 			{
 				canvas.drawText(new String(mFont.mCodePoints, c, 1), 0, 1, mFont.mCharX[c] - mFont.mCharLeft[c] + (mFont.mBorder / 2), mFont.mCharTop[c] - minTop
 						+ (mFont.mBorder / 2), paint);
 			}
+			mBitmap=Bitmap.createBitmap(paintBitmap, 0, 0, paintBitmap.getWidth(), paintBitmap.getHeight());
+			paintBitmap.recycle();
 		}
 		return mBitmap;
 	}
