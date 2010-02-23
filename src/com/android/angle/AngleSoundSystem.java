@@ -1,0 +1,138 @@
+package com.android.angle;
+
+import java.io.IOException;
+
+import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.util.Log;
+
+public class AngleSoundSystem
+{
+	private Activity mActivity;
+	private MediaPlayer mMediaPlayer;
+	private SoundPool mSoundPool;
+	
+	public AngleSoundSystem (Activity activity)
+	{
+		Log.e("ASS","Init A");
+		try
+		{
+			Thread.sleep(100);
+			mSoundPool=new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+			mMediaPlayer=null;
+			mActivity=activity;
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		Log.e("ASS","Init B");
+	}
+	
+	public void delete ()
+	{
+		Log.e("ASS","Denit A");
+		try
+		{
+			stopMusic();
+			Thread.sleep(100);
+			mSoundPool.release();
+			mSoundPool=null;
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		java.lang.System.gc();
+		Log.e("ASS","Denit B");
+	}
+	
+	public void playMusic (String fileName, float volume, boolean loop)
+	{
+		try
+		{
+			if (mMediaPlayer!=null)
+				stopMusic();
+			mMediaPlayer = new MediaPlayer();
+			if (mMediaPlayer!=null)
+			{
+				AssetFileDescriptor afd = mActivity.getAssets().openFd(fileName);
+				mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+				mMediaPlayer.prepare();
+				mMediaPlayer.setVolume(volume, volume);
+				mMediaPlayer.setLooping(loop);
+				mMediaPlayer.start();
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void playMusic (int resId, float volume, boolean loop)
+	{
+			if (mMediaPlayer!=null)
+				stopMusic();
+			mMediaPlayer = MediaPlayer.create(mActivity, resId);
+			if (mMediaPlayer!=null)
+			{
+				mMediaPlayer.setVolume(volume, volume);
+				mMediaPlayer.setLooping(loop);
+				mMediaPlayer.start();
+			}
+	}
+
+	public void stopMusic ()
+	{
+		if (mMediaPlayer!=null)
+		{
+			mMediaPlayer.stop();
+			mMediaPlayer.release();
+			mMediaPlayer=null;
+		}
+	}
+	
+	public void pauseMusic()
+	{
+		if (mMediaPlayer!=null)
+			mMediaPlayer.pause();
+	}
+	
+	public void resumeMusic()
+	{
+		if (mMediaPlayer!=null)
+			mMediaPlayer.start();
+	}
+	
+	public int loadSound (int resId)
+	{
+		return mSoundPool.load(mActivity, resId, 0);
+	}
+	
+	public int loadSound (String fileName, int priority)
+	{
+		int id = 0;
+		try
+		{
+			id = mSoundPool.load(mActivity.getAssets().openFd(fileName), priority);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return id;
+	}
+	public void playSound(int id)
+	{
+		mSoundPool.play(id, 1, 1, 0, 0, 1);
+	}
+	public void playSound(int id, float leftVolume, float rightVolume, int priority, int loop, float rate)
+	{
+		mSoundPool.play(id, leftVolume, rightVolume, priority, loop, rate);
+	}
+};

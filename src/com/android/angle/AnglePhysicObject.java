@@ -1,6 +1,6 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL11;
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Base physic object
@@ -8,8 +8,9 @@ import javax.microedition.khronos.opengles.GL11;
  * @author Ivan Pajuelo
  * 
  */
-public class AnglePhysicObject
+public class AnglePhysicObject extends AngleObject
 {
+	private static final boolean sDrawColliders = false;
 	public float mMass; // Masa
 	public float mBounce; // Coefficient of restitution
 	public AngleVector mVelocity;
@@ -21,17 +22,17 @@ public class AnglePhysicObject
 	protected int mSegmentCollidersCount;
 	public AngleVector mDelta;
 	private int mFriction;
-	public AngleVisualObject mVisual;
+	public AngleVector mPosition; //Set to change the position of the sprite
 
-	public AnglePhysicObject(AngleVisualObject visual, int maxSegmentColliders, int maxCircleColliders)
+	public AnglePhysicObject(int maxSegmentColliders, int maxCircleColliders)
 	{
-		mVisual = visual;
 		mMaxSegmentColliders = maxSegmentColliders;
 		mMaxCircleColliders = maxCircleColliders;
 		mCircleColliders = new AngleCircleCollider[mMaxCircleColliders];
 		mCircleCollidersCount = 0;
 		mSegmentColliders = new AngleSegmentCollider[mMaxSegmentColliders];
 		mSegmentCollidersCount = 0;
+		mPosition = new AngleVector(0, 0);
 		mBounce = 1;
 		mFriction = 1;
 		mMass = 0; // Infinite mass
@@ -153,11 +154,18 @@ public class AnglePhysicObject
 		other.mVelocity.mY = oFinalVelY * nCos + oFinalVelX * nSin;
 	}
 
-	public void draw(GL11 gl)
+	
+	@Override
+	public void draw(GL10 gl)
 	{
-		for (int mc = 0; mc < mCircleCollidersCount; mc++)
-			mCircleColliders[mc].draw(gl);
-		for (int mc = 0; mc < mSegmentCollidersCount; mc++)
-			mSegmentColliders[mc].draw(gl);
+		if (sDrawColliders)
+		{
+			for (int mc = 0; mc < mCircleCollidersCount; mc++)
+				mCircleColliders[mc].draw(gl);
+			for (int mc = 0; mc < mSegmentCollidersCount; mc++)
+				mSegmentColliders[mc].draw(gl);
+		}
+		super.draw(gl);
 	}
+
 }

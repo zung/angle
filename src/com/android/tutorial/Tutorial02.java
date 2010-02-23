@@ -1,84 +1,51 @@
 package com.android.tutorial;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 
-import com.android.angle.AngleAbstractGameEngine;
-import com.android.angle.AngleSprite;
+import com.android.angle.AngleActivity;
+import com.android.angle.AngleRotatingSprite;
 import com.android.angle.AngleSpriteLayout;
-import com.android.angle.AngleSpritesEngine;
-import com.android.angle.AngleSurfaceView;
 
 /**
- * In this tutorial, we create a sprites engine and add an AngleSprite.
+ * Override Angle class and create our first animated object
  * 
- * We learn to:
- * -Create a basic game engine 
- * -Add one rendering engine to main game engine. In this case a sprites engine. 
- * -Create an AngleSprite(Engine, Width, Height, ResourceId, 
- *                        Crop Left, Crop Top, Crop Width, Crop Height) 
- * -Change the position of the sprite
  * 
  * @author Ivan Pajuelo
  * 
  */
-public class Tutorial02 extends Activity
+public class Tutorial02 extends AngleActivity
 {
-	private AngleSurfaceView mView; //Main view
-	private AngleAbstractGameEngine mGame; //Simplest game engine. Only renders
-	private AngleSpritesEngine mSprites; //The engine where the sprite will be added
-	private AngleSpriteLayout mLogoLayout; //The layout (see below)
-	private AngleSprite mLogo; //The sprite (see below)
+	private class MyAnimatedSprite extends AngleRotatingSprite
+	{
+		public MyAnimatedSprite(AngleSpriteLayout layout)
+		{
+			super(layout);
+		}
 
-	// scale, rotation nor effects
-
+		//Override step function to implement animations and user logic
+		@Override
+		public void step(float secondsElapsed)
+		{
+			mRotation+=secondsElapsed*10;//10º per second
+			super.step(secondsElapsed);
+		}
+		
+	};
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		mView = new AngleSurfaceView(this);
-		setContentView(mView);
-		
-		//1st we need a game engine that contains the rendering engines tree
-		mGame=new AngleAbstractGameEngine(mView);
 
-		// Create a sprites engine with maximum of 10 layouts and 10 sprites
-		mSprites = new AngleSpritesEngine(10, 10); 
-		
-		// and adds it to our game engine
-		mGame.addEngine(mSprites); 
+		AngleSpriteLayout mLogoLayout = new AngleSpriteLayout(mGLSurfaceView, 128, 128, R.drawable.anglelogo);
+		//Use MyAnimatedSprite so we can make it roll
+		MyAnimatedSprite mLogo = new MyAnimatedSprite (mLogoLayout);
+		mLogo.mPosition.set(160, 200); 
+		mGLSurfaceView.addObject(mLogo);
 
-		
-		// Create a layout that describes how the sprite will be rendered (the layout will be automatically added to mSprites)
-		mLogoLayout = new AngleSpriteLayout(mSprites, 128, 128, R.drawable.anglelogo, 0, 0, 128, 128);
-		// Create a sprite that use this layout (the sprite will be automatically added to mSprites and render if visible)
-		mLogo = new AngleSprite (mSprites, mLogoLayout);
-		// Set position
-		mLogo.mCenter.set(100, 100); 
-
-		//Set the game engine to run and render
-		//In this sample (AngleAbstractGameEngine) only render
-		mView.setGameEngine(mGame);  
-	}
-
-	@Override
-	protected void onPause()
-	{
-		mView.onPause();
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume()
-	{
-		mView.onResume();
-		super.onResume();
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		mView.onDestroy();
-		super.onDestroy();
+		//Use a framelayout as main view instead of using mGLSurfaceView directly 
+		FrameLayout mMainLayout=new FrameLayout(this);
+		mMainLayout.addView(mGLSurfaceView);
+		setContentView(mMainLayout);
 	}
 }

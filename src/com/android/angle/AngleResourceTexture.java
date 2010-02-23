@@ -7,14 +7,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+/**
+ * Creates a texture using drawable resource
+ * @author Ivan
+ *
+ */
 public class AngleResourceTexture extends AngleTexture
 {
 	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
-	public int mResourceID = -1;
+	public int mResourceID;
 
-	public AngleResourceTexture(int resourceId)
+	public AngleResourceTexture(AngleTextureEngine textureEngine, int resourceId)
 	{
-		super();
+		super(textureEngine);
 		mResourceID = resourceId;
 	}
 
@@ -22,7 +27,7 @@ public class AngleResourceTexture extends AngleTexture
 	{
 		//Log.e("Texture", "HID:"+mHWTextureID+", RID:"+mResourceID);
 		sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		InputStream is = AngleMainEngine.mContext.getResources().openRawResource(mResourceID);
+		InputStream is = AngleSurfaceView.mContext.getResources().openRawResource(mResourceID);
 		Bitmap bitmap;
 		try
 		{

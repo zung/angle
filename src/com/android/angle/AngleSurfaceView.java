@@ -1,167 +1,320 @@
+/*
+ * Copyright (C) 2009 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// This file was lifted from the APIDemos sample.  See: 
+// http://developer.android.com/guide/samples/ApiDemos/src/com/example/android/apis/graphics/index.html
 package com.android.angle;
 
+import java.nio.CharBuffer;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+
 import android.content.Context;
-import android.os.Handler;
-import android.os.PowerManager;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
- * Surface view based on API demos
- * 
- * @author Ivan Pajuelo
- * 
+ * Main view for OpenGL ES graphics
+ * @author Ivan
+ *
  */
 public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 {
-	public static AngleRenderThread mRenderThread;
-	public static boolean mSizeChanged = true;
-	public static SurfaceHolder mSurfaceHolder;
-	private static AngleMainEngine mRenderEngine;
-	private PowerManager.WakeLock mWakeLock;
+	private RenderThread mGLThread;
+	private SurfaceHolder mHolder;
+	private AngleTextureEngine mTextureEngine;
+	
+	static final int sMaxObjects = 30;
+	AtomicBoolean updating;
+	private int mMaxObjects;
+	protected AngleObject[]mChilds;
+	protected AngleObject[]mNewChilds;
+	protected int mChildsCount;
+	protected int mNewChildsCount;
+	
+	public static int roWidth;
+	public static int roHeight;
+	public static boolean mTexturesLost;
+	public static Context mContext; //To static context access 
+
+	public static final char[] sIndexValues = new char[] { 0, 1, 2, 1, 2, 3 };
+	public static int roIndexBufferIndex = -1;
+	public static final boolean sUseHWBuffers=true;
+	
+	public static void invalidateHardwareBuffers (GL10 gl)
+	{
+		int[] hwBuffers=new int[1];
+		((GL11)gl).glGenBuffers(1, hwBuffers, 0);
+
+		// Allocate and fill the index buffer.
+		roIndexBufferIndex = hwBuffers[0];
+		((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, roIndexBufferIndex);
+		((GL11)gl).glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, 6 * 2, CharBuffer.wrap(sIndexValues), GL11.GL_STATIC_DRAW);
+		((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
+	public static void releaseHardwareBuffers (GL10 gl)
+	{
+		int[] hwBuffers = new int[1];
+		hwBuffers[0]=roIndexBufferIndex;
+		((GL11) gl).glDeleteBuffers(1, hwBuffers, 0);
+		roIndexBufferIndex=-1;
+	}
 
 	public AngleSurfaceView(Context context)
 	{
 		super(context);
-		doInit(context);
+		init();
 	}
 
 	public AngleSurfaceView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		doInit(context);
+		init();
 	}
 
-	private void doInit(Context context)
+	private void init()
 	{
-		AngleMainEngine.mContext = context;
-		mSurfaceHolder = getHolder();
-		mSurfaceHolder.addCallback(this);
-		mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-		mRenderEngine = new AngleMainEngine(10);
-		mRenderThread = new AngleRenderThread(mRenderEngine);
-		mRenderThread.start();
-		PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-		mWakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Angle");
+		mMaxObjects=sMaxObjects;
+		updating=new AtomicBoolean();
+		mChilds=new AngleObject[mMaxObjects];
+		mNewChilds=new AngleObject[mMaxObjects];
+		mChildsCount=0;
+		mNewChildsCount=0;
+		// Install a SurfaceHolder.Callback so we get notified when the
+		// underlying surface is created and destroyed
+		mHolder = getHolder();
+		mHolder.addCallback(this);
+		mHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+		
+		mTextureEngine=new AngleTextureEngine();
+
+		mContext = getContext();
 	}
 
-	public void setAwake(boolean awake)
+	public SurfaceHolder getSurfaceHolder()
 	{
-		if (awake)
-			mWakeLock.acquire();
-		else
-			mWakeLock.release();
+		return mHolder;
+	}
+
+	public void start()
+	{
+		mGLThread = new RenderThread(this);
+		mGLThread.start();
 	}
 
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		if (mRenderThread != null)
-			mRenderThread.surfaceCreated();
+      Log.d("VIEW","surfaceCreated HOLDER");
+		mGLThread.surfaceCreated();
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
-		if (mRenderThread != null)
-			mRenderThread.surfaceDestroyed();
+      Log.d("VIEW","surfaceDestroyed HOLDER");
+		mGLThread.surfaceDestroyed();
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
 	{
-		if (mRenderThread != null)
-			mRenderThread.surfaceChanged(w, h);
+      Log.d("VIEW","surfaceChanged HOLDER");
+		mGLThread.onWindowResize(w, h);
 	}
 
-	/**
-	 * Must be called in Activity.onPause
-	 */
 	public void onPause()
 	{
-		if (mRenderThread != null)
-			mRenderThread.onPause();
+		mGLThread.onPause();
 	}
 
-	/**
-	 * Must be called in Activity.onResume
-	 */
 	public void onResume()
 	{
-		if (mRenderThread != null)
-			mRenderThread.onResume();
-	}
-
-	/**
-	 * Must be called in Activity.onDestroy
-	 */
-	public void onDestroy()
-	{
-		if (mRenderThread != null)
-			mRenderThread.requestExitAndWait();
-		mRenderThread = null;
-		mRenderEngine = null;
-		System.gc();
+		mGLThread.onResume();
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus)
 	{
 		super.onWindowFocusChanged(hasFocus);
-		if (mRenderThread != null)
-			mRenderThread.onWindowFocusChanged(hasFocus);
+		mGLThread.onWindowFocusChanged(hasFocus);
+	   Log.d("VIEW","onWindowFocusChanged");
 	}
 
 	@Override
 	protected void onDetachedFromWindow()
 	{
 		super.onDetachedFromWindow();
-		if (mRenderThread != null)
-			mRenderThread.requestExitAndWait();
+		roWidth=0;
+		roHeight=0;
+		mGLThread.requestExitAndWait();
+	   Log.d("VIEW","onDetachedFromWindow");
+	}
+	
+	public void sizeChanged(GL10 gl, int width, int height)
+	{
+		roWidth=width;
+		roHeight=height;
+		gl.glViewport(0, 0, roWidth, roHeight);
+
+		gl.glMatrixMode(GL10.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glOrthof(0.0f, roWidth, roHeight, 0.0f, 0.0f, 1.0f);
+
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
+
+		gl.glShadeModel(GL10.GL_FLAT);
+		gl.glDisable(GL10.GL_DITHER);
+		gl.glDisable(GL10.GL_MULTISAMPLE);
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnable(GL10.GL_BLEND);
+		
+      gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+      gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+      gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glColor4f(1, 1, 1, 1);
+		gl.glClearColor(0, 0, 0, 1);
+		Log.d("VIEW","sizeChanged");
 	}
 
-	public void notifyTo(Handler handler)
+	public void surfaceCreated(GL10 gl)
 	{
-		mRenderThread.mHandler = handler;
+		mTextureEngine.loadTextures(gl);
+		
+		step(0);
+		
+		if (sUseHWBuffers)
+			invalidateHardwareBuffers(gl);
+
+		for (int t=0;t<mChildsCount;t++)
+		{
+			mChilds[t].invalidateTexture(gl);
+   		if (sUseHWBuffers)
+   			mChilds[t].invalidateHardwareBuffers(gl);
+		}
+		
+      Log.d("VIEW","surfaceCreated");
+      
 	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event)
+	public void destroy(GL10 gl)
 	{
-		if (mRenderThread != null)
-			if (mRenderThread.mGameEngine != null)
-				return mRenderThread.mGameEngine.onTouchEvent(event);
-		return super.onTouchEvent(event);
+		mTextureEngine.destroy(gl);
+		
+		if (sUseHWBuffers)
+		{
+			releaseHardwareBuffers(gl);
+			for (int t=0;t<mChildsCount;t++)
+   			mChilds[t].releaseHardwareBuffers(gl);
+      }
+	}
+	
+	public synchronized void draw(GL10 gl)
+	{
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glLoadIdentity();
+		gl.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+		for (int t=0;t<mChildsCount;t++)
+			mChilds[t].draw(gl);
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public AngleTextureEngine getTextureEngine()
 	{
-		if (mRenderThread != null)
-			if (mRenderThread.mGameEngine != null)
-				return mRenderThread.mGameEngine.onKeyDown(keyCode, event);
-		return super.onKeyDown(keyCode, event);
+		return mTextureEngine;
 	}
 
-	@Override
-	public boolean onTrackballEvent(MotionEvent event)
+	public void setAwake(boolean awake)
 	{
-		if (mRenderThread != null)
-			if (mRenderThread.mGameEngine != null)
-				return mRenderThread.mGameEngine.onTrackballEvent(event);
-		return super.onTrackballEvent(event);
+		setKeepScreenOn(awake);
+	}
+
+	//---------------------------------------------
+	//-- Problemas de no tener herencia múltiple --
+	//---------------------------------------------
+	/**
+	 * Called every frame 
+	 * @param secondsElapsed Seconds elapsed since last frame
+	 */
+	public void step(float secondsElapsed)
+	{
+		if (mNewChildsCount>0)
+		{
+			Log.e("ASV","Adding "+mNewChildsCount);
+			updating.set(true);
+			for (int t=0;t<mNewChildsCount;t++)
+			{
+				mNewChilds[t].mParent=this;
+				mChilds[mChildsCount++]=mNewChilds[t];
+			}
+			mNewChildsCount=0;
+			updating.set(false);
+		}
+		for (int t=0;t<mChildsCount;t++)
+		{
+			if (mChilds[t].die)
+			{
+				mChilds[t].die=false;
+				mChilds[t].mParent=null;
+				mChildsCount--;
+				for (int d = t; d < mChildsCount; d++)
+					mChilds[d] = mChilds[d + 1];
+				mChilds[mChildsCount] = null;
+				t--;
+			}
+			else
+				mChilds[t].step(secondsElapsed);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param object Object to add
+	 */
+	public void addObject(AngleObject object)
+	{
+		while (updating.get());
+		if (mChildsCount<mMaxObjects)
+			mNewChilds[mNewChildsCount++]=object;
 	}
 
 	/**
-	 * Set the callback function to be called before draw every frame
 	 * 
-	 * @param beforeDraw
-	 *           Runnable derived class (usually game engine).
+	 * @param object Object to remove
 	 */
-	public void setGameEngine(AngleAbstractGameEngine gameEngine)
+	public void removeObject(AngleObject object)
 	{
-		if (mRenderThread != null)
-			mRenderThread.setGameEngine(gameEngine);
+		object.die=true;
 	}
+
+	/**
+	 * 
+	 * @param idx Index of the object to remove
+	 */
+	public void removeObject(int idx)
+	{
+		if (idx<mChildsCount)
+			mChilds[idx].die=true;
+	}
+	//---------------------------------------------
+	//-- ####################################### --
+	//---------------------------------------------
 
 }

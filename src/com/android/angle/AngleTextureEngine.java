@@ -1,6 +1,9 @@
 package com.android.angle;
 
-import javax.microedition.khronos.opengles.GL11;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import android.util.Log;
 
@@ -12,153 +15,129 @@ import android.util.Log;
  */
 public class AngleTextureEngine
 {
-	private static final int MAX_TEXTURES = 64;
-	private static AngleTexture[] mTextures = new AngleTexture[MAX_TEXTURES];
-	private static GL11 mGL;
+	private CopyOnWriteArrayList<AngleTexture> mTexturesX;
+
+	private GL10 mGl;
 
 	AngleTextureEngine()
 	{
+		mTexturesX = new CopyOnWriteArrayList<AngleTexture>();
 	}
 
-	public static void onDestroy()
+	public void destroy(GL10 gl)
 	{
+		mGl = gl;
 		onContextLost();
 	}
 
-	public static void onContextLost()
+	public void onContextLost()
 	{
-		if (mGL != null)
+		if (mGl != null)
 		{
 			int d = 0;
-			int[] textures = new int[MAX_TEXTURES];
+			int[] textures = new int[mTexturesX.size()];
+			Iterator<AngleTexture> it = mTexturesX.iterator();
+			while (it.hasNext())
+				textures[d++] = it.next().mHWTextureID;
 
-			for (int t = 0; t < MAX_TEXTURES; t++)
-			{
-				if (mTextures[t] != null)
-					textures[d++] = mTextures[t].mHWTextureID;
-			}
-			mGL.glDeleteTextures(d, textures, 0);
+			mGl.glDeleteTextures(d, textures, 0);
+			mTexturesX.clear();
 		}
-//		for (int t = 0; t < MAX_TEXTURES; t++)
-//			mTextures[t] = null;
 	}
 
-	public static void genTextures(GL11 gl)
+	public void loadTextures(GL10 gl)
 	{
-		mGL = gl;
-		if (mGL != null)
+		mGl = gl;
+		if (mGl != null)
 		{
-			mGL.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);
+			Iterator<AngleTexture> it = mTexturesX.iterator();
+			while (it.hasNext())
+				it.next().linkToGL(mGl);
+			Log.e("Textures", "Loaded");
+		}
+	}
 
-			mGL.glShadeModel(GL11.GL_FLAT);
-			mGL.glDisable(GL11.GL_DEPTH_TEST);
-			mGL.glDisable(GL11.GL_DITHER);
-			mGL.glDisable(GL11.GL_LIGHTING);
-			mGL.glEnable(GL11.GL_TEXTURE_2D);
+	public AngleTexture createTextureFromFont(AngleFont font)
+	{
+		AngleTexture tex = null;
+		Iterator<AngleTexture> it = mTexturesX.iterator();
+		while (it.hasNext())
+		{
+			tex = it.next();
+			if (tex instanceof AngleFontTexture)
+			{
+				// Texture already exists
+				if (((AngleFontTexture) tex).mFont == font)
+				{
+					tex.mRefernces++;
+					return tex;
+				}
+			}
+		}
 
-			mGL.glClearColor(0.0f, 0.0f, 0.0f, 1);
-			mGL.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			int[] mTextureIDs = new int[MAX_TEXTURES];
+		tex = new AngleFontTexture(this, font);
+		mTexturesX.add(tex);
+		tex.linkToGL(mGl);
+		return tex;
+	}
 	
-			mGL.glGenTextures(MAX_TEXTURES, mTextureIDs, 0);
-	
-			int error = mGL.glGetError();
-			if (error != GL11.GL_NO_ERROR)
+	public AngleTexture createTextureFromResourceId(int resourceId)
+	{
+		AngleTexture tex = null;
+		Iterator<AngleTexture> it = mTexturesX.iterator();
+		while (it.hasNext())
+		{
+			tex = it.next();
+			if (tex instanceof AngleResourceTexture)
+			{
+				// Texture already exists
+				if (((AngleResourceTexture) tex).mResourceID == resourceId)
+				{
+					tex.mRefernces++;
+					return tex;
+				}
+			}
+		}
+
+		tex = new AngleResourceTexture(this, resourceId);
+		mTexturesX.add(tex);
+		tex.linkToGL(mGl);
+		return tex;
+	}
+
+	public int generateTexture()
+	{
+		if (mGl != null)
+		{
+			int[] textureIDs = new int[1];
+
+			mGl.glGenTextures(1, textureIDs, 0);
+
+			int error = mGl.glGetError();
+			if (error != GL10.GL_NO_ERROR)
 				Log.e("AngleTexture", "generate GLError: " + error);
 			else
-				Log.e("Textures", "Generated");
+			{
+				Log.e("Texture", "Generated");
+				return textureIDs[0];
+			}
 		}
-	}
-	
-	public static void loadTextures()
-	{
-		for (int t = 0; t < MAX_TEXTURES; t++)
-		{
-			if (mTextures[t] != null)
-				mTextures[t].load(t,mGL);
-		}
-		AngleMainEngine.mTexturesLost = false;
-		Log.e("Textures", "Loaded");
+		return -1;
 	}
 
-	public static AngleTexture createTextureFromFont(AngleFont font)
+	public void deleteTexture(AngleTexture tex)
 	{
-		int t;
-		for (t = 0; t < MAX_TEXTURES; t++)
+		if (mTexturesX.indexOf(tex) > -1)
 		{
-			if (mTextures[t] != null)
-			{
-				if (mTextures[t] instanceof AngleFontTexture)
-				{
-					//Texture already exists
-					if (((AngleFontTexture) mTextures[t]).mFont == font)
-					{
-						mTextures[t].mRefernces++;
-						return mTextures[t];
-					}
-				}
-			}
+			tex.mRefernces--;
+			if (tex.mRefernces < 0)
+				mTexturesX.remove(tex);
 		}
-		for (t = 0; t < MAX_TEXTURES; t++)
+		if (tex.mHWTextureID > -1)
 		{
-			if (mTextures[t] == null)
-			{
-				mTextures[t] = new AngleFontTexture(font);
-				return mTextures[t];
-			}
-		}
-		Log.e("AngleTextureEngine", "createTextureFromFont() MAX_TEXTURES reached");
-		return null;
-	}
-	public static AngleTexture createTextureFromResourceId(int resourceId)
-	{
-		int t;
-		for (t = 0; t < MAX_TEXTURES; t++)
-		{
-			if (mTextures[t] != null)
-			{
-				if (mTextures[t] instanceof AngleResourceTexture)
-				{
-					//Texture already exists
-					if (((AngleResourceTexture) mTextures[t]).mResourceID == resourceId)
-					{
-						mTextures[t].mRefernces++;
-						return mTextures[t];
-					}
-				}
-			}
-		}
-		for (t = 0; t < MAX_TEXTURES; t++)
-		{
-			if (mTextures[t] == null)
-			{
-				mTextures[t] = new AngleResourceTexture(resourceId);
-				return mTextures[t];
-			}
-		}
-		Log.e("AngleTextureEngine", "createTextureFromResourceId() MAX_TEXTURES reached");
-		return null;
-	}
-
-	public static void deleteTexture(AngleTexture mTexture)
-	{
-		for (int t = 0; t < MAX_TEXTURES; t++)
-		{
-			if (mTextures[t] == mTexture)
-			{
-				mTextures[t].mRefernces--;
-				if (mTextures[t].mRefernces < 0)
-				{
-					if (mTextures[t].mHWTextureID>-1)
-					{
-						int[] texture = new int[1];
-						texture[0] = mTextures[t].mHWTextureID;
-						mGL.glDeleteTextures(1, texture, 0);
-					}
-					mTextures[t] = null;
-					break;
-				}
-			}
+			int[] texture = new int[1];
+			texture[0] = tex.mHWTextureID;
+			mGl.glDeleteTextures(1, texture, 0);
 		}
 	}
 }

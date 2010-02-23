@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 /**
@@ -16,7 +17,7 @@ public class AngleCircleCollider
 {
 	protected AnglePhysicObject mObject;
 	protected AngleVector mCenter;
-	protected float mRadius;
+	protected float mRadius; 
 	protected float mNormal;
 
 	public AngleCircleCollider(float x, float y, float radius)
@@ -27,8 +28,8 @@ public class AngleCircleCollider
 
 	public boolean test(AngleCircleCollider otherCollider)
 	{
-		float dX = (otherCollider.mObject.mVisual.mCenter.mX + otherCollider.mCenter.mX) - (mObject.mVisual.mCenter.mX + mCenter.mX);
-		float dY = (otherCollider.mObject.mVisual.mCenter.mY + otherCollider.mCenter.mY) - (mObject.mVisual.mCenter.mY + mCenter.mY);
+		float dX = (otherCollider.mObject.mPosition.mX + otherCollider.mCenter.mX) - (mObject.mPosition.mX + mCenter.mX);
+		float dY = (otherCollider.mObject.mPosition.mY + otherCollider.mCenter.mY) - (mObject.mPosition.mY + mCenter.mY);
 		float dist = (float) Math.sqrt(dX * dX + dY * dY);
 		// The normal in a circle is the direction to the center of the other
 		// collider
@@ -45,7 +46,7 @@ public class AngleCircleCollider
 		return otherCollider.closestDist(this) < mRadius;
 	}
 
-	protected void draw(GL11 gl)
+	protected void draw(GL10 gl)
 	{
 		final int segments = 20;
 
@@ -55,7 +56,7 @@ public class AngleCircleCollider
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 		gl.glColor4f(0f, 1f, 0f, 1f);
-		gl.glTranslatef(mObject.mVisual.mCenter.mX + mCenter.mX, mObject.mVisual.mCenter.mY + mCenter.mY, 0.0f);
+		gl.glTranslatef(mObject.mPosition.mX + mCenter.mX, mObject.mPosition.mY + mCenter.mY, 0.0f);
 		FloatBuffer vertices;
 		vertices = ByteBuffer.allocateDirect(segments * 2 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 

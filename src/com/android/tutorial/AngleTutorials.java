@@ -50,6 +50,7 @@ public class AngleTutorials extends Activity implements OnClickListener
 				intent = new Intent(this, Tutorial04.class);
 				startActivity(intent);
 				break;
+				/*				
 			case R.id.tut05:
 				intent = new Intent(this, Tutorial05.class);
 				startActivity(intent);
@@ -70,6 +71,7 @@ public class AngleTutorials extends Activity implements OnClickListener
 				intent = new Intent(this, Game.class);
 				startActivity(intent);
 				break;
+*/				
 		}
 	}
 }
