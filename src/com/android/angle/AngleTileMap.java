@@ -21,8 +21,8 @@ public class AngleTileMap extends AngleObject
 	public int mColumnsCount;
 	public int mRowsCount;
 	public int[] mMap;
-	protected int mWidth;
-	protected int mHeight;
+	public int mWidth;
+	public int mHeight;
 	public float mRed;
 	public float mGreen;
 	public float mBlue;
@@ -84,8 +84,8 @@ public class AngleTileMap extends AngleObject
 					   	
 					   	if ((tile>=0)&&(tile<mTileBank.mTilesCount))
 					   	{
-					   		mTextureIV[0] = (tile%mTileBank.mTilesColumns)*(mTileBank.mTileWidth)+1;//+(dx/mScale));// Ucr
-					   		mTextureIV[1] = (tile/mTileBank.mTilesColumns)*(mTileBank.mTileHeight)+mTileBank.mTileHeight+1;//-(dy/mScale));// Vcr
+					   		mTextureIV[0] = (tile%mTileBank.mTilesColumns)*(mTileBank.mTileWidth);//+(dx/mScale));// Ucr
+					   		mTextureIV[1] = (tile/mTileBank.mTilesColumns)*(mTileBank.mTileHeight)+mTileBank.mTileHeight;//-(dy/mScale));// Vcr
 								mTextureIV[2] = mTileBank.mTileWidth;//(int) (W/mScale); // Wcr
 					   		((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 					   		((GL11Ext) gl).glDrawTexfOES(mPosition.mX+px, AngleSurfaceView.roHeight-(mPosition.mY+py+TH), mZ, TW, TH);

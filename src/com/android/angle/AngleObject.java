@@ -18,7 +18,7 @@ public class AngleObject
 	protected int mChildsCount;
 	protected int mNewChildsCount;
 	private int mMaxObjects;
-	boolean die;
+	public boolean mDie;
 	
 	
 	public AngleObject ()
@@ -35,7 +35,7 @@ public class AngleObject
 
 	private void doInit()
 	{
-		die=false;
+		mDie=false;
 		mChilds=new AngleObject[mMaxObjects];
 		mNewChilds=new AngleObject[mMaxObjects];
 		mChildsCount=0;
@@ -62,9 +62,9 @@ public class AngleObject
 		}
 		for (int t=0;t<mChildsCount;t++)
 		{
-			if (mChilds[t].die)
+			if (mChilds[t].mDie)
 			{
-				mChilds[t].die=false;
+				mChilds[t].mDie=false;
 				mChilds[t].mParent=null;
 				mChildsCount--;
 				for (int d = t; d < mChildsCount; d++)
@@ -94,7 +94,7 @@ public class AngleObject
 	 */
 	public void removeObject(AngleObject object)
 	{
-		object.die=true;
+		object.mDie=true;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class AngleObject
 	public void removeObject(int idx)
 	{
 		if (idx<mChildsCount)
-			mChilds[idx].die=true;
+			mChilds[idx].mDie=true;
 	}
 
 	/**
@@ -182,6 +182,6 @@ public class AngleObject
 	public void removeAll()
 	{
 		for (int t=0;t<mChildsCount;t++)
-			mChilds[t].die=true;
+			mChilds[t].mDie=true;
 	}
 }
