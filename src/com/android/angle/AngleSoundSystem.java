@@ -17,7 +17,6 @@ public class AngleSoundSystem
 	
 	public AngleSoundSystem (Activity activity)
 	{
-		Log.e("ASS","Init A");
 		try
 		{
 			Thread.sleep(100);
@@ -29,12 +28,10 @@ public class AngleSoundSystem
 		{
 			e.printStackTrace();
 		}
-		Log.e("ASS","Init B");
 	}
 	
 	public void delete ()
 	{
-		Log.e("ASS","Denit A");
 		try
 		{
 			stopMusic();
@@ -50,7 +47,6 @@ public class AngleSoundSystem
 			e.printStackTrace();
 		}
 		java.lang.System.gc();
-		Log.e("ASS","Denit B");
 	}
 	
 	public void playMusic (String fileName, float volume, boolean loop)
@@ -142,5 +138,10 @@ public class AngleSoundSystem
 	{
 		if (mSoundPool!=null)
 			mSoundPool.play(id, leftVolume, rightVolume, priority, loop, rate);
+	}
+	public void unloadSound (int soundID)
+	{
+		if (mSoundPool!=null)
+			mSoundPool.unload(soundID);
 	}
 };
