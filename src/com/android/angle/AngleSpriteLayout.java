@@ -1,9 +1,6 @@
 package com.android.angle;
 
-import java.nio.FloatBuffer;
-
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Stores all the information about how to draw a sprite
@@ -25,12 +22,8 @@ public class AngleSpriteLayout
 	protected int mFrameColumns;
 	private AngleTextureEngine mTextureEngine;
 
-	public AngleVector roPivot; //Pivot point
+	private AngleVector[] mPivot; //Pivot point
 	
-	public float[] roVertexValues;
-	public int roVertBufferIndex;
-	
-
 	/**
 	 * 
 	 * @param view			Main AngleSurfaceView
@@ -112,12 +105,10 @@ public class AngleSpriteLayout
 		mFrameCount = frameCount;
 		mFrameColumns = frameColumns;
 
-		roVertexValues = new float[12];
-		roPivot=new AngleVector();
+		mPivot=new AngleVector[mFrameCount];
+		for (int f=0;f<mFrameCount;f++)
+			mPivot[f]=new AngleVector(roWidth / 2, roHeight / 2);
 
-		setPivot(roWidth / 2, roHeight / 2);
-
-		roVertBufferIndex = -1;
 	}
 
 	/**
@@ -125,51 +116,42 @@ public class AngleSpriteLayout
 	 * @param x
 	 * @param y
 	 */
-	public void setPivot(int x, int y)
+	public void setPivot(int frame, float x, float y)
 	{
-		roPivot.set(x,y);
-		
-		roVertexValues[0] = -roPivot.mX;
-		roVertexValues[1] = roHeight - roPivot.mY;
-		roVertexValues[2] = roWidth - roPivot.mX;
-		roVertexValues[3] = roHeight - roPivot.mY;
-		roVertexValues[4] = -roPivot.mX;
-		roVertexValues[5] = -roPivot.mY;
-		roVertexValues[6] = roWidth - roPivot.mX;
-		roVertexValues[7] = -roPivot.mY;
-	}
-	
-	/**
-	 * Called when hardware buffers are invalid
-	 * @param gl
-	 */
-	protected void invalidateHardwareBuffers(GL10 gl)
-	{
-		int[] hwBuffers=new int[1];
-		((GL11)gl).glGenBuffers(1, hwBuffers, 0);
-
-		// Allocate and fill the vertex buffer.
-		roVertBufferIndex = hwBuffers[0];
-		((GL11)gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, roVertBufferIndex);
-		((GL11)gl).glBufferData(GL11.GL_ARRAY_BUFFER, 8 * 4, FloatBuffer.wrap(roVertexValues), GL11.GL_STATIC_DRAW);
-		((GL11)gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+		if (frame<mFrameCount)
+			mPivot[frame].set(x,y);
 	}
 
-	/**
-	 * Called when hardware buffers must be released
-	 * @param gl
-	 */
-	protected void releaseHardwareBuffers(GL10 gl)
+	public void setPivot(float x, float y)
 	{
-		int[] hwBuffers = new int[1];
-		hwBuffers[0]=roVertBufferIndex;
-		((GL11) gl).glDeleteBuffers(1, hwBuffers, 0);
-		roVertBufferIndex=-1;
+		for (int f=0;f<mFrameCount;f++)
+			mPivot[f].set(x,y);
+	}
+
+	public AngleVector getPivot(int frame)
+	{
+		if (frame<mFrameCount)
+			return mPivot[frame];
+		return null;
+	}
+
+	public void fillVertexValues(int frame, float[] vertexValues)
+	{
+		if (frame<mFrameCount)
+		{
+			vertexValues[0] = -mPivot[frame].mX;
+			vertexValues[1] = roHeight - mPivot[frame].mY;
+			vertexValues[2] = roWidth - mPivot[frame].mX;
+			vertexValues[3] = roHeight - mPivot[frame].mY;
+			vertexValues[4] = -mPivot[frame].mX;
+			vertexValues[5] = -mPivot[frame].mY;
+			vertexValues[6] = roWidth - mPivot[frame].mX;
+			vertexValues[7] = -mPivot[frame].mY;
+		}
 	}
 	
 	public void onDestroy(GL10 gl)
 	{
 		mTextureEngine.deleteTexture(roTexture);
 	}
-
 }

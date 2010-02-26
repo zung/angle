@@ -19,6 +19,8 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	public float mRotation;
 	protected float[] mTexCoordValues;
 	protected int mTextureCoordBufferIndex;
+	public float[] mVertexValues;
+	public int mVertBufferIndex;
 
 	public AngleRotatingSprite(AngleSpriteLayout layout)
 	{
@@ -26,6 +28,8 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 		mRotation = 0;
 		mTexCoordValues = new float[8];
 		mTextureCoordBufferIndex = -1;
+		mVertexValues = new float[12];
+		mVertBufferIndex = -1;
 		setFrame(0);
 	}
 
@@ -55,35 +59,39 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 			mTexCoordValues[5] = (mLayout.roCropTop + frameTop) / H;
 			mTexCoordValues[6] = (mLayout.roCropLeft + mLayout.roCropHeight + frameLeft) / W;
 			mTexCoordValues[7] = (mLayout.roCropTop + frameTop) / H;
+
+			mLayout.fillVertexValues(roFrame, mVertexValues);
 		}
 	}
 
 	@Override
 	public void invalidateHardwareBuffers(GL10 gl)
 	{
-		int[] hwBuffers = new int[1];
-		((GL11) gl).glGenBuffers(1, hwBuffers, 0);
+		int[] hwBuffers = new int[2];
+		((GL11) gl).glGenBuffers(2, hwBuffers, 0);
 
 		// Allocate and fill the texture buffer.
 		mTextureCoordBufferIndex = hwBuffers[0];
 		((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mTextureCoordBufferIndex);
 		((GL11) gl).glBufferData(GL11.GL_ARRAY_BUFFER, 8 * 4, FloatBuffer.wrap(mTexCoordValues), GL11.GL_STATIC_DRAW);
+		mVertBufferIndex = hwBuffers[1];
+		((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mVertBufferIndex);
+		((GL11) gl).glBufferData(GL11.GL_ARRAY_BUFFER, 8 * 4, FloatBuffer.wrap(mVertexValues), GL11.GL_STATIC_DRAW);
 		((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
 
-		mLayout.invalidateHardwareBuffers(gl);
 		super.invalidateHardwareBuffers(gl);
+
 	}
 
 	@Override
 	public void releaseHardwareBuffers(GL10 gl)
 	{
-		int[] hwBuffers = new int[1];
+		int[] hwBuffers = new int[2];
 		hwBuffers[0]=mTextureCoordBufferIndex;
-		((GL11) gl).glDeleteBuffers(1, hwBuffers, 0);
+		hwBuffers[1]=mVertBufferIndex;
+		((GL11) gl).glDeleteBuffers(2, hwBuffers, 0);
 		mTextureCoordBufferIndex=-1;
-		
-		mLayout.releaseHardwareBuffers(gl);
-		super.releaseHardwareBuffers(gl);
+		mVertBufferIndex=-1;
 	}
 
 	@Override
@@ -106,7 +114,7 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 			if (mTextureCoordBufferIndex<0)
 				invalidateHardwareBuffers(gl);
 
-			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mLayout.roVertBufferIndex);
+			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mVertBufferIndex);
 			((GL11) gl).glVertexPointer(2, GL10.GL_FLOAT, 0, 0);
 
 			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mTextureCoordBufferIndex);
@@ -125,13 +133,13 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 			FloatBuffer mTexCoordBuffer;
 
 			mIndexBuffer = ByteBuffer.allocateDirect(AngleSurfaceView.sIndexValues.length*2).order(ByteOrder.nativeOrder()).asCharBuffer();
-			mVertexBuffer = ByteBuffer.allocateDirect(mLayout.roVertexValues.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+			mVertexBuffer = ByteBuffer.allocateDirect(mVertexValues.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			mTexCoordBuffer = ByteBuffer.allocateDirect(mTexCoordValues.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
 			for (int i = 0; i < AngleSurfaceView.sIndexValues.length; ++i)
 				mIndexBuffer.put(i, AngleSurfaceView.sIndexValues[i]);
-			for (int i = 0; i < mLayout.roVertexValues.length; ++i)
-				mVertexBuffer.put(i, mLayout.roVertexValues[i]);
+			for (int i = 0; i < mVertexValues.length; ++i)
+				mVertexBuffer.put(i, mVertexValues[i]);
 			for (int i = 0; i < mTexCoordValues.length; ++i)
 				mTexCoordBuffer.put(i, mTexCoordValues[i]);
 
