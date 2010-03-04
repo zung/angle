@@ -154,4 +154,10 @@ public class AngleSpriteLayout
 	{
 		mTextureEngine.deleteTexture(roTexture);
 	}
+	
+	public void changeTexture (int resourceId)
+	{
+		mTextureEngine.deleteTexture(roTexture);
+		roTexture = mTextureEngine.createTextureFromResourceId(resourceId);
+	}
 }

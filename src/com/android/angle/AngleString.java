@@ -17,7 +17,7 @@ public class AngleString extends AngleObject
 	public static final int aCenter = 1;
 	public static final int aRight = 2;
 	protected String mString;
-	protected int mLength; // Length to display
+	public int mLength; // Length to display
 	protected AngleFont mFont; // Font
 	protected int[] mTextureIV = new int[4]; //Texture coordinates
 	public AngleVector mPosition; // Position
@@ -47,8 +47,11 @@ public class AngleString extends AngleObject
 	 */
 	public void set(String src)
 	{
-		mLength = src.length();
 		mString=src;
+		if (mString!=null)
+			mLength = mString.length();
+		else
+			mLength=0;
 	}
 
 	/**
@@ -187,6 +190,13 @@ public class AngleString extends AngleObject
 			}
 		}
 		return ret;
+	}
+	
+	public int getLength()
+	{
+		if (mString!=null)
+			return mString.length();
+		return 0;
 	}
 	
 }

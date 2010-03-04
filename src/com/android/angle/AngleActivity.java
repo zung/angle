@@ -92,6 +92,7 @@ public class AngleActivity extends Activity
 	@Override
 	public void finish()
 	{
+		mGLSurfaceView.delete();
 		SS.delete();
 		super.finish();
 	}
