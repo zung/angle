@@ -84,6 +84,16 @@ public class AngleObject
 	public void addObject(AngleObject object)
 	{
 		while (updating.get());
+		for (int t=0;t<mChildsCount;t++)
+		{
+			if (mChilds[t]==object)
+				return;
+		}
+		for (int t=0;t<mNewChildsCount;t++)
+		{
+			if (mNewChilds[t]==object)
+				return;
+		}
 		if (mChildsCount<mMaxObjects)
 			mNewChilds[mNewChildsCount++]=object;
 	}
@@ -94,7 +104,8 @@ public class AngleObject
 	 */
 	public void removeObject(AngleObject object)
 	{
-		object.mDie=true;
+		if (object!=null)
+			object.mDie=true;
 	}
 
 	/**
@@ -127,9 +138,18 @@ public class AngleObject
 	}
 
 	/**
+	 * Called before object is deleted
+	 */
+	public void delete()
+	{
+		for (int t=0;t<mChildsCount;t++)
+			mChilds[t].delete();
+	}
+
+
+	/**
 	 * Called when hardware buffers must be released
 	 * @param gl
-	 * @return 
 	 */
 	public void releaseHardwareBuffers(GL10 gl)
 	{
