@@ -11,6 +11,7 @@ import android.util.Log;
 
 public class AngleSoundSystem
 {
+	private static final boolean isSoundDisabled = true;
 	private static final boolean isMusicDisabled = true;
 	private Activity mActivity;
 	private MediaPlayer mMediaPlayer;
@@ -21,7 +22,8 @@ public class AngleSoundSystem
 		try
 		{
 			Thread.sleep(100);
-			mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+			if (!isSoundDisabled)
+				mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
 			mMediaPlayer = null;
 			mActivity = activity;
 		}
