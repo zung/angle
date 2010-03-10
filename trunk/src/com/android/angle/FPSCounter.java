@@ -20,7 +20,7 @@ public class FPSCounter extends AngleObject
 			if (lCTM > 0)
 			{
 				mFPS=(100.f / ((CTM - lCTM) / 1000.f));
-				Log.e("FPS","" + mFPS);
+				Log.v("FPS","" + mFPS);
 			}
 			lCTM = CTM;
 		}
