@@ -53,7 +53,6 @@ public class AngleTextureEngine
 			Iterator<AngleTexture> it = mTexturesX.iterator();
 			while (it.hasNext())
 				it.next().linkToGL(mGl);
-			Log.e("Textures", "Loaded");
 		}
 	}
 
@@ -101,7 +100,6 @@ public class AngleTextureEngine
 
 		tex = new AngleResourceTexture(this, resourceId);
 		mTexturesX.add(tex);
-		tex.linkToGL(mGl);
 		return tex;
 	}
 
@@ -117,10 +115,7 @@ public class AngleTextureEngine
 			if (error != GL10.GL_NO_ERROR)
 				Log.e("AngleTexture", "generate GLError: " + error);
 			else
-			{
-				Log.e("Texture", "Generated");
 				return textureIDs[0];
-			}
 		}
 		return -1;
 	}

@@ -94,6 +94,8 @@ public class AngleTileMap extends AngleObject
 				   }
 				}
 			}
+			else
+				mTileBank.mTexture.linkToGL(gl);
 		}
 		super.draw(gl);
 	}

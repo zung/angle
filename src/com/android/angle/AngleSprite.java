@@ -12,8 +12,8 @@ import javax.microedition.khronos.opengles.GL11Ext;
  */
 public class AngleSprite extends AngleAbstractSprite
 {
-	protected int[] mTextureIV; //Texture coordinates
-	
+	protected int[] mTextureIV; // Texture coordinates
+
 	/**
 	 * 
 	 * @param layout
@@ -44,16 +44,19 @@ public class AngleSprite extends AngleAbstractSprite
 	{
 		if (mLayout.roTexture != null)
 		{
-			if (mLayout.roTexture.mHWTextureID>-1)
+			if (mLayout.roTexture.mHWTextureID > -1)
 			{
 				gl.glBindTexture(GL10.GL_TEXTURE_2D, mLayout.roTexture.mHWTextureID);
-			   gl.glColor4f(mRed,mGreen,mBlue,mAlpha);
+				gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
 
 				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
-	
-				((GL11Ext) gl).glDrawTexfOES(mPosition.mX - (mLayout.getPivot(roFrame).mX*mScale.mX), 
-						AngleSurfaceView.roHeight-((mPosition.mY - (mLayout.getPivot(roFrame).mY*mScale.mY))+(mLayout.roHeight * mScale.mY)), mZ, mLayout.roWidth * mScale.mX, mLayout.roHeight * mScale.mY);
+
+				((GL11Ext) gl).glDrawTexfOES(mPosition.mX - (mLayout.getPivot(roFrame).mX * mScale.mX), AngleSurfaceView.roHeight
+						- ((mPosition.mY - (mLayout.getPivot(roFrame).mY * mScale.mY)) + (mLayout.roHeight * mScale.mY)), mZ, mLayout.roWidth
+						* mScale.mX, mLayout.roHeight * mScale.mY);
 			}
+			else
+				mLayout.roTexture.linkToGL(gl);
 		}
 		super.draw(gl);
 	}

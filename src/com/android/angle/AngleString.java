@@ -19,14 +19,14 @@ public class AngleString extends AngleObject
 	protected String mString;
 	public int mLength; // Length to display
 	protected AngleFont mFont; // Font
-	protected int[] mTextureIV = new int[4]; //Texture coordinates
+	protected int[] mTextureIV = new int[4]; // Texture coordinates
 	public AngleVector mPosition; // Position
 	public float mZ; // Z position (0=Near, 1=Far)
-	public int mAlignment; //Text alignment
-	public float mRed;   //Red tint (0 - 1)
-	public float mGreen;	//Green tint (0 - 1)
-	public float mBlue;	//Blue tint (0 - 1)
-	public float mAlpha;	//Alpha channel (0 - 1)
+	public int mAlignment; // Text alignment
+	public float mRed; // Red tint (0 - 1)
+	public float mGreen; // Green tint (0 - 1)
+	public float mBlue; // Blue tint (0 - 1)
+	public float mAlpha; // Alpha channel (0 - 1)
 
 	public AngleString(AngleFont font)
 	{
@@ -34,10 +34,10 @@ public class AngleString extends AngleObject
 		mFont = font;
 		mLength = 0;
 		mAlignment = aLeft;
-		mRed=1;  
-		mGreen=1;
-		mBlue=1;
-		mAlpha=1;
+		mRed = 1;
+		mGreen = 1;
+		mBlue = 1;
+		mAlpha = 1;
 	}
 
 	/**
@@ -47,30 +47,31 @@ public class AngleString extends AngleObject
 	 */
 	public void set(String src)
 	{
-		mString=src;
-		if (mString!=null)
+		mString = src;
+		if (mString != null)
 			mLength = mString.length();
 		else
-			mLength=0;
+			mLength = 0;
 	}
 
 	/**
 	 * Test if a point is within extent of the string
+	 * 
 	 * @param x
 	 * @param y
-	 * @return Returns true if point(x,y) is within string 
+	 * @return Returns true if point(x,y) is within string
 	 */
 	public boolean test(float x, float y)
 	{
 		float left = getXPosition(0);
 		if (x >= left)
-			if (y >= mPosition.mY+mFont.mLineat)
+			if (y >= mPosition.mY + mFont.mLineat)
 				if (x < left + getWidth())
-					if (y < mPosition.mY + getHeight()+mFont.mLineat)
+					if (y < mPosition.mY + getHeight() + mFont.mLineat)
 						return true;
 		return false;
 	}
-	
+
 	@Override
 	public void draw(GL10 gl)
 	{
@@ -78,39 +79,44 @@ public class AngleString extends AngleObject
 		{
 			if (mFont.mTexture != null)
 			{
-				gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mTexture.mHWTextureID);
-			   gl.glColor4f(mRed,mGreen,mBlue,mAlpha);
-
-				float x = getXPosition(0);
-				float y = mPosition.mY;
-				for (int c = 0; c < mLength; c++)
+				if (mFont.mTexture.mHWTextureID > -1)
 				{
-					if (mString.charAt(c) == '\n')
-					{
-						y += mFont.mHeight;
-						x = getXPosition(c + 1);
-						continue;
-					}
-					char chr = mFont.getChar(mString.charAt(c));
-					if (chr == (char) -1)
-					{
-						x += mFont.mSpaceWidth;
-						continue;
-					}
-					int chrWidth = mFont.mCharRight[chr] - mFont.mCharLeft[chr];
-					mTextureIV[0] = mFont.mCharX[chr];
-					mTextureIV[1] = mFont.mCharTop[chr] + mFont.mHeight;
-					mTextureIV[2] = chrWidth;
-					mTextureIV[3] = -mFont.mHeight;
-					((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
+					gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mTexture.mHWTextureID);
+					gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
 
-					((GL11Ext) gl).glDrawTexfOES(x + mFont.mCharLeft[chr], 
-							AngleSurfaceView.roHeight - (y + mFont.mHeight + mFont.mLineat), 
-							mZ, chrWidth,	mFont.mHeight);
-					x += mFont.mCharRight[chr] + mFont.mSpace;
+					float x = getXPosition(0);
+					float y = mPosition.mY;
+					for (int c = 0; c < mLength; c++)
+					{
+						if (mString.charAt(c) == '\n')
+						{
+							y += mFont.mHeight;
+							x = getXPosition(c + 1);
+							continue;
+						}
+						char chr = mFont.getChar(mString.charAt(c));
+						if (chr == (char) -1)
+						{
+							x += mFont.mSpaceWidth;
+							continue;
+						}
+						int chrWidth = mFont.mCharRight[chr] - mFont.mCharLeft[chr];
+						mTextureIV[0] = mFont.mCharX[chr];
+						mTextureIV[1] = mFont.mCharTop[chr] + mFont.mHeight;
+						mTextureIV[2] = chrWidth;
+						mTextureIV[3] = -mFont.mHeight;
+						((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
+
+						((GL11Ext) gl).glDrawTexfOES(x + mFont.mCharLeft[chr], AngleSurfaceView.roHeight - (y + mFont.mHeight + mFont.mLineat),
+								mZ, chrWidth, mFont.mHeight);
+						x += mFont.mCharRight[chr] + mFont.mSpace;
+					}
 				}
+				else
+					mFont.mTexture.linkToGL(gl);
 			}
 		}
+		super.draw(gl);
 	}
 
 	private float getXPosition(int c)
@@ -191,12 +197,12 @@ public class AngleString extends AngleObject
 		}
 		return ret;
 	}
-	
+
 	public int getLength()
 	{
-		if (mString!=null)
+		if (mString != null)
 			return mString.length();
 		return 0;
 	}
-	
+
 }
