@@ -257,7 +257,6 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	{
 		if (mNewChildsCount>0)
 		{
-			Log.e("ASV","Adding "+mNewChildsCount);
 			updating.set(true);
 			for (int t=0;t<mNewChildsCount;t++)
 			{

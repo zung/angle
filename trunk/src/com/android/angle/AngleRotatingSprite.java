@@ -10,8 +10,9 @@ import javax.microedition.khronos.opengles.GL11;
 
 /**
  * Sprite with rotating capabilities. Uses hardware buffers if available
+ * 
  * @author Ivan
- *
+ * 
  */
 public class AngleRotatingSprite extends AngleAbstractSprite
 {
@@ -87,69 +88,80 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	public void releaseHardwareBuffers(GL10 gl)
 	{
 		int[] hwBuffers = new int[2];
-		hwBuffers[0]=mTextureCoordBufferIndex;
-		hwBuffers[1]=mVertBufferIndex;
+		hwBuffers[0] = mTextureCoordBufferIndex;
+		hwBuffers[1] = mVertBufferIndex;
 		((GL11) gl).glDeleteBuffers(2, hwBuffers, 0);
-		mTextureCoordBufferIndex=-1;
-		mVertBufferIndex=-1;
+		mTextureCoordBufferIndex = -1;
+		mVertBufferIndex = -1;
 	}
 
 	@Override
 	public void draw(GL10 gl)
 	{
-		gl.glPushMatrix();
-		gl.glLoadIdentity();
-
-		gl.glTranslatef(mPosition.mX, mPosition.mY, mZ);
-		if (mRotation != 0)
-			gl.glRotatef(-mRotation, 0, 0, 1);
-		if ((mScale.mX != 1) || (mScale.mY != 1))
-			gl.glScalef(mScale.mX, mScale.mY, 1);
-
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, mLayout.roTexture.mHWTextureID);
-	   gl.glColor4f(mRed,mGreen,mBlue,mAlpha);
-
-		if (AngleSurfaceView.sUseHWBuffers)
+		if (mLayout.roTexture != null)
 		{
-			if (mTextureCoordBufferIndex<0)
-				invalidateHardwareBuffers(gl);
+			if (mLayout.roTexture.mHWTextureID > -1)
+			{
 
-			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mVertBufferIndex);
-			((GL11) gl).glVertexPointer(2, GL10.GL_FLOAT, 0, 0);
+				gl.glPushMatrix();
+				gl.glLoadIdentity();
 
-			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mTextureCoordBufferIndex);
-			((GL11) gl).glTexCoordPointer(2, GL10.GL_FLOAT, 0, 0);
+				gl.glTranslatef(mPosition.mX, mPosition.mY, mZ);
+				if (mRotation != 0)
+					gl.glRotatef(-mRotation, 0, 0, 1);
+				if ((mScale.mX != 1) || (mScale.mY != 1))
+					gl.glScalef(mScale.mX, mScale.mY, 1);
 
-			((GL11) gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, AngleSurfaceView.roIndexBufferIndex);
-			((GL11) gl).glDrawElements(GL10.GL_TRIANGLES, 6, GL10.GL_UNSIGNED_SHORT, 0);
+				gl.glBindTexture(GL10.GL_TEXTURE_2D, mLayout.roTexture.mHWTextureID);
+				gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
 
-			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-			((GL11) gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+				if (AngleSurfaceView.sUseHWBuffers)
+				{
+					if (mTextureCoordBufferIndex < 0)
+						invalidateHardwareBuffers(gl);
+
+					((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mVertBufferIndex);
+					((GL11) gl).glVertexPointer(2, GL10.GL_FLOAT, 0, 0);
+
+					((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mTextureCoordBufferIndex);
+					((GL11) gl).glTexCoordPointer(2, GL10.GL_FLOAT, 0, 0);
+
+					((GL11) gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, AngleSurfaceView.roIndexBufferIndex);
+					((GL11) gl).glDrawElements(GL10.GL_TRIANGLES, 6, GL10.GL_UNSIGNED_SHORT, 0);
+
+					((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+					((GL11) gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+				}
+				else
+				{
+					CharBuffer mIndexBuffer;
+					FloatBuffer mVertexBuffer;
+					FloatBuffer mTexCoordBuffer;
+
+					mIndexBuffer = ByteBuffer.allocateDirect(AngleSurfaceView.sIndexValues.length * 2).order(ByteOrder.nativeOrder())
+							.asCharBuffer();
+					mVertexBuffer = ByteBuffer.allocateDirect(mVertexValues.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+					mTexCoordBuffer = ByteBuffer.allocateDirect(mTexCoordValues.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+
+					for (int i = 0; i < AngleSurfaceView.sIndexValues.length; ++i)
+						mIndexBuffer.put(i, AngleSurfaceView.sIndexValues[i]);
+					for (int i = 0; i < mVertexValues.length; ++i)
+						mVertexBuffer.put(i, mVertexValues[i]);
+					for (int i = 0; i < mTexCoordValues.length; ++i)
+						mTexCoordBuffer.put(i, mTexCoordValues[i]);
+
+					gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertexBuffer);
+					gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
+					gl.glDrawElements(GL10.GL_TRIANGLES, AngleSurfaceView.sIndexValues.length, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+
+				}
+
+				gl.glPopMatrix();
+			}
+			else
+				mLayout.roTexture.linkToGL(gl);
 		}
-		else
-		{
-			CharBuffer mIndexBuffer;
-			FloatBuffer mVertexBuffer;
-			FloatBuffer mTexCoordBuffer;
 
-			mIndexBuffer = ByteBuffer.allocateDirect(AngleSurfaceView.sIndexValues.length*2).order(ByteOrder.nativeOrder()).asCharBuffer();
-			mVertexBuffer = ByteBuffer.allocateDirect(mVertexValues.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-			mTexCoordBuffer = ByteBuffer.allocateDirect(mTexCoordValues.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-
-			for (int i = 0; i < AngleSurfaceView.sIndexValues.length; ++i)
-				mIndexBuffer.put(i, AngleSurfaceView.sIndexValues[i]);
-			for (int i = 0; i < mVertexValues.length; ++i)
-				mVertexBuffer.put(i, mVertexValues[i]);
-			for (int i = 0; i < mTexCoordValues.length; ++i)
-				mTexCoordBuffer.put(i, mTexCoordValues[i]);
-
-			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertexBuffer);
-			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexCoordBuffer);
-			gl.glDrawElements(GL10.GL_TRIANGLES, AngleSurfaceView.sIndexValues.length, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
-
-		}
-
-		gl.glPopMatrix();
 		super.draw(gl);
 	}
 
