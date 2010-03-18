@@ -241,4 +241,13 @@ public class AngleFont
 		}
 		return (char) -1;
 	}
+
+	public int charWidth(char c)
+	{
+		char chr = getChar(c);
+		if (chr == (char) -1)
+			return mSpaceWidth;
+		else
+			return mCharRight[chr] - mCharLeft[chr];
+	}
 }

@@ -84,6 +84,7 @@ public class AngleObject
 	 */
 	public void addObject(AngleObject object)
 	{
+		object.mDie=false;
 		while (updating.get());
 		for (int t=0;t<mChildsCount;t++)
 		{
