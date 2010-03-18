@@ -23,40 +23,85 @@ public class AngleSprite extends AngleAbstractSprite
 	{
 		super(layout);
 		mTextureIV = new int[4];
-		mTextureIV[2] = mLayout.roCropWidth; // Wcr
-		mTextureIV[3] = -mLayout.roCropHeight; // Hcr
-		setFrame(0);
+		setLayout(roLayout);
+	}
+
+	@Override
+	public void setLayout(AngleSpriteLayout layout)
+	{
+		super.setLayout(layout);
+		if (roLayout != null)
+		{
+			mTextureIV[2] = roLayout.roCropWidth; // Wcr
+			mTextureIV[3] = -roLayout.roCropHeight; // Hcr
+			setFrame(0);
+		}
 	}
 
 	@Override
 	public void setFrame(int frame)
 	{
-		if (frame < mLayout.mFrameCount)
+		if (roLayout != null)
 		{
-			roFrame = frame;
-			mTextureIV[0] = mLayout.roCropLeft + ((roFrame % mLayout.mFrameColumns) * mLayout.roCropWidth);// Ucr
-			mTextureIV[1] = (mLayout.roCropTop + mLayout.roCropHeight) + ((roFrame / mLayout.mFrameColumns) * mLayout.roCropHeight);// Vcr
+			if (frame < roLayout.mFrameCount)
+			{
+				roFrame = frame;
+				mTextureIV[0] = roLayout.roCropLeft + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
+				mTextureIV[1] = (roLayout.roCropTop + roLayout.roCropHeight) + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
+			}
+		}
+	}
+
+	@Override
+	public void setFlip(boolean flipHorizontal, boolean flipVertical)
+	{
+		if (roLayout != null)
+		{
+			if (flipHorizontal)
+			{
+				mTextureIV[0] = (roLayout.roCropLeft + roLayout.roCropWidth) + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
+				mTextureIV[2] = -roLayout.roCropWidth; // Wcr
+			}
+			else
+			{
+				mTextureIV[0] = roLayout.roCropLeft + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
+				mTextureIV[2] = roLayout.roCropWidth; // Wcr
+			}
+
+			if (flipVertical)
+			{
+				mTextureIV[1] = roLayout.roCropTop + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
+				mTextureIV[3] = roLayout.roCropHeight; // Hcr
+			}
+			else
+			{
+				mTextureIV[1] = (roLayout.roCropTop + roLayout.roCropHeight) + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
+				mTextureIV[3] = -roLayout.roCropHeight; // Hcr
+			}
 		}
 	}
 
 	@Override
 	public void draw(GL10 gl)
 	{
-		if (mLayout.roTexture != null)
+		if (roLayout != null)
 		{
-			if (mLayout.roTexture.mHWTextureID > -1)
+			if (roLayout.roTexture != null)
 			{
-				gl.glBindTexture(GL10.GL_TEXTURE_2D, mLayout.roTexture.mHWTextureID);
-				gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
+				if (roLayout.roTexture.mHWTextureID > -1)
+				{
+					gl.glBindTexture(GL10.GL_TEXTURE_2D, roLayout.roTexture.mHWTextureID);
+					gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
 
-				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
+					((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 
-				((GL11Ext) gl).glDrawTexfOES(mPosition.mX - (mLayout.getPivot(roFrame).mX * mScale.mX), AngleSurfaceView.roHeight
-						- ((mPosition.mY - (mLayout.getPivot(roFrame).mY * mScale.mY)) + (mLayout.roHeight * mScale.mY)), mZ, mLayout.roWidth
-						* mScale.mX, mLayout.roHeight * mScale.mY);
+					((GL11Ext) gl).glDrawTexfOES(mPosition.mX - (roLayout.getPivot(roFrame).mX * mScale.mX), AngleSurfaceView.roHeight
+							- ((mPosition.mY - (roLayout.getPivot(roFrame).mY * mScale.mY)) + (roLayout.roHeight * mScale.mY)), mZ, roLayout.roWidth
+							* mScale.mX, roLayout.roHeight * mScale.mY);
+				}
+				else
+					roLayout.roTexture.linkToGL(gl);
 			}
-			else
-				mLayout.roTexture.linkToGL(gl);
 		}
 		super.draw(gl);
 	}
