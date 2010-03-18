@@ -7,7 +7,7 @@ package com.android.angle;
  */
 public abstract class AngleAbstractSprite extends AngleObject
 {
-	public AngleSpriteLayout mLayout; //Sprite Layout with information about how to draw the sprite
+	public AngleSpriteLayout roLayout; //Sprite Layout with information about how to draw the sprite
 	public int roFrame; //Frame number. (ReadOnly)
 	public AngleVector mPosition; //Set to change the position of the sprite
 	public float mZ; // Z position (0=Near, 1=Far)
@@ -22,7 +22,7 @@ public abstract class AngleAbstractSprite extends AngleObject
 		mScale = new AngleVector(1, 1);
 		mPosition = new AngleVector(0, 0);
 		mZ = 0;
-		mLayout=layout;
+		roLayout=layout;
 		mRed=1;
 		mGreen=1;
 		mBlue=1;
@@ -34,5 +34,11 @@ public abstract class AngleAbstractSprite extends AngleObject
 	 * @param frame frame number
 	 */
 	public abstract void setFrame(int frame);
+	public abstract void setFlip(boolean flipHorizontal, boolean flipVertical);
+
+	public void setLayout(AngleSpriteLayout layout)
+	{
+		roLayout=layout;
+	}
 	
 }

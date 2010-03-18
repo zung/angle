@@ -19,6 +19,7 @@ public class AngleObject
 	protected int mNewChildsCount;
 	private int mMaxObjects;
 	public boolean mDie;
+	public int mTag;
 	
 	
 	public AngleObject ()
