@@ -218,35 +218,11 @@ public class AngleString extends AngleObject
 					gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
 
 					int LC=linesCount();
-					for (int l = LC-mDisplayLines; l < LC; l++)
-						drawLine(l);
-
-					float x = getXPosition(0);
 					float y = mPosition.mY;
-					for (int c = 0; c < mLength; c++)
+					for (int l = LC-mDisplayLines; l < LC; l++)
 					{
-						if (mString.charAt(c) == '\n')
-						{
-							y += mFont.mHeight;
-							x = getXPosition(c + 1);
-							continue;
-						}
-						char chr = mFont.getChar(mString.charAt(c));
-						if (chr == (char) -1)
-						{
-							x += mFont.mSpaceWidth;
-							continue;
-						}
-						int chrWidth = mFont.mCharRight[chr] - mFont.mCharLeft[chr];
-						mTextureIV[0] = mFont.mCharX[chr];
-						mTextureIV[1] = mFont.mCharTop[chr] + mFont.mHeight;
-						mTextureIV[2] = chrWidth;
-						mTextureIV[3] = -mFont.mHeight;
-						((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
-
-						((GL11Ext) gl).glDrawTexfOES(x + mFont.mCharLeft[chr], AngleSurfaceView.roHeight - (y + mFont.mHeight + mFont.mLineat),
-								mZ, chrWidth, mFont.mHeight);
-						x += mFont.mCharRight[chr] + mFont.mSpace;
+						drawLine(gl,y,l);
+						y += mFont.mHeight;
 					}
 				}
 				else
@@ -266,7 +242,7 @@ public class AngleString extends AngleObject
 		}
 		return result;
 	}
-
+/*
 	private float getXPosition(int c)
 	{
 		if (mAlignment == aRight)
@@ -296,10 +272,6 @@ public class AngleString extends AngleObject
 		return ret;
 	}
 
-	/**
-	 * 
-	 * @return String width in pixels
-	 */
 	public int getWidth()
 	{
 		int ret = 0;
@@ -327,7 +299,11 @@ public class AngleString extends AngleObject
 			maxRet = ret;
 		return maxRet;
 	}
-
+*/
+	private int longestLine()
+	{
+		
+	}
 	/**
 	 * 
 	 * @return String height in pixels
