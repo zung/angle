@@ -232,22 +232,22 @@ public class AngleFont
 		}
 	}
 
-	protected char getChar(char chr)
+	protected int getChar(char chr)
 	{
 		for (int c = 0; c < mCharCount; c++)
 		{
 			if (mCodePoints[c] == chr)
-				return (char) c;
+				return c;
 		}
-		return (char) -1;
+		return -1;
 	}
 
 	public int charWidth(char c)
 	{
-		char chr = getChar(c);
-		if (chr == (char) -1)
+		int chr = getChar(c);
+		if (chr == -1)
 			return mSpaceWidth;
 		else
-			return mCharRight[chr] - mCharLeft[chr];
+			return mCharRight[chr] + mSpace;
 	}
 }

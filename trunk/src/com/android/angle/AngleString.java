@@ -16,7 +16,6 @@ public class AngleString extends AngleObject
 	public static final int aCenter = 1;
 	public static final int aRight = 2;
 	protected String mString;
-	public int m1stChar; // 1st char to display
 	public int mLength; // Length to display
 	protected AngleFont mFont; // Font
 	protected int[] mTextureIV = new int[4]; // Texture coordinates
@@ -31,6 +30,10 @@ public class AngleString extends AngleObject
 	public int mDisplayLines;
 	protected boolean mIgnoreNL;
 	protected int mTabLength;
+	private int mLinesCount;
+	private int[] mLineStart;
+	private int[] mLineEnd;
+	private int mWidth;
 
 	public AngleString(AngleFont font)
 	{
@@ -47,13 +50,14 @@ public class AngleString extends AngleObject
 		mPosition = new AngleVector();
 		mFont = font;
 		mLength = 0;
+		mLinesCount = 0;
 		mAlignment = aLeft;
 		mRed = 1;
 		mGreen = 1;
 		mBlue = 1;
 		mAlpha = 1;
 		mDisplayWidth = 0;
-		mDisplayLines = 0;
+		mDisplayLines = 1;
 		mTabLength = tabLength;
 		mIgnoreNL = ignoreNL;
 	}
@@ -66,6 +70,7 @@ public class AngleString extends AngleObject
 	public void set(String src)
 	{
 		mLength = 0;
+		mString="";
 		if (src == null)
 			return;
 
@@ -73,14 +78,17 @@ public class AngleString extends AngleObject
 		for (int c = 0; c < src.length(); c++)
 		{
 			if ((src.charAt(c) == '\n') && mIgnoreNL)
+			{
+				mStep1=mStep1.concat(" ");
 				continue;
+			}
 			if (src.charAt(c) == '\t')
 			{
 				for (int t = 0; t < mTabLength; t++)
-					mStep1.concat(" ");
+					mStep1=mStep1.concat(" ");
 			}
 			else if (src.charAt(c) >= ' ')
-				mStep1.concat(src.substring(c, c + 1));
+				mStep1=mStep1.concat(src.substring(c, c + 1));
 		}
 		if (mDisplayWidth > 0)
 		{
@@ -95,10 +103,11 @@ public class AngleString extends AngleObject
 				}
 				else
 					lineWidth += mFont.charWidth(mStep1.charAt(c));
-
+				
+				boolean copy=false;
+				int llc = c; // Last Line Char
 				if (lineWidth > mDisplayWidth)
 				{
-					int llc = c; // Last Line Char
 					while ((lineWidth > mDisplayWidth) && (llc > flc))
 					{
 						while ((mStep1.charAt(llc) == ' ') && (llc > flc)) // Quita los espacios del final
@@ -119,18 +128,47 @@ public class AngleString extends AngleObject
 						mString = mStep1;
 						break;
 					}
-					else
-					{
-						mString.concat(mStep1.substring(flc,llc));
-						mString.concat("\n");
-						c=llc;
-					}
+					copy=true;
+				}
+				if (copy||(c == mStep1.length()-1))
+				{
+					mString=mString.concat(mStep1.substring(flc,llc+1));
+					if (llc+1==mStep1.length())
+						break;
+					mString=mString.concat("\n");
+					flc=llc+1;
+					while ((mStep1.charAt(flc) == ' ') && (flc < mStep1.length())) // Quita los espacios del final
+						flc++;
+					c=flc;
+					lineWidth=0;
 				}
 			}
 		}
 		else
 			mString = mStep1;
 		mLength = mString.length();
+		mLinesCount=linesCount();
+		mLineStart=new int[mLinesCount];
+		mLineEnd=new int[mLinesCount];
+		int l=0;
+		mLineStart[l]=0;
+		mLineEnd[mLinesCount-1]=mLength;
+		for (int c=0;c<mLength;c++)
+		{
+			if (mString.charAt(c) == '\n')
+			{
+				mLineEnd[l++]=c;
+				if (l<mLinesCount)
+					mLineStart[l]=c+1;
+			}
+		}
+		mWidth=0;
+		for (l=0;l<mLinesCount;l++)
+		{
+			int lw=getWidth(mLineStart[l], mLineEnd[l]);
+			if (mWidth<lw)
+				mWidth=lw;
+		}
 	}
 
 	/**
@@ -142,30 +180,33 @@ public class AngleString extends AngleObject
 	 */
 	public boolean test(float x, float y)
 	{
-		float left = getXPosition(0);
+		float left=mPosition.mX;
+		if (mAlignment == aRight)
+			left=mPosition.mX - mWidth;
+		else if (mAlignment == aCenter)
+			left=mPosition.mX - mWidth / 2;
+
 		if (x >= left)
 			if (y >= mPosition.mY + mFont.mLineat)
-				if (x < left + getWidth())
+				if (x < left + mWidth)
 					if (y < mPosition.mY + getHeight() + mFont.mLineat)
 						return true;
 		return false;
 	}
 
-	private void drawLine(GL10 gl, float y, int line)
+	private int drawLine(GL10 gl, float y, int line)
 	{
 		if (line>=0)
 		{
-			int flc=firstCharOfLine(line);
-			int llc=lastCharOfLine(line);
 			float x=mPosition.mX;
 			if (mAlignment == aRight)
-				x=mPosition.mX - getWidth(flc,llc);
+				x-= getWidth(mLineStart[line], mLineEnd[line]);
 			else if (mAlignment == aCenter)
-				x=mPosition.mX - getWidth(flc,llc) / 2;
-			for (int c=flc;c<llc;c++)
+				x-= getWidth(mLineStart[line], mLineEnd[line]) / 2;
+			for (int c=mLineStart[line];(c<mLineEnd[line])&&(c<mLength);c++)
 			{
-				char chr = mFont.getChar(mString.charAt(c));
-				if (chr == (char) -1)
+				int chr = mFont.getChar(mString.charAt(c));
+				if (chr == -1)
 				{
 					x += mFont.mSpaceWidth;
 					continue;
@@ -180,9 +221,10 @@ public class AngleString extends AngleObject
 				((GL11Ext) gl).glDrawTexfOES(x + mFont.mCharLeft[chr], AngleSurfaceView.roHeight - (y + mFont.mHeight + mFont.mLineat),
 						mZ, chrWidth, mFont.mHeight);
 				x += mFont.mCharRight[chr] + mFont.mSpace;
-				
 			}
+			return mFont.mHeight;
 		}
+		return 0;
 	}
 
 	private int getWidth(int flc, int llc)
@@ -193,21 +235,11 @@ public class AngleString extends AngleObject
 		return result;
 	}
 
-	private int lastCharOfLine(int line)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int firstCharOfLine(int line)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	@Override
 	public void draw(GL10 gl)
 	{
+		if (mLength>0)
+		{
 		if (mFont != null)
 		{
 			if (mFont.mTexture != null)
@@ -220,14 +252,12 @@ public class AngleString extends AngleObject
 					int LC=linesCount();
 					float y = mPosition.mY;
 					for (int l = LC-mDisplayLines; l < LC; l++)
-					{
-						drawLine(gl,y,l);
-						y += mFont.mHeight;
-					}
+						y += drawLine(gl,y,l); 
 				}
 				else
 					mFont.mTexture.linkToGL(gl);
 			}
+		}
 		}
 		super.draw(gl);
 	}
@@ -242,84 +272,13 @@ public class AngleString extends AngleObject
 		}
 		return result;
 	}
-/*
-	private float getXPosition(int c)
-	{
-		if (mAlignment == aRight)
-			return mPosition.mX - getLineWidth(c);
-		else if (mAlignment == aCenter)
-			return mPosition.mX - getLineWidth(c) / 2;
-		return mPosition.mX;
-	}
-
-	private int getLineWidth(int c)
-	{
-		int ret = 0;
-		for (; c < mLength; c++)
-		{
-			if (mString.charAt(c) == '\n')
-				break;
-			char chr = mFont.getChar(mString.charAt(c));
-			if (chr == (char) -1)
-			{
-				ret += mFont.mSpaceWidth;
-				continue;
-			}
-			ret += mFont.mCharRight[chr] + mFont.mSpace;
-			if (c == 0)
-				ret -= mFont.mCharLeft[chr];
-		}
-		return ret;
-	}
-
-	public int getWidth()
-	{
-		int ret = 0;
-		int maxRet = 0;
-		for (int c = 0; c < mLength; c++)
-		{
-			if (mString.charAt(c) == '\n')
-			{
-				if (ret > maxRet)
-					maxRet = ret;
-				ret = 0;
-				continue;
-			}
-			char chr = mFont.getChar(mString.charAt(c));
-			if (chr == (char) -1)
-			{
-				ret += mFont.mSpaceWidth;
-				continue;
-			}
-			ret += mFont.mCharRight[chr] + mFont.mSpace;
-			if (c == 0)
-				ret -= mFont.mCharLeft[chr];
-		}
-		if (ret > maxRet)
-			maxRet = ret;
-		return maxRet;
-	}
-*/
-	private int longestLine()
-	{
-		
-	}
 	/**
 	 * 
 	 * @return String height in pixels
 	 */
 	public int getHeight()
 	{
-		int ret = mFont.mHeight;
-		for (int c = 0; c < mLength; c++)
-		{
-			if (mString.charAt(c) == '\n')
-			{
-				ret += mFont.mHeight;
-				continue;
-			}
-		}
-		return ret;
+		return mFont.mHeight*linesCount();
 	}
 
 	public int getLength()
