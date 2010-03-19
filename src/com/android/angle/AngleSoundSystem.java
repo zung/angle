@@ -12,7 +12,7 @@ import android.util.Log;
 public class AngleSoundSystem
 {
 	private static final boolean isSoundDisabled = true;
-	private static final boolean isMusicDisabled = true;
+	private static final boolean isMusicDisabled = false;
 	private Activity mActivity;
 	private MediaPlayer mMediaPlayer;
 	private SoundPool mSoundPool;
@@ -65,7 +65,7 @@ public class AngleSoundSystem
 				{
 					AssetFileDescriptor afd = mActivity.getAssets().openFd(fileName);
 					mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-					mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+					mMediaPlayer.setAudioStreamType(10);
 					mMediaPlayer.prepare();
 					mMediaPlayer.setVolume(volume, volume);
 					mMediaPlayer.setLooping(loop);

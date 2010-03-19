@@ -4,6 +4,8 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
+import android.util.Log;
+
 /**
  * Have the string and its position. Length is automatically set when string content is changed. But can be altered to create typing effect.
  * 
@@ -34,6 +36,8 @@ public class AngleString extends AngleObject
 	private int[] mLineStart;
 	private int[] mLineEnd;
 	private int mWidth;
+	private boolean isUpdating;
+	private boolean isDrawing;
 
 	public AngleString(AngleFont font)
 	{
@@ -60,6 +64,8 @@ public class AngleString extends AngleObject
 		mDisplayLines = 1;
 		mTabLength = tabLength;
 		mIgnoreNL = ignoreNL;
+		isUpdating=false;
+		isDrawing=false;
 	}
 
 	/**
@@ -69,6 +75,9 @@ public class AngleString extends AngleObject
 	 */
 	public void set(String src)
 	{
+		isUpdating=true;
+		while (isDrawing);
+		
 		mLength = 0;
 		mString="";
 		if (src == null)
@@ -169,6 +178,7 @@ public class AngleString extends AngleObject
 			if (mWidth<lw)
 				mWidth=lw;
 		}
+		isUpdating=false;
 	}
 
 	/**
@@ -196,6 +206,7 @@ public class AngleString extends AngleObject
 
 	private int drawLine(GL10 gl, float y, int line)
 	{
+		Log.d("AS","Printing Line "+line);
 		if ((line>=0)&&(line<mLinesCount))
 		{
 			float x=mPosition.mX;
@@ -246,6 +257,9 @@ public class AngleString extends AngleObject
 			{
 				if (mFont.mTexture.mHWTextureID > -1)
 				{
+					if (!isUpdating)
+					{
+					isDrawing=true;
 					gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mTexture.mHWTextureID);
 					gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
 
@@ -253,6 +267,8 @@ public class AngleString extends AngleObject
 					float y = mPosition.mY;
 					for (int l = LC-mDisplayLines; l < LC; l++)
 						y += drawLine(gl,y,l); 
+					isDrawing=false;
+					}
 				}
 				else
 					mFont.mTexture.linkToGL(gl);
