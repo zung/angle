@@ -196,7 +196,7 @@ public class AngleString extends AngleObject
 
 	private int drawLine(GL10 gl, float y, int line)
 	{
-		if (line>=0)
+		if ((line>=0)&&(line<mLinesCount))
 		{
 			float x=mPosition.mX;
 			if (mAlignment == aRight)
