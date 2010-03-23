@@ -18,6 +18,7 @@ public class AngleString extends AngleObject
 	public static final int aCenter = 1;
 	public static final int aRight = 2;
 	protected String mString;
+	protected String mWantString;
 	public int mLength; // Length to display
 	protected AngleFont mFont; // Font
 	protected int[] mTextureIV = new int[4]; // Texture coordinates
@@ -36,8 +37,7 @@ public class AngleString extends AngleObject
 	private int[] mLineStart;
 	private int[] mLineEnd;
 	private int mWidth;
-	private boolean isUpdating;
-	private boolean isDrawing;
+	private boolean mNewString;
 
 	public AngleString(AngleFont font)
 	{
@@ -64,8 +64,7 @@ public class AngleString extends AngleObject
 		mDisplayLines = 1;
 		mTabLength = tabLength;
 		mIgnoreNL = ignoreNL;
-		isUpdating=false;
-		isDrawing=false;
+		mNewString=false;
 	}
 
 	/**
@@ -73,13 +72,19 @@ public class AngleString extends AngleObject
 	 * 
 	 * @param src
 	 */
+	public void setAndHide(String src)
+	{
+		prepareString(src);
+	}
 	public void set(String src)
 	{
-		isUpdating=true;
-		while (isDrawing);
-		
+		prepareString(src);
+		mLength=mWantString.length();
+	}
+	private void prepareString(String src)
+	{
 		mLength = 0;
-		mString="";
+		mWantString="";
 		if (src == null)
 			return;
 
@@ -134,17 +139,17 @@ public class AngleString extends AngleObject
 					}
 					if (llc == flc) //Hay una palabra + larga que la linea
 					{
-						mString = mStep1;
+						mWantString = mStep1;
 						break;
 					}
 					copy=true;
 				}
 				if (copy||(c == mStep1.length()-1))
 				{
-					mString=mString.concat(mStep1.substring(flc,llc+1));
+					mWantString=mWantString.concat(mStep1.substring(flc,llc+1));
 					if (llc+1==mStep1.length())
 						break;
-					mString=mString.concat("\n");
+					mWantString=mWantString.concat("\n");
 					flc=llc+1;
 					while ((mStep1.charAt(flc) == ' ') && (flc < mStep1.length())) // Quita los espacios del final
 						flc++;
@@ -154,15 +159,26 @@ public class AngleString extends AngleObject
 			}
 		}
 		else
-			mString = mStep1;
-		mLength = mString.length();
-		mLinesCount=linesCount();
+			mWantString = mStep1;
+		mNewString=true;
+	}
+	
+	private void tsSetString()
+	{
+		mString=mWantString;
+		mNewString=false;
+		mLinesCount=1;
+		for (int c=0;c<mString.length();c++)
+		{
+			if (mString.charAt(c) == '\n')
+				mLinesCount++;
+		}
 		mLineStart=new int[mLinesCount];
 		mLineEnd=new int[mLinesCount];
 		int l=0;
 		mLineStart[l]=0;
-		mLineEnd[mLinesCount-1]=mLength;
-		for (int c=0;c<mLength;c++)
+		mLineEnd[mLinesCount-1]=mString.length();
+		for (int c=0;c<mString.length();c++)
 		{
 			if (mString.charAt(c) == '\n')
 			{
@@ -178,7 +194,6 @@ public class AngleString extends AngleObject
 			if (mWidth<lw)
 				mWidth=lw;
 		}
-		isUpdating=false;
 	}
 
 	/**
@@ -206,7 +221,6 @@ public class AngleString extends AngleObject
 
 	private int drawLine(GL10 gl, float y, int line)
 	{
-		Log.d("AS","Printing Line "+line);
 		if ((line>=0)&&(line<mLinesCount))
 		{
 			float x=mPosition.mX;
@@ -249,31 +263,31 @@ public class AngleString extends AngleObject
 	@Override
 	public void draw(GL10 gl)
 	{
-		if (mLength>0)
-		{
 		if (mFont != null)
 		{
 			if (mFont.mTexture != null)
 			{
 				if (mFont.mTexture.mHWTextureID > -1)
 				{
-					if (!isUpdating)
+					if (mNewString)
+						tsSetString();
+					else
 					{
-					isDrawing=true;
-					gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mTexture.mHWTextureID);
-					gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
-
-					int LC=linesCount();
-					float y = mPosition.mY;
-					for (int l = LC-mDisplayLines; l < LC; l++)
-						y += drawLine(gl,y,l); 
-					isDrawing=false;
+						if (mLength>0)
+						{
+						gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.mTexture.mHWTextureID);
+						gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
+	
+						int LC=linesCount();
+						float y = mPosition.mY;
+						for (int l = LC-mDisplayLines; l < LC; l++)
+							y += drawLine(gl,y,l);
+						}
 					}
 				}
 				else
 					mFont.mTexture.linkToGL(gl);
 			}
-		}
 		}
 		super.draw(gl);
 	}
