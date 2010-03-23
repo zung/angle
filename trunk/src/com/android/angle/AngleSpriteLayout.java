@@ -160,4 +160,25 @@ public class AngleSpriteLayout
 		mTextureEngine.deleteTexture(roTexture);
 		roTexture = mTextureEngine.createTextureFromResourceId(resourceId);
 	}
+
+	public void changeLayout(int width, int height, int resourceId)
+	{
+		changeLayout(width, height, resourceId, 0, 0, width, height, 1, 1);
+	}
+	public void changeLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight)
+	{
+		changeLayout(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight, 1, 1);
+	}
+	public void changeLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight, int frameCount, int frameColumns)
+	{
+		changeTexture (resourceId);
+		roWidth = width;
+		roHeight = height;
+		roCropLeft = cropLeft;
+		roCropWidth = cropWidth;
+		roCropTop = cropTop;
+		roCropHeight = cropHeight;
+		mFrameCount = frameCount;
+		mFrameColumns = frameColumns;
+	}
 }
