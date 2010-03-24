@@ -65,6 +65,7 @@ public class AngleObject
 		{
 			if (mChilds[t].mDie)
 			{
+				mChilds[t].onDie();
 				mChilds[t].mDie=false;
 				mChilds[t].mParent=null;
 				mChildsCount--;
@@ -78,6 +79,10 @@ public class AngleObject
 		}
 	}
 	
+	protected void onDie()
+	{
+	}
+
 	/**
 	 * 
 	 * @param object Object to add
