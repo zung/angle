@@ -3,6 +3,7 @@ package com.android.angle;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -13,7 +14,9 @@ public class AngleSoundSystem
 {
 	private static final boolean isSoundDisabled = true;
 	private static final boolean isMusicDisabled = false;
+	private static final int sMusicStream = 3;
 	private Activity mActivity;
+	public float roMusicVolume;
 	private MediaPlayer mMediaPlayer;
 	private SoundPool mSoundPool;
 
@@ -51,6 +54,22 @@ public class AngleSoundSystem
 		}
 		java.lang.System.gc();
 	}
+	
+	public void setMusicVolume (float volume)
+	{
+		if (!isMusicDisabled)
+		{
+			if (mMediaPlayer != null)
+			{
+				roMusicVolume=volume;
+				if (roMusicVolume>1)
+					roMusicVolume=1;
+				if (roMusicVolume<0)
+					roMusicVolume=0;
+				mMediaPlayer.setVolume(roMusicVolume, roMusicVolume);
+			}
+		}
+	}
 
 	public void playMusic(String fileName, float volume, boolean loop)
 	{
@@ -65,9 +84,10 @@ public class AngleSoundSystem
 				{
 					AssetFileDescriptor afd = mActivity.getAssets().openFd(fileName);
 					mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-					mMediaPlayer.setAudioStreamType(10);
+					mMediaPlayer.setAudioStreamType(sMusicStream);
 					mMediaPlayer.prepare();
-					mMediaPlayer.setVolume(volume, volume);
+					roMusicVolume=volume;
+					mMediaPlayer.setVolume(roMusicVolume, roMusicVolume);
 					mMediaPlayer.setLooping(loop);
 					mMediaPlayer.start();
 				}
@@ -88,7 +108,8 @@ public class AngleSoundSystem
 			mMediaPlayer = MediaPlayer.create(mActivity, resId);
 			if (mMediaPlayer != null)
 			{
-				mMediaPlayer.setVolume(volume, volume);
+				roMusicVolume=volume;
+				mMediaPlayer.setVolume(roMusicVolume, roMusicVolume);
 				mMediaPlayer.setLooping(loop);
 				mMediaPlayer.start();
 			}
