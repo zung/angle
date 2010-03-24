@@ -171,7 +171,6 @@ public class AngleSpriteLayout
 	}
 	public void changeLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight, int frameCount, int frameColumns)
 	{
-		changeTexture (resourceId);
 		roWidth = width;
 		roHeight = height;
 		roCropLeft = cropLeft;
@@ -180,5 +179,6 @@ public class AngleSpriteLayout
 		roCropHeight = cropHeight;
 		mFrameCount = frameCount;
 		mFrameColumns = frameColumns;
+		changeTexture (resourceId);
 	}
 }
