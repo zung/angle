@@ -1,16 +1,11 @@
 package com.android.angle;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 
-import android.R;
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.util.Log;
 
 public class AngleSoundSystem
 {
