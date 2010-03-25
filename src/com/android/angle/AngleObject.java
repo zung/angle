@@ -102,7 +102,9 @@ public class AngleObject
 				return;
 		}
 		if (mChildsCount<mMaxObjects)
+		{
 			mNewChilds[mNewChildsCount++]=object;
+		}
 	}
 
 	/**

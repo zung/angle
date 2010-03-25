@@ -13,6 +13,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class RenderThread extends Thread
 {
    private static final Semaphore sEglSemaphore = new Semaphore(1);
+	public static boolean isRendering=false;
    private boolean mSizeChanged = true;
 	public boolean mDone;
 	public boolean mPaused;
@@ -181,6 +182,7 @@ public class RenderThread extends Thread
 	{
 		synchronized (this)
 		{
+			RenderThread.isRendering=false;
 			mPaused = true;
 		}
 	}
@@ -189,6 +191,7 @@ public class RenderThread extends Thread
 	{
 		synchronized (this)
 		{
+			RenderThread.isRendering=true;
 			mPaused = false;
 			notify();
 		}
