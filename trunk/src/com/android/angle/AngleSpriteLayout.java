@@ -86,6 +86,11 @@ public class AngleSpriteLayout
 	 * @param resourceId
 	 *           Resource bitmap
 	 */
+	public AngleSpriteLayout(AngleSurfaceView view, int resourceId)
+	{
+		doInit(view, 0, 0, resourceId, 0, 0, 0, 0, 1, 1);
+	}
+
 	public AngleSpriteLayout(AngleSurfaceView view, int width, int height, int resourceId)
 	{
 		doInit(view, width, height, resourceId, 0, 0, width, height, 1, 1);
@@ -95,13 +100,23 @@ public class AngleSpriteLayout
 			int frameColumns)
 	{
 		mTextureEngine=view.getTextureEngine();
-		roWidth = width;
-		roHeight = height;
 		roTexture = mTextureEngine.createTextureFromResourceId(resourceId);
 		roCropLeft = cropLeft;
-		roCropWidth = cropWidth;
 		roCropTop = cropTop;
-		roCropHeight = cropHeight;
+		if ((width==0)||(height==0))
+		{
+			roWidth = roTexture.mWidth;
+			roHeight = roTexture.mHeight;
+			roCropWidth = roTexture.mWidth;
+			roCropHeight = roTexture.mHeight;
+		}
+		else
+		{
+			roWidth = width;
+			roHeight = height;
+			roCropWidth = cropWidth;
+			roCropHeight = cropHeight;
+		}
 		mFrameCount = frameCount;
 		mFrameColumns = frameColumns;
 

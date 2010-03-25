@@ -324,4 +324,17 @@ public class AngleString extends AngleObject
 		return 0;
 	}
 
+	private static AngleString create(AngleObject parent, AngleString str)
+	{
+		parent.addObject(str);
+		return str;
+	}
+
+	public static AngleString createAndHide(AngleObject parent, AngleString str)
+	{
+		create(parent, str);
+		str.mAlpha=0;
+		return str;
+	}
+
 }
