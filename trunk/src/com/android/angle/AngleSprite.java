@@ -22,10 +22,28 @@ public class AngleSprite extends AngleAbstractSprite
 	public AngleSprite(AngleSpriteLayout layout)
 	{
 		super(layout);
-		mTextureIV = new int[4];
-		setLayout(roLayout);
+		doInit(0, 0, 1);
 	}
 
+	public AngleSprite(int x, int y, AngleSpriteLayout layout)
+	{
+		super(layout);
+		doInit(x, y, 1);
+	}
+	
+	public AngleSprite(int x, int y, float alpha, AngleSpriteLayout layout)
+	{
+		super(layout);
+		doInit(x, y, alpha);
+	}
+
+	private void doInit(int x, int y, float alpha)
+	{
+		mTextureIV = new int[4];
+		setLayout(roLayout);
+		mPosition.set(x,y);
+		mAlpha=alpha;
+	}
 	@Override
 	public void setLayout(AngleSpriteLayout layout)
 	{

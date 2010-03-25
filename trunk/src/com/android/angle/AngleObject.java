@@ -87,24 +87,25 @@ public class AngleObject
 	 * 
 	 * @param object Object to add
 	 */
-	public void addObject(AngleObject object)
+	public AngleObject addObject(AngleObject object)
 	{
 		object.mDie=false;
 		while (updating.get());
 		for (int t=0;t<mChildsCount;t++)
 		{
 			if (mChilds[t]==object)
-				return;
+				return object;
 		}
 		for (int t=0;t<mNewChildsCount;t++)
 		{
 			if (mNewChilds[t]==object)
-				return;
+				return object;
 		}
-		if (mChildsCount<mMaxObjects)
+		if (mChildsCount+mNewChildsCount<mMaxObjects)
 		{
 			mNewChilds[mNewChildsCount++]=object;
 		}
+		return object;
 	}
 
 	/**

@@ -26,12 +26,31 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	public AngleRotatingSprite(AngleSpriteLayout layout)
 	{
 		super(layout);
+		doInit(0, 0, 1);
+	}
+
+	public AngleRotatingSprite(int x, int y, AngleSpriteLayout layout)
+	{
+		super(layout);
+		doInit(x, y, 1);
+	}
+	
+	public AngleRotatingSprite(int x, int y, float alpha, AngleSpriteLayout layout)
+	{
+		super(layout);
+		doInit(x, y, alpha);
+	}
+
+	private void doInit(int x, int y, float alpha)
+	{
 		mRotation = 0;
 		mTexCoordValues = new float[8];
 		mTextureCoordBufferIndex = -1;
 		mVertexValues = new float[12];
 		mVertBufferIndex = -1;
 		setLayout(roLayout);
+		mPosition.set(x,y);
+		mAlpha=alpha;
 	}
 
 	@Override

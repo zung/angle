@@ -40,18 +40,4 @@ public abstract class AngleAbstractSprite extends AngleObject
 	{
 		roLayout=layout;
 	}
-	
-	public static AngleAbstractSprite createAndSet(AngleObject parent, int x, int y, AngleAbstractSprite spr)
-	{
-		parent.addObject(spr);
-		spr.mPosition.set(x,y);
-		return spr;
-	}
-	
-	public static AngleAbstractSprite createSetAndHide(AngleObject parent, int x, int y, AngleAbstractSprite spr)
-	{
-		createAndSet(parent, x, y, spr);
-		spr.mAlpha=0;
-		return spr;
-	}
 }
