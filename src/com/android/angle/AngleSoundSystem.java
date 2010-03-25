@@ -1,34 +1,41 @@
 package com.android.angle;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
+import android.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
+import android.net.Uri;
 import android.util.Log;
 
 public class AngleSoundSystem
 {
-	private static final boolean isSoundDisabled = true;
+	private static final boolean isSoundDisabled = false;
 	private static final boolean isMusicDisabled = false;
-	private static final int sMusicStream = 3;
+	private static final int sMusicStream = AudioManager.STREAM_MUSIC;
+	private static final int sMaxSounds = 3;
 	private Activity mActivity;
 	public float roMusicVolume;
-	private MediaPlayer mMediaPlayer;
-	private SoundPool mSoundPool;
+	private MediaPlayer mMusicPlayer;
+	private MediaPlayer[] mSoundPlayer;
+	private int mCurrentSound;
+	private int[] mResID;
 
 	public AngleSoundSystem(Activity activity)
 	{
+		mActivity = activity;
+		mSoundPlayer = new MediaPlayer[sMaxSounds];
+		mResID = new int[sMaxSounds];
 		try
 		{
 			Thread.sleep(100);
-			if (!isSoundDisabled)
-				mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-			mMediaPlayer = null;
-			mActivity = activity;
+			for (int s = 0; s < sMaxSounds; s++)
+				mSoundPlayer[s] = new MediaPlayer();
+			mMusicPlayer = null;
 		}
 		catch (InterruptedException e)
 		{
@@ -41,12 +48,9 @@ public class AngleSoundSystem
 		try
 		{
 			stopMusic();
+			for (int s = 0; s < sMaxSounds; s++)
+				stopSound(mResID[s]);
 			Thread.sleep(100);
-			if (mSoundPool != null)
-			{
-				mSoundPool.release();
-				mSoundPool = null;
-			}
 		}
 		catch (InterruptedException e)
 		{
@@ -54,19 +58,19 @@ public class AngleSoundSystem
 		}
 		java.lang.System.gc();
 	}
-	
-	public void setMusicVolume (float volume)
+
+	public void setMusicVolume(float volume)
 	{
 		if (!isMusicDisabled)
 		{
-			if (mMediaPlayer != null)
+			if (mMusicPlayer != null)
 			{
-				roMusicVolume=volume;
-				if (roMusicVolume>1)
-					roMusicVolume=1;
-				if (roMusicVolume<0)
-					roMusicVolume=0;
-				mMediaPlayer.setVolume(roMusicVolume, roMusicVolume);
+				roMusicVolume = volume;
+				if (roMusicVolume > 1)
+					roMusicVolume = 1;
+				if (roMusicVolume < 0)
+					roMusicVolume = 0;
+				mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
 			}
 		}
 	}
@@ -77,19 +81,19 @@ public class AngleSoundSystem
 		{
 			try
 			{
-				if (mMediaPlayer != null)
+				if (mMusicPlayer != null)
 					stopMusic();
-				mMediaPlayer = new MediaPlayer();
-				if (mMediaPlayer != null)
+				mMusicPlayer = new MediaPlayer();
+				if (mMusicPlayer != null)
 				{
 					AssetFileDescriptor afd = mActivity.getAssets().openFd(fileName);
-					mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-					mMediaPlayer.setAudioStreamType(sMusicStream);
-					mMediaPlayer.prepare();
-					roMusicVolume=volume;
-					mMediaPlayer.setVolume(roMusicVolume, roMusicVolume);
-					mMediaPlayer.setLooping(loop);
-					mMediaPlayer.start();
+					mMusicPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+					mMusicPlayer.prepare();
+					roMusicVolume = volume;
+					mMusicPlayer.setAudioStreamType(sMusicStream);
+					mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
+					mMusicPlayer.setLooping(loop);
+					mMusicPlayer.start();
 				}
 			}
 			catch (IOException e)
@@ -101,80 +105,89 @@ public class AngleSoundSystem
 
 	public void playMusic(int resId, float volume, boolean loop)
 	{
-		if (!isMusicDisabled)
+		if ((!isMusicDisabled) && (resId > 0))
 		{
-			if (mMediaPlayer != null)
+			if (mMusicPlayer != null)
 				stopMusic();
-			mMediaPlayer = MediaPlayer.create(mActivity, resId);
-			if (mMediaPlayer != null)
+			mMusicPlayer = MediaPlayer.create(mActivity, resId);
+			if (mMusicPlayer != null)
 			{
-				roMusicVolume=volume;
-				mMediaPlayer.setVolume(roMusicVolume, roMusicVolume);
-				mMediaPlayer.setLooping(loop);
-				mMediaPlayer.start();
+				roMusicVolume = volume;
+				mMusicPlayer.setAudioStreamType(sMusicStream);
+				mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
+				mMusicPlayer.setLooping(loop);
+				mMusicPlayer.start();
 			}
 		}
 	}
 
 	public void stopMusic()
 	{
-		if (mMediaPlayer != null)
+		if (mMusicPlayer != null)
 		{
-			mMediaPlayer.stop();
-			mMediaPlayer.release();
-			mMediaPlayer = null;
+			mMusicPlayer.stop();
+			mMusicPlayer.release();
+			mMusicPlayer = null;
+		}
+	}
+
+	public void playSound(int resId, float volume, boolean loop)
+	{
+		if ((!isSoundDisabled) && (resId > 0))
+		{
+			if (mSoundPlayer[mCurrentSound] != null)
+				stopSound(mResID[mCurrentSound]);
+			mResID[mCurrentSound] = resId;
+			mSoundPlayer[mCurrentSound] = MediaPlayer.create(mActivity, mResID[mCurrentSound]);
+			if (mSoundPlayer[mCurrentSound] != null)
+			{
+				mSoundPlayer[mCurrentSound].setVolume(volume, volume);
+				mSoundPlayer[mCurrentSound].setLooping(loop);
+				mSoundPlayer[mCurrentSound].start();
+			}
+			mCurrentSound++;
+			mCurrentSound %= sMaxSounds;
+		}
+	}
+
+	public void stopSound(int resId)
+	{
+		int s = 0;
+		for (; s < sMaxSounds; s++)
+			if (mResID[s] == resId)
+				break;
+
+		if (s < sMaxSounds)
+		{
+			if (mSoundPlayer[s] != null)
+			{
+				if (mSoundPlayer[s].isPlaying())
+					mSoundPlayer[s].stop();
+				mSoundPlayer[s].release();
+				mSoundPlayer[s] = null;
+			}
 		}
 	}
 
 	public void pauseMusic()
 	{
-		if (mMediaPlayer != null)
-			mMediaPlayer.pause();
+		if (mMusicPlayer != null)
+			mMusicPlayer.pause();
 	}
 
 	public void resumeMusic()
 	{
-		if (mMediaPlayer != null)
-			mMediaPlayer.start();
+		if (mMusicPlayer != null)
+			mMusicPlayer.start();
 	}
 
-	public int loadSound(int resId)
+	public void playSound(int resId)
 	{
-		if (mSoundPool != null)
-			return mSoundPool.load(mActivity, resId, 0);
-		return -1;
+		playSound(resId, 1, false);
 	}
 
-	public int loadSound(String fileName, int priority)
+	public void playSound(int resId, float volume)
 	{
-		int id = -1;
-		try
-		{
-			if (mSoundPool != null)
-				id = mSoundPool.load(mActivity.getAssets().openFd(fileName), priority);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return id;
-	}
-
-	public void playSound(int id)
-	{
-		if (mSoundPool != null)
-			mSoundPool.play(id, 1, 1, 0, 0, 1);
-	}
-
-	public void playSound(int id, float leftVolume, float rightVolume, int priority, int loop, float rate)
-	{
-		if (mSoundPool != null)
-			mSoundPool.play(id, leftVolume, rightVolume, priority, loop, rate);
-	}
-
-	public void unloadSound(int soundID)
-	{
-		if (mSoundPool != null)
-			mSoundPool.unload(soundID);
+		playSound(resId, volume, false);
 	}
 };
