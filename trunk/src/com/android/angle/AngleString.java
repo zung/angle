@@ -4,8 +4,6 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
-import android.util.Log;
-
 /**
  * Have the string and its position. Length is automatically set when string content is changed. But can be altered to create typing effect.
  * 
