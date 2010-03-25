@@ -1,6 +1,13 @@
 package com.android.angle;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.microedition.khronos.opengles.GL10;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 
 /**
  * Stores all the information about how to draw a sprite
@@ -105,10 +112,27 @@ public class AngleSpriteLayout
 		roCropTop = cropTop;
 		if ((width==0)||(height==0))
 		{
-			roWidth = roTexture.mWidth;
-			roHeight = roTexture.mHeight;
-			roCropWidth = roTexture.mWidth;
-			roCropHeight = roTexture.mHeight;
+			InputStream is = view.getResources().openRawResource(resourceId);			
+			try
+			{
+				Bitmap bitmap = BitmapFactory.decodeStream(is, null, new BitmapFactory.Options());
+				roWidth = bitmap.getWidth();
+				roHeight = bitmap.getHeight();
+				roCropWidth = bitmap.getWidth();
+				roCropHeight = bitmap.getHeight();
+				bitmap.recycle();
+			}
+			finally
+			{
+				try
+				{
+					is.close();
+				}
+				catch (IOException e)
+				{
+					Log.e("AngleTextureEngine", "loadTexture::InputStream.close error: " + e.getMessage());
+				}
+			}
 		}
 		else
 		{

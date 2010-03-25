@@ -185,4 +185,14 @@ public class AngleSoundSystem
 	{
 		playSound(resId, volume, false);
 	}
+
+	public boolean isMusicPlaying()
+	{
+		if (!isMusicDisabled) 
+		{
+			if (mMusicPlayer != null)
+				return mMusicPlayer.isPlaying();
+		}
+		return false;
+	}
 };
