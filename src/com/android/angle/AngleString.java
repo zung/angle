@@ -47,6 +47,14 @@ public class AngleString extends AngleObject
 		init(font, tabLength, ignoreNL);
 	}
 
+	public AngleString(AngleFont font, String string, int x, int y, int alignment)
+	{
+		init(font, 3, false);
+		set(string);
+		mPosition.set(x,y); 
+		mAlignment = alignment;
+	}
+
 	private void init(AngleFont font, int tabLength, boolean ignoreNL)
 	{
 		mPosition = new AngleVector();
