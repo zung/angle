@@ -218,13 +218,14 @@ public class AngleString extends AngleObject
 			left=mPosition.mX - mWidth / 2;
 
 		if (x >= left)
-			if (y >= mPosition.mY + mFont.mLineat)
+			if (y >= mPosition.mY - mFont.mHeight - mFont.mLineat)
 				if (x < left + mWidth)
-					if (y < mPosition.mY + getHeight() + mFont.mLineat)
+					if (y < mPosition.mY - mFont.mHeight - mFont.mLineat + getHeight())
 						return true;
 		return false;
 	}
-
+	
+	
 	private int drawLine(GL10 gl, float y, int line)
 	{
 		if ((line>=0)&&(line<mLinesCount))
@@ -323,18 +324,4 @@ public class AngleString extends AngleObject
 			return mString.length();
 		return 0;
 	}
-
-	private static AngleString create(AngleObject parent, AngleString str)
-	{
-		parent.addObject(str);
-		return str;
-	}
-
-	public static AngleString createAndHide(AngleObject parent, AngleString str)
-	{
-		create(parent, str);
-		str.mAlpha=0;
-		return str;
-	}
-
 }

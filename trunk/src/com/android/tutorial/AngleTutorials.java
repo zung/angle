@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import com.android.game.StepByStepGame;
+
 /**
  * Set of tutorials to learn to use Angle.
  * 
@@ -24,6 +26,7 @@ public class AngleTutorials extends Activity implements OnClickListener
 		findViewById(R.id.tut04).setOnClickListener(this);
 		findViewById(R.id.tut05).setOnClickListener(this);
 		findViewById(R.id.game).setOnClickListener(this);
+		findViewById(R.id.gamesteps).setOnClickListener(this);
 	}
 
 	public void onClick(View v)
@@ -53,6 +56,10 @@ public class AngleTutorials extends Activity implements OnClickListener
 				break;
 			case R.id.game:
 				intent = new Intent(this, Game.class);
+				startActivity(intent);
+				break;
+			case R.id.gamesteps:
+				intent = new Intent(this, StepByStepGame.class);
 				startActivity(intent);
 				break;
 		}
