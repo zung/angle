@@ -25,9 +25,9 @@ public class Tutorial04 extends AngleActivity
 		private static final float sAlphaSpeed = 0.5f;
 		private float mAplhaDir;
 
-		public MyAnimatedSprite(AngleSpriteLayout layout)
+		public MyAnimatedSprite(int x, int y, AngleSpriteLayout layout)
 		{
-			super(layout);
+			super(x, y, layout);
 			mAplhaDir=sAlphaSpeed;
 		}
 
@@ -68,10 +68,8 @@ public class Tutorial04 extends AngleActivity
 			if (event.getAction()==MotionEvent.ACTION_DOWN)
 			{
 				//Add new MyAnimatedSprite on touch position 
-				MyAnimatedSprite mLogo = new MyAnimatedSprite (mLogoLayout);
-				mLogo.mPosition.set(event.getX(), event.getY());
 				//Access mGLSurfaceView using mActivity
-				mActivity.mGLSurfaceView.addObject(mLogo);
+				mActivity.mGLSurfaceView.addObject(new MyAnimatedSprite ((int)event.getX(), (int)event.getY(), mLogoLayout));
 				return true;
 			}
 			return super.onTouchEvent(event);

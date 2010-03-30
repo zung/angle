@@ -90,11 +90,9 @@ public class Game extends AngleActivity
 		{
 			super(activity);
 			
-			//Create two main object groups. One for the game field and other for the dashboard
-			ogField=new AngleObject();
-			addObject(ogField);
-			ogDashboard=new AngleObject();
-			addObject(ogDashboard);
+			//Create and insert two main object groups. One for the game field and other for the dashboard
+			ogField=addObject(new AngleObject());
+			ogDashboard=addObject(new AngleObject());
 
 			AngleTileBank tbGround = new AngleTileBank(mActivity.mGLSurfaceView,R.drawable.tilemap,4,4,32,32);
 			tmGround = new AngleTileMap(tbGround, 320, 480, 15, 180, false,false);
@@ -105,23 +103,18 @@ public class Game extends AngleActivity
 			ogField.addObject(tmGround);
 			slShip = new AngleSpriteLayout(mActivity.mGLSurfaceView,64, 64, R.drawable.anglelogo, 0, 0, 128, 128);
 			slShot = new AngleSpriteLayout(mActivity.mGLSurfaceView,16, 16, R.drawable.anglelogo, 0, 0, 128, 128);
-			mShip = new MyShip(slShip);
-			ogField.addObject(mShip);
+			mShip = (MyShip)ogField.addObject(new MyShip(slShip));
+
 			
 			//The dashboard background
 			AngleSpriteLayout slDash = new AngleSpriteLayout(mActivity.mGLSurfaceView, 320, 64, R.drawable.tilemap, 0, 32, 320, 64);
-			AngleSprite mDash=new AngleSprite (slDash);
+			AngleSprite mDash=(AngleSprite)ogDashboard.addObject(new AngleSprite (slDash));
 			mDash.mPosition.set(160, 480-slDash.roHeight/2);
 			mDash.mAlpha=0.5f;
-			ogDashboard.addObject(mDash);
 
 			//Font and text
 			AngleFont fntCafe25 = new AngleFont(mActivity.mGLSurfaceView, 25, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, 30, 200, 255, 255);
-			AngleString mText = new AngleString(fntCafe25);
-			mText.set("Hola");
-			mText.mAlignment = AngleString.aCenter;
-			mText.mPosition.set(160, 440); 
-			ogDashboard.addObject(mText);
+			ogDashboard.addObject(new AngleString(fntCafe25,"Hello!!!",160,440,AngleString.aCenter));
 		}
 
 		@Override

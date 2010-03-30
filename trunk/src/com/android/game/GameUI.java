@@ -119,6 +119,16 @@ public class GameUI extends AngleUI
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		//Impedimos que el sistema sea sobrecargado por eventos de touch
+		//Máximo 60 por segundo
+		try
+		{
+			Thread.sleep(16);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		// -------------------------
 		float eX=event.getX();
 		float eY=event.getY();
 		if (event.getAction()==MotionEvent.ACTION_DOWN)
