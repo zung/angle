@@ -10,7 +10,6 @@ public abstract class AngleAbstractSprite extends AngleObject
 	public AngleSpriteLayout roLayout; //Sprite Layout with information about how to draw the sprite
 	public int roFrame; //Frame number. (ReadOnly)
 	public AngleVector mPosition; //Set to change the position of the sprite
-	public float mZ; // Z position (0=Near, 1=Far)
 	public AngleVector mScale; //Set to change the scale of the sprite
 	public float mRed;   //Red tint (0 - 1)
 	public float mGreen;	//Green tint (0 - 1)
@@ -21,7 +20,6 @@ public abstract class AngleAbstractSprite extends AngleObject
 	{
 		mScale = new AngleVector(1, 1);
 		mPosition = new AngleVector(0, 0);
-		mZ = 0;
 		roLayout=layout;
 		mRed=1;
 		mGreen=1;

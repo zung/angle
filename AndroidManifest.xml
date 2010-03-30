@@ -22,7 +22,7 @@
 		<activity android:name="Game" android:clearTaskOnLaunch="true"
 			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
 			android:screenOrientation="portrait"></activity>
-	<activity android:name="com.android.game.StepByStepGame" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+	<activity android:name="com.android.game.StepByStepGame" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"></activity>
 </application>
 	<uses-sdk android:minSdkVersion="3" />
 

@@ -27,7 +27,10 @@ public class MenuUI extends AngleUI
 	//PASO 7:
 	//Vamos a crear 2 textos para el menú. Para ello, necesitaremos una fuente 
 	private AngleString strPlay;
+	private AngleString strHiScore;
 	private AngleString strExit;
+
+	private int mHiScore;
 
 	public MenuUI(AngleActivity activity)
 	{
@@ -56,12 +59,13 @@ public class MenuUI extends AngleUI
 		AngleFont fntCafe=new AngleFont(mActivity.mGLSurfaceView, 25, Typeface.createFromAsset(mActivity.getAssets(),"cafe.ttf"), 222, 0, 0, 30, 200, 255, 255);
 		
 		//PASO 11:
-		//Creamos y añadimos los 2 textos del menú a ogMenuTexts
+		//Creamos y añadimos los 3 textos del menú a ogMenuTexts
 		//Ahora veremos la utilidad de que addObject devuelva el objeto añadido para hacerlo todo inline
 		//Podriamos añadirlos antes del paso 9. No importa el orden en el que se construya el árbol
 		//En el constructor del String, tenemos: la fuente que usa, la posición en pantalla de la linea de esctritura 
 		//(en este caso, al usar una alineación al centro, la posición en X, marca el centro) y la alineación horizontal
 		strPlay = (AngleString) ogMenuTexts.addObject(new AngleString(fntCafe, "Play", 160, 180, AngleString.aCenter));
+		strHiScore = (AngleString) ogMenuTexts.addObject(new AngleString(fntCafe, "Hi Score", 160, 210, AngleString.aCenter));
 		strExit = (AngleString) ogMenuTexts.addObject(new AngleString(fntCafe, "Exit", 160, 390, AngleString.aCenter));
 		
 		//La estructura por ahora nos queda así:
@@ -95,6 +99,17 @@ public class MenuUI extends AngleUI
 			return true;
 		}
 		return false;
+	}
+
+	//PASO 14:
+	//Sobrecargamos el callback onActivate para actualizar el HiScore 
+	@Override
+	public void onActivate()
+	{
+		if (((StepByStepGame) mActivity).mTheGame.mScore>mHiScore)
+				mHiScore=((StepByStepGame) mActivity).mTheGame.mScore;
+		strHiScore.set("Hi Score: "+mHiScore);
+		super.onActivate();
 	}
 	
 	//(continua em GameUI)

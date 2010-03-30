@@ -1,25 +1,24 @@
 package com.android.game;
 
 import com.android.angle.AngleSprite;
-import com.android.angle.AngleSpriteLayout;
 import com.android.angle.AngleVector;
 
 public class Sight extends AngleSprite
 {
 	private boolean mAutofire;
-	private Field mField;
+	private GameUI mGame;
 	private float mReloadTO;
 	private int mWeapon;
 	private boolean[] mOneShot={false};
-	private float[] mReload={0.2f};
+	private float[] mReload={0.12f};
 	private float mShotTO;
 
-	public Sight(AngleSpriteLayout layout, Field field)
+	public Sight(GameUI game)
 	{
-		super(layout);
+		super(game.slSight);
+		mAlpha=0;
+		mGame=game;
 		mPosition.set(160,140);
-		mZ=0; //al frente
-		mField=field;
 	}
 
 	public void moveTo(AngleVector mSight)
@@ -30,14 +29,15 @@ public class Sight extends AngleSprite
 	private void shot()
 	{
 		setFrame(1);
-		mShotTO=0.05f;
-		mField.shotAt(mPosition,mWeapon);
+		mShotTO=0.04f;
+		mGame.mField.shotAt(mPosition,mWeapon);
 		mReloadTO=mReload[mWeapon];
 	}
 
 	public void fire(boolean isDown)
 	{
 		mAutofire=isDown;
+		mAlpha=(isDown)?1:0;
 		if ((!isDown)&&mOneShot[mWeapon])
 		{
 			if (mReloadTO<=0)

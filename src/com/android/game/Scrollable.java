@@ -7,9 +7,9 @@ public class Scrollable extends AngleSprite
 {
 	float mFieldX;
 	float mFieldZ;
-	Field mField;
+	AngleSprite mField;
 
-	public Scrollable(Field field, AngleSpriteLayout layout)
+	public Scrollable(AngleSprite field, AngleSpriteLayout layout)
 	{
 		super(layout);
 		mField=field;
@@ -22,7 +22,6 @@ public class Scrollable extends AngleSprite
 		float s=(float) (((mFieldZ/mField.roLayout.roHeight)*3)+0.2);
 		mPosition.set(mFieldX+mField.mPosition.mX-256,mFieldZ+mField.mPosition.mY-256);
 		mScale.set(s,s);
-		mZ=(512f-mFieldZ)/512f;
 	}
 
 }

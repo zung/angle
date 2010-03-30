@@ -114,7 +114,7 @@ public class AngleSprite extends AngleAbstractSprite
 					((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
 
 					((GL11Ext) gl).glDrawTexfOES(mPosition.mX - (roLayout.getPivot(roFrame).mX * mScale.mX), AngleSurfaceView.roHeight
-							- ((mPosition.mY - (roLayout.getPivot(roFrame).mY * mScale.mY)) + (roLayout.roHeight * mScale.mY)), mZ, roLayout.roWidth
+							- ((mPosition.mY - (roLayout.getPivot(roFrame).mY * mScale.mY)) + (roLayout.roHeight * mScale.mY)), 0, roLayout.roWidth
 							* mScale.mX, roLayout.roHeight * mScale.mY);
 				}
 				else
