@@ -160,6 +160,7 @@ public class AngleSoundSystem
 					mSoundPlayer[s].stop();
 				mSoundPlayer[s].release();
 				mSoundPlayer[s] = null;
+				mResID[s]=0;
 			}
 		}
 	}

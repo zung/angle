@@ -1,8 +1,5 @@
 package com.android.game;
 
-import android.util.Log;
-
-import com.android.angle.AngleSpriteLayout;
 
 public class Smiley extends Scrollable
 {
@@ -15,7 +12,7 @@ public class Smiley extends Scrollable
 
 	public Smiley(GameUI game)
 	{
-		super(game.mField, game.slSmiley);
+		super(game.mField.mGround, game.slSmiley);
 		mGame=game;
 		mAnimation=aJumping;
 		mFieldX=(float) (Math.random()*512);

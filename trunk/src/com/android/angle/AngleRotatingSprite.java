@@ -147,7 +147,7 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 					gl.glPushMatrix();
 					gl.glLoadIdentity();
 
-					gl.glTranslatef(mPosition.mX, mPosition.mY, mZ);
+					gl.glTranslatef(mPosition.mX, mPosition.mY, 0);
 					if (mRotation != 0)
 						gl.glRotatef(-mRotation, 0, 0, 1);
 					if ((mScale.mX != 1) || (mScale.mY != 1))

@@ -176,14 +176,14 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		gl.glLoadIdentity();
 		gl.glOrthof(0.0f, roWidth, roHeight, 0.0f, 0.0f, 1.0f);
 
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
-
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glDisable(GL10.GL_DITHER);
 		gl.glDisable(GL10.GL_MULTISAMPLE);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnable(GL10.GL_BLEND);
+
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
 		
       gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
       gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
