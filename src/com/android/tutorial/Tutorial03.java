@@ -23,9 +23,9 @@ public class Tutorial03 extends AngleActivity
 		private static final float sAlphaSpeed = 0.5f;
 		private float mAplhaDir;
 
-		public MyAnimatedSprite(AngleSpriteLayout layout)
+		public MyAnimatedSprite(int x, int y, AngleSpriteLayout layout)
 		{
-			super(layout);
+			super(x, y, layout);
 			mAplhaDir=sAlphaSpeed;
 		}
 
@@ -53,10 +53,7 @@ public class Tutorial03 extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 
-		AngleSpriteLayout mLogoLayout = new AngleSpriteLayout(mGLSurfaceView, 128, 128, R.drawable.anglelogo);
-		MyAnimatedSprite mLogo = new MyAnimatedSprite (mLogoLayout);
-		mLogo.mPosition.set(160, 200); 
-		mGLSurfaceView.addObject(mLogo);
+		mGLSurfaceView.addObject(new MyAnimatedSprite (160, 200, new AngleSpriteLayout(mGLSurfaceView, R.drawable.anglelogo)));
 		
 		//Add FPS counter. See logcat
 		mGLSurfaceView.addObject(new FPSCounter());

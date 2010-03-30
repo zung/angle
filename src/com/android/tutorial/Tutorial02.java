@@ -18,9 +18,9 @@ public class Tutorial02 extends AngleActivity
 {
 	private class MyAnimatedSprite extends AngleRotatingSprite
 	{
-		public MyAnimatedSprite(AngleSpriteLayout layout)
+		public MyAnimatedSprite(int x, int y, AngleSpriteLayout layout)
 		{
-			super(layout);
+			super(x, y, layout);
 		}
 
 		//Override step function to implement animations and user logic
@@ -37,11 +37,9 @@ public class Tutorial02 extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 
-		AngleSpriteLayout mLogoLayout = new AngleSpriteLayout(mGLSurfaceView, 128, 128, R.drawable.anglelogo);
+		//Now we will insert our sprite with only one line of code
 		//Use MyAnimatedSprite so we can make it roll
-		MyAnimatedSprite mLogo = new MyAnimatedSprite (mLogoLayout);
-		mLogo.mPosition.set(160, 200); 
-		mGLSurfaceView.addObject(mLogo);
+		mGLSurfaceView.addObject(new MyAnimatedSprite (160, 200, new AngleSpriteLayout(mGLSurfaceView, R.drawable.anglelogo)));
 
 		//Use a framelayout as main view instead of using mGLSurfaceView directly 
 		FrameLayout mMainLayout=new FrameLayout(this);

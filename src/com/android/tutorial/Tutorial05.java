@@ -23,7 +23,7 @@ import com.android.angle.AngleUI;
 import com.android.angle.FPSCounter;
 
 /**
- * Cretate an user interface (AngleUI)
+ * Use some pseudo-phisyc
  * 
  * 
  * @author Ivan Pajuelo

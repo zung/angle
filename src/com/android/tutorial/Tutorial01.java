@@ -22,7 +22,7 @@ public class Tutorial01 extends AngleActivity
 		super.onCreate(savedInstanceState);
 		//Create a sprite layout
 		//In this case use drawable anglelogo cropping a 128x128 square placed at position 0,0 (See others AngleSpriteLayout constructors for more options)
-		AngleSpriteLayout mLogoLayout = new AngleSpriteLayout(mGLSurfaceView, 128, 128, R.drawable.anglelogo);
+		AngleSpriteLayout mLogoLayout = new AngleSpriteLayout(mGLSurfaceView, R.drawable.anglelogo);
 		//Create a sprite that use this layout
 		AngleSprite mLogo = new AngleSprite (mLogoLayout);
 		//Set position
