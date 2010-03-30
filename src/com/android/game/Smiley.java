@@ -5,6 +5,7 @@ public class Smiley extends Scrollable
 {
 	private static final int aJumping = 0;
 	private static final float[] sFrameCount = {8};
+	private static final int sDeadZone = 40;
 	private int mAnimation;
 	private float aFrame;
 	private float[] mFH={0,-2,5,16,16,13,6,0};
@@ -15,7 +16,7 @@ public class Smiley extends Scrollable
 		super(game.mField.mGround, game.slSmiley);
 		mGame=game;
 		mAnimation=aJumping;
-		mFieldX=(float) (Math.random()*512);
+		mFieldX=(float) (sDeadZone+Math.random()*(512-sDeadZone*2));
 		place();
 	}
 

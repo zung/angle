@@ -14,7 +14,7 @@ import com.android.angle.AngleVector;
 
 public class GameUI extends AngleUI
 {
-	private static final float sSightSpeed = 10;
+	private static final float sSightSpeed = 5;
 	public Field mField;
 	private Sight mSight;
 	private AngleObject ogDashboard;
