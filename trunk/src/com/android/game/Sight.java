@@ -3,6 +3,9 @@ package com.android.game;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleVector;
 
+/** 
+* @author Ivan Pajuelo
+*/
 public class Sight extends AngleSprite
 {
 	private boolean mAutofire;

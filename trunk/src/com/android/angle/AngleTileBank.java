@@ -4,7 +4,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Bank with tiles for tile map
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public class AngleTileBank

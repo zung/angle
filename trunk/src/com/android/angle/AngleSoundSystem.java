@@ -7,6 +7,11 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
+/**
+ * Sounds and music manager
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleSoundSystem
 {
 	private static final boolean isSoundDisabled = false;
@@ -70,6 +75,12 @@ public class AngleSoundSystem
 		}
 	}
 
+	/**
+	 * Play music from asset
+	 * @param fileName asset file name
+	 * @param volume normalized volume
+	 * @param loop infinite loop
+	 */
 	public void playMusic(String fileName, float volume, boolean loop)
 	{
 		if (!isMusicDisabled)
@@ -97,7 +108,12 @@ public class AngleSoundSystem
 			}
 		}
 	}
-
+	/**
+	 * Play music from raw resource
+	 * @param resId resource id
+	 * @param volume normalized volume 
+	 * @param loop infinite loop
+	 */
 	public void playMusic(int resId, float volume, boolean loop)
 	{
 		if ((!isMusicDisabled) && (resId > 0))
@@ -126,6 +142,12 @@ public class AngleSoundSystem
 		}
 	}
 
+	/**
+	 * Play sound from raw resource
+	 * @param resId resource id
+	 * @param volume normalized volume 
+	 * @param loop infinite loop
+	 */
 	public void playSound(int resId, float volume, boolean loop)
 	{
 		if ((!isSoundDisabled) && (resId > 0))
@@ -145,6 +167,10 @@ public class AngleSoundSystem
 		}
 	}
 
+	/**
+	 * stop specific sound
+	 * @param resId resource id
+	 */
 	public void stopSound(int resId)
 	{
 		int s = 0;
@@ -177,11 +203,20 @@ public class AngleSoundSystem
 			mMusicPlayer.start();
 	}
 
+	/**
+	 * Play sound from raw resource at maximum volume with no loop
+	 * @param resId resource id
+	 */
 	public void playSound(int resId)
 	{
 		playSound(resId, 1, false);
 	}
 
+	/**
+	 * Play sound from raw resource with no loop
+	 * @param resId resource id
+	 * @param volume normalized volume 
+	 */
 	public void playSound(int resId, float volume)
 	{
 		playSound(resId, volume, false);

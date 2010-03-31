@@ -6,6 +6,9 @@ import com.android.angle.AngleObject;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleVector;
 
+/** 
+* @author Ivan Pajuelo
+*/
 public class Field extends AngleObject
 {
 	private static final float sSmileySpawn = 1.3f;
@@ -14,7 +17,7 @@ public class Field extends AngleObject
 	public AngleSprite mGround;
 
 	//PASO 27:
-	//Este objeto deberia ser más simple y contener únicamente los smileys,
+	//Este objeto debería ser más simple y contener únicamente los smileys,
 	//pero lo he complicado un poco más para mostrar la versatilidad del motor
 	//Para empezar, en el constructor, le decimos que podrá contener hasta 100 hijos.
 	//El hijo 0, siempre será el fondo. Así que nos caben 99 smileys
@@ -66,6 +69,6 @@ public class Field extends AngleObject
 	}
 	
 	//PASO 29: (FIN)
-	//El resto de código, básicamente es la lógica del juego
+	//El resto de código es básicamente la lógica del juego.
 
 }

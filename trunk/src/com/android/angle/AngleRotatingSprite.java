@@ -11,7 +11,7 @@ import javax.microedition.khronos.opengles.GL11;
 /**
  * Sprite with rotating capabilities. Uses hardware buffers if available
  * 
- * @author Ivan
+ * @author Ivan Pajuelo
  * 
  */
 public class AngleRotatingSprite extends AngleAbstractSprite
@@ -23,18 +23,35 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	public float[] mVertexValues;
 	public int mVertBufferIndex;
 
+	/**
+	 * 
+	 * @param layout AngleSpriteLayout
+	 */
 	public AngleRotatingSprite(AngleSpriteLayout layout)
 	{
 		super(layout);
 		doInit(0, 0, 1);
 	}
 
+	/**
+	 * 
+	 * @param x Position
+	 * @param y Position
+	 * @param layout AngleSpriteLayout
+	 */
 	public AngleRotatingSprite(int x, int y, AngleSpriteLayout layout)
 	{
 		super(layout);
 		doInit(x, y, 1);
 	}
 	
+	/**
+	 * 
+	 * @param x Position
+	 * @param y Position
+	 * @param alpha Normalized alpha channel value
+	 * @param layout AngleSpriteLayout
+	 */
 	public AngleRotatingSprite(int x, int y, float alpha, AngleSpriteLayout layout)
 	{
 		super(layout);
@@ -99,7 +116,6 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	{
 		if (roLayout != null)
 		{
-
 			// TODO
 		}
 	}

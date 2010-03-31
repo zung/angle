@@ -9,7 +9,7 @@ import android.util.Log;
 
 /**
  * Creates a texture using drawable resource
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public class AngleResourceTexture extends AngleTexture

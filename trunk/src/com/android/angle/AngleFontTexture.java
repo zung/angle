@@ -8,7 +8,7 @@ import android.graphics.Bitmap.Config;
 
 /**
  * Texture created using font characters
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public class AngleFontTexture extends AngleTexture

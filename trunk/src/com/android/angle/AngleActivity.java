@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+/**
+ * Main Activity
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleActivity extends Activity
 {
-	public AngleSurfaceView mGLSurfaceView;
-	public AngleSoundSystem SS;
+	public AngleSurfaceView mGLSurfaceView; //The main GL View
+	public AngleSoundSystem SS; //Sounds and music manager
 	private AngleUI mCurrentUI=null;
 
 	@Override
@@ -25,11 +30,14 @@ public class AngleActivity extends Activity
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Set the current user interface
+	 * @param currentUI
+	 */
 	public void setUI(AngleUI currentUI)
 	{
 		if (mCurrentUI!=null)

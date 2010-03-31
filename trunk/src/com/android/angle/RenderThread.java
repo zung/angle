@@ -8,6 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * thread for rendering
+ * @author Ivan Pajuelo
  * 
  */
 public class RenderThread extends Thread

@@ -5,6 +5,11 @@ import android.view.MotionEvent;
 
 import com.android.angle.AngleObject;
 
+/**
+ * Base user interface
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleUI extends AngleObject
 {
 	protected AngleActivity mActivity;

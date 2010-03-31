@@ -19,7 +19,7 @@ import com.android.angle.FPSCounter;
 
 /**
  * Cretate little game simulation
- * 
+ * >Creamos una pequeña simulación de juego
  * 
  * @author Ivan Pajuelo
  * 
@@ -91,14 +91,18 @@ public class Game extends AngleActivity
 			super(activity);
 			
 			//Create and insert two main object groups. One for the game field and other for the dashboard
+			//>Creamos e insertamos dos grupos de objetos principales. Uno para el campo de juego y otro para los marcadores
 			ogField=addObject(new AngleObject());
 			ogDashboard=addObject(new AngleObject());
 
+			//Create a tile bank and a tile map for the ground (see constructors)
+			//>Creamos un banco de tiles y un mapa para el suelo (mirar los constructores)
 			AngleTileBank tbGround = new AngleTileBank(mActivity.mGLSurfaceView,R.drawable.tilemap,4,4,32,32);
 			tmGround = new AngleTileMap(tbGround, 320, 480, 15, 180, false,false);
 			for (int t=0;t<tmGround.mColumnsCount*tmGround.mRowsCount;t++)
 				tmGround.mMap[t]=(int) (Math.random()*tbGround.mTilesCount);
-			// Put the top of the camera at the lowest part of the map
+			// Put the bottom of the camera at the lowest part of the map
+			//>Ponemos la cámara en la parte más baja del mapa
 			tmGround.mTop = tmGround.mRowsCount* tbGround.mTileHeight - tmGround.mHeight;
 			ogField.addObject(tmGround);
 			slShip = new AngleSpriteLayout(mActivity.mGLSurfaceView,64, 64, R.drawable.anglelogo, 0, 0, 128, 128);
@@ -107,12 +111,14 @@ public class Game extends AngleActivity
 
 			
 			//The dashboard background
+			//>Fondo de los marcadores
 			AngleSpriteLayout slDash = new AngleSpriteLayout(mActivity.mGLSurfaceView, 320, 64, R.drawable.tilemap, 0, 32, 320, 64);
 			AngleSprite mDash=(AngleSprite)ogDashboard.addObject(new AngleSprite (slDash));
 			mDash.mPosition.set(160, 480-slDash.roHeight/2);
 			mDash.mAlpha=0.5f;
 
 			//Font and text
+			//>Fuente y texto
 			AngleFont fntCafe25 = new AngleFont(mActivity.mGLSurfaceView, 25, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, 30, 200, 255, 255);
 			ogDashboard.addObject(new AngleString(fntCafe25,"Hello!!!",160,440,AngleString.aCenter));
 		}
@@ -122,6 +128,8 @@ public class Game extends AngleActivity
 		{
 			// Prevent event flooding
 			// Max 33 events per second
+			//>Prevenimos una sobrecarga de eventos de entrada
+			//>33 eventos por segundo como máximo
 			try
 			{
 				Thread.sleep(30);
@@ -155,7 +163,6 @@ public class Game extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 
-		//Add FPS counter. See logcat
 		mGLSurfaceView.addObject(new FPSCounter());
 
 		FrameLayout mMainLayout=new FrameLayout(this);

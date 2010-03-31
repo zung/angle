@@ -16,8 +16,7 @@ public class AngleSprite extends AngleAbstractSprite
 
 	/**
 	 * 
-	 * @param layout
-	 *           Sprite referenced
+	 * @param layout AngleSpriteLayout
 	 */
 	public AngleSprite(AngleSpriteLayout layout)
 	{
@@ -25,12 +24,25 @@ public class AngleSprite extends AngleAbstractSprite
 		doInit(0, 0, 1);
 	}
 
+	/**
+	 * 
+	 * @param x Position
+	 * @param y Position
+	 * @param layout AngleSpriteLayout
+	 */
 	public AngleSprite(int x, int y, AngleSpriteLayout layout)
 	{
 		super(layout);
 		doInit(x, y, 1);
 	}
 	
+	/**
+	 * 
+	 * @param x Position
+	 * @param y Position
+	 * @param alpha Normalized alpha channel value
+	 * @param layout AngleSpriteLayout
+	 */
 	public AngleSprite(int x, int y, float alpha, AngleSpriteLayout layout)
 	{
 		super(layout);
@@ -44,6 +56,7 @@ public class AngleSprite extends AngleAbstractSprite
 		mPosition.set(x,y);
 		mAlpha=alpha;
 	}
+
 	@Override
 	public void setLayout(AngleSpriteLayout layout)
 	{
