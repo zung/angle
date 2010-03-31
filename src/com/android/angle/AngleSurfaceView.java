@@ -32,7 +32,7 @@ import android.view.SurfaceView;
 
 /**
  * Main view for OpenGL ES graphics
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callback

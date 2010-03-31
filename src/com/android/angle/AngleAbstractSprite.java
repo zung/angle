@@ -2,7 +2,7 @@ package com.android.angle;
 
 /**
  * Sprite base class
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public abstract class AngleAbstractSprite extends AngleObject
@@ -16,6 +16,10 @@ public abstract class AngleAbstractSprite extends AngleObject
 	public float mBlue;	//Blue tint (0 - 1)
 	public float mAlpha;	//Alpha channel (0 - 1)
 
+	/**
+	 * Every sprite needs an AngleSpriteLayout to know how to draw itself
+	 * @param layout the AngleSpriteLayout
+	 */
 	public AngleAbstractSprite(AngleSpriteLayout layout)
 	{
 		mScale = new AngleVector(1, 1);
@@ -32,8 +36,18 @@ public abstract class AngleAbstractSprite extends AngleObject
 	 * @param frame frame number
 	 */
 	public abstract void setFrame(int frame);
+	
+	/**
+	 * Set if sprite is flipped horizontally or vertically  
+	 * @param flipHorizontal
+	 * @param flipVertical
+	 */
 	public abstract void setFlip(boolean flipHorizontal, boolean flipVertical);
-
+	
+	/**
+	 * Change the AngleSpriteLayout
+	 * @param layout
+	 */
 	public void setLayout(AngleSpriteLayout layout)
 	{
 		roLayout=layout;

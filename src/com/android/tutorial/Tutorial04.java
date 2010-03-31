@@ -12,7 +12,7 @@ import com.android.angle.FPSCounter;
 
 /**
  * Cretate an user interface (AngleUI)
- * 
+ * >Creación de una interface de usuario (AngleUI) 
  * 
  * @author Ivan Pajuelo
  * 
@@ -54,6 +54,7 @@ public class Tutorial04 extends AngleActivity
 	private class MyDemo extends AngleUI
 	{
 		//Now our rolling sprite(s) will be in our new UI
+		//>Ahora nuestro(s) sprite(s) giratorio(s) estará(n) en nuestra nueva UI 
 		AngleSpriteLayout mLogoLayout;
 		
 		public MyDemo(AngleActivity activity)
@@ -67,8 +68,10 @@ public class Tutorial04 extends AngleActivity
 		{
 			if (event.getAction()==MotionEvent.ACTION_DOWN)
 			{
-				//Add new MyAnimatedSprite on touch position 
-				//Access mGLSurfaceView using mActivity
+				//Add a new MyAnimatedSprite on touch position 
+				//To access mGLSurfaceView we will use mActivity
+				//>Añadimos un nuevo MyAnimatedSprite en la posición donde se ha pulsado
+				//>Para acceder a mGLSurfaceView usaremos mActivity
 				mActivity.mGLSurfaceView.addObject(new MyAnimatedSprite ((int)event.getX(), (int)event.getY(), mLogoLayout));
 				return true;
 			}
@@ -82,7 +85,6 @@ public class Tutorial04 extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 		
-		//Add FPS counter. See logcat
 		mGLSurfaceView.addObject(new FPSCounter());
 
 		FrameLayout mMainLayout=new FrameLayout(this);
@@ -90,6 +92,7 @@ public class Tutorial04 extends AngleActivity
 		setContentView(mMainLayout);
 		
 		//Set current UI (create inline)
+		//>Fijamos la UI activa. (creación inline)
 		setUI(new MyDemo(this));
 	}
 }

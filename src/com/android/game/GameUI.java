@@ -12,6 +12,9 @@ import com.android.angle.AngleString;
 import com.android.angle.AngleUI;
 import com.android.angle.AngleVector;
 
+/** 
+* @author Ivan Pajuelo
+*/
 public class GameUI extends AngleUI
 {
 	private static final float sSightSpeed = 5;
@@ -33,7 +36,7 @@ public class GameUI extends AngleUI
 	
 	//PASO 15:
 	//Este será el punto de entrada
-	//Aqui inicializaremos todas la variables que necesitemos cuando se acabe de activar esta UI
+	//Aquí inicializaremos todas la variables que necesitemos cuando se acabe de activar esta UI
 	@Override
 	public void onActivate()
 	{
@@ -139,7 +142,7 @@ public class GameUI extends AngleUI
 						if (eY<sprTrackPad.mPosition.mY+sprTrackPad.roLayout.roHeight/2)
 						{
 							//PASO 23:
-							//Aqui vemos como reproducir un sonido con volumen al 100%(1) y en un bucle infinito
+							//Aquí vemos como reproducir un sonido con volumen al 100%(1) y en un bucle infinito
 							mActivity.SS.playSound(com.android.tutorial.R.raw.machinegun,1,true);
 							mSight.fire(true);
 						}
@@ -169,7 +172,7 @@ public class GameUI extends AngleUI
 	}
 
 	//PASO 25:
-	//En este callback para actualizar la cantidad de vidas restantes, vemos como volver al menu
+	//En este callback para actualizar la cantidad de vidas restantes, vemos como volver al menú
 	//estableciendo su UI
 	public void updateLifes(int lifes)
 	{

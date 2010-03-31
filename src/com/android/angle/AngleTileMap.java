@@ -7,7 +7,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
 
 /**
  * Tile map
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public class AngleTileMap extends AngleObject

@@ -6,7 +6,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Base class of Angle engine
- * @author Ivan
+ * @author Ivan Pajuelo
  *
  */
 public class AngleObject
@@ -28,6 +28,10 @@ public class AngleObject
 		doInit();
 	}
 
+	/**
+	 * Create AngleObject specifying the maximum direct descendants
+	 * @param maxObjects
+	 */
 	public AngleObject (int maxObjects)
 	{
 		mMaxObjects=maxObjects;
@@ -79,6 +83,9 @@ public class AngleObject
 		}
 	}
 	
+	/**
+	 * Called when this object dies
+	 */
 	protected void onDie()
 	{
 	}
@@ -189,12 +196,20 @@ public class AngleObject
 			return ((AngleObject) mParent).getSurfaceView();
 	}
 
+	/**
+	 * invalidate the textures of this branch
+	 * @param gl
+	 */
 	public void invalidateTexture(GL10 gl)
 	{
 		for (int t=0;t<mChildsCount;t++)
 			mChilds[t].invalidateTexture(gl);
 	}
 
+	/**
+	 * 
+	 * @return Object parent
+	 */
 	public AngleObject getParent ()
 	{
 		if (mParent instanceof AngleObject)
@@ -202,6 +217,11 @@ public class AngleObject
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param idx
+	 * @return child at index idx
+	 */
 	public AngleObject childAt(int idx)
 	{
 		if ((idx>=0)&&(idx<mChildsCount))
@@ -209,6 +229,9 @@ public class AngleObject
 		return null;
 	}
 
+	/**
+	 * remove all children
+	 */
 	public void removeAll()
 	{
 		for (int t=0;t<mChildsCount;t++)

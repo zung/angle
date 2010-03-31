@@ -24,6 +24,7 @@ import com.android.angle.FPSCounter;
 
 /**
  * Use some pseudo-phisyc
+ * >Usando algo de pseudo-física
  * 
  * 
  * @author Ivan Pajuelo
@@ -62,13 +63,13 @@ public class Tutorial05 extends AngleActivity
 			mSprite=new AngleSprite(layout);
 			addCircleCollider(new AngleCircleCollider(0, 0, 29));
 			mMass = 10;
-			mBounce = 0.8f; // Coefficient of restitution (1 return all the energy)
+			mBounce = 0.8f; // Coefficient of restitution (1 return all the energy)  >Coeficiente de restitución (1 devuelve toda la energia)
 		}
 
 		@Override
 		public float getSurface()
 		{
-			return 29 * 2; // Radius * 2
+			return 29 * 2; // Radius * 2  >Radio * 2
 		}
 
 		@Override
@@ -77,7 +78,8 @@ public class Tutorial05 extends AngleActivity
 			mSprite.mPosition.set(mPosition);
 			mSprite.draw(gl);
 			//Draw colliders (beware calls GC)
-			//drawColliders(gl);
+			//>Dibujado de los lolisionadores (cuidado, llama al GC)
+		// drawColliders(gl);
 		}
 		
 		
@@ -85,7 +87,6 @@ public class Tutorial05 extends AngleActivity
 
 	private class MyDemo extends AngleUI
 	{
-		//Now our rolling sprite(s) will be in our new UI
 		AngleSpriteLayout mBallLayout;
 		AnglePhysicsEngine mPhysics;
 		
@@ -94,10 +95,11 @@ public class Tutorial05 extends AngleActivity
 			super(activity);
 			mBallLayout = new AngleSpriteLayout(mGLSurfaceView, 64, 64, R.drawable.ball, 0, 0, 128, 128);
 			mPhysics=new AnglePhysicsEngine(20);
-			mPhysics.mViscosity = 0.2f; // Air viscosity
+			mPhysics.mViscosity = 0.2f; // Air viscosity >Viscosidad del aire
 			addObject(mPhysics);
 
 			// Add 4 segment colliders to simulate walls
+			//>Añadimos 2 colisionadores de segmento para simular las paredes
 			AnglePhysicObject mWall = new AnglePhysicObject(1, 0);
 			mWall.mPosition.set(160, 479);
 			mWall.addSegmentCollider(new AngleSegmentCollider(-160, 0, 160, 0));
@@ -130,10 +132,10 @@ public class Tutorial05 extends AngleActivity
 			{
 				if ((event.getX()>30)&&(event.getY()>30)&&(event.getX()<320-30)&&(event.getY()<480-30))
 				{
-					//Add new MyAnimatedSprite on touch position 
 					Ball mBall = new Ball (mBallLayout);
 					mBall.mPosition.set(event.getX(), event.getY());
 					// Ensure that there isn't any ball in this place
+					// >Nos aseguramos de que ninguna pelota ocupa esta posición
 					for (int b = 0; b < mPhysics.count(); b++)
 					{
 						AngleObject O=mPhysics.childAt(b);
@@ -163,7 +165,6 @@ public class Tutorial05 extends AngleActivity
 
       mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE); 
       
-		//Add FPS counter. See logcat
 		mGLSurfaceView.addObject(new FPSCounter());
 
 		FrameLayout mMainLayout=new FrameLayout(this);
@@ -175,6 +176,8 @@ public class Tutorial05 extends AngleActivity
 	}
 
 
+	//Overload onPause and onResume to enable and disable the accelerometer
+	//Sobrecargamos onPause y onResume para activar y desactivar el acelerómetro
 	@Override
 	protected void onPause()
 	{

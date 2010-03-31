@@ -1,6 +1,9 @@
 package com.android.game;
 
 
+/** 
+* @author Ivan Pajuelo
+*/
 public class Smiley extends Scrollable
 {
 	private static final int aJumping = 0;

@@ -9,8 +9,8 @@ import com.android.angle.AngleSpriteLayout;
 import com.android.angle.FPSCounter;
 
 /**
- * Use FPSCounter class to see performance, put the activity in fullscreen (look in AndroidManifest.xml) and play with alpha
- * 
+ * Use FPSCounter class to see performance, put the Activity in full screen (look in AndroidManifest.xml) and play with alpha
+ * >Veremos como usar FPSCounter para ver el rendimiento, pondremos la Activity a pantalla completa (mirar en AndroidManifest.xml) y jugaremos con el canal alfa 
  * 
  * @author Ivan Pajuelo
  * 
@@ -55,7 +55,8 @@ public class Tutorial03 extends AngleActivity
 
 		mGLSurfaceView.addObject(new MyAnimatedSprite (160, 200, new AngleSpriteLayout(mGLSurfaceView, R.drawable.anglelogo)));
 		
-		//Add FPS counter. See logcat
+		//Add FPS counter. See LogCat
+		//>Añadimos un contador de imágenes por segundo. Mirar en LogCat
 		mGLSurfaceView.addObject(new FPSCounter());
 
 		FrameLayout mMainLayout=new FrameLayout(this);

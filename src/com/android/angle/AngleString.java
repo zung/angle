@@ -37,16 +37,34 @@ public class AngleString extends AngleObject
 	private int mWidth;
 	private boolean mNewString;
 
+	/**
+	 * 
+	 * @param font AngleFont
+	 */
 	public AngleString(AngleFont font)
 	{
 		init(font, 3, false);
 	}
 
+	/**
+	 * 
+	 * @param font AngleFont
+	 * @param tabLength Length in spaces of \t 
+	 * @param ignoreNL Ignore \n
+	 */
 	public AngleString(AngleFont font, int tabLength, boolean ignoreNL)
 	{
 		init(font, tabLength, ignoreNL);
 	}
 
+	/**
+	 * 
+	 * @param font AngleFont
+	 * @param string The text
+	 * @param x Position
+	 * @param y Position
+	 * @param alignment aLeft, aCenter or aRight
+	 */
 	public AngleString(AngleFont font, String string, int x, int y, int alignment)
 	{
 		init(font, 3, false);
@@ -74,7 +92,7 @@ public class AngleString extends AngleObject
 	}
 
 	/**
-	 * Changes the string content
+	 * Changes the string content and hides it
 	 * 
 	 * @param src
 	 */
@@ -82,11 +100,18 @@ public class AngleString extends AngleObject
 	{
 		prepareString(src);
 	}
+
+	/**
+	 * Changes the string content
+	 * 
+	 * @param src
+	 */
 	public void set(String src)
 	{
 		prepareString(src);
 		mLength=mWantString.length();
 	}
+	
 	private void prepareString(String src)
 	{
 		mLength = 0;
@@ -205,8 +230,8 @@ public class AngleString extends AngleObject
 	/**
 	 * Test if a point is within extent of the string
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x Point
+	 * @param y Point
 	 * @return Returns true if point(x,y) is within string
 	 */
 	public boolean test(float x, float y)
@@ -318,6 +343,10 @@ public class AngleString extends AngleObject
 		return mFont.mHeight*linesCount();
 	}
 
+	/**
+	 * 
+	 * @return String length
+	 */
 	public int getLength()
 	{
 		if (mString != null)

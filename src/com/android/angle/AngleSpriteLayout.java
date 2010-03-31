@@ -84,6 +84,17 @@ public class AngleSpriteLayout
 	}
 
 	/**
+	 * This constructor will get the bounds of resource dimensions
+	 * @param view			Main AngleSurfaceView
+	 * @param resourceId
+	 *           Resource bitmap
+	 */
+	public AngleSpriteLayout(AngleSurfaceView view, int resourceId)
+	{
+		doInit(view, 0, 0, resourceId, 0, 0, 0, 0, 1, 1);
+	}
+
+	/**
 	 * 
 	 * @param view			Main AngleSurfaceView
 	 * @param width
@@ -93,11 +104,6 @@ public class AngleSpriteLayout
 	 * @param resourceId
 	 *           Resource bitmap
 	 */
-	public AngleSpriteLayout(AngleSurfaceView view, int resourceId)
-	{
-		doInit(view, 0, 0, resourceId, 0, 0, 0, 0, 1, 1);
-	}
-
 	public AngleSpriteLayout(AngleSurfaceView view, int width, int height, int resourceId)
 	{
 		doInit(view, width, height, resourceId, 0, 0, width, height, 1, 1);
@@ -151,7 +157,8 @@ public class AngleSpriteLayout
 	}
 
 	/**
-	 * Set pivot point
+	 * Set pivot point of one frame
+	 * @param frame
 	 * @param x
 	 * @param y
 	 */
@@ -161,12 +168,23 @@ public class AngleSpriteLayout
 			mPivot[frame].set(x,y);
 	}
 
+	/**
+	 * Set pivot point of all frames
+	 * @param x
+	 * @param y
+	 */
 	public void setPivot(float x, float y)
 	{
 		for (int f=0;f<mFrameCount;f++)
 			mPivot[f].set(x,y);
 	}
 
+	/**
+	 * get pivot point of one frame
+	 * 
+	 * @param frame
+	 * @return pivot point 
+	 */
 	public AngleVector getPivot(int frame)
 	{
 		if (frame<mFrameCount)
@@ -194,20 +212,54 @@ public class AngleSpriteLayout
 		mTextureEngine.deleteTexture(roTexture);
 	}
 	
+	/**
+	 * Change the content of the texture
+	 * @param resourceId Drawable
+	 */
 	public void changeTexture (int resourceId)
 	{
 		mTextureEngine.deleteTexture(roTexture);
 		roTexture = mTextureEngine.createTextureFromResourceId(resourceId);
 	}
 
+	/**
+	 * Change the entire layout
+	 * @param width
+	 * @param height
+	 * @param resourceId
+	 */
 	public void changeLayout(int width, int height, int resourceId)
 	{
 		changeLayout(width, height, resourceId, 0, 0, width, height, 1, 1);
 	}
+	
+	/**
+	 * Change the entire layout
+	 * @param width
+	 * @param height
+	 * @param resourceId
+	 * @param cropLeft
+	 * @param cropTop
+	 * @param cropWidth
+	 * @param cropHeight
+	 */
 	public void changeLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight)
 	{
 		changeLayout(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight, 1, 1);
 	}
+	
+	/**
+	 * Change the entire layout
+	 * @param width
+	 * @param height
+	 * @param resourceId
+	 * @param cropLeft
+	 * @param cropTop
+	 * @param cropWidth
+	 * @param cropHeight
+	 * @param frameCount
+	 * @param frameColumns
+	 */
 	public void changeLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight, int frameCount, int frameColumns)
 	{
 		roWidth = width;

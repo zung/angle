@@ -11,6 +11,9 @@ import com.android.angle.AngleSpriteLayout;
 import com.android.angle.AngleString;
 import com.android.angle.AngleUI;
 
+/** 
+* @author Ivan Pajuelo
+*/
 public class MenuUI extends AngleUI
 {
 	//PASO 6:
@@ -19,7 +22,7 @@ public class MenuUI extends AngleUI
 	//Haremos lo mismo con la UI de juego. La gracia de las UIs, es que sólo hay una activa,
 	//de esta manera, cuando establecemos una, lo que hacemos es dejar activa sólo una de las ramas del árbol
 	//tanto para su dibujado como para su lógica.
-	//Ahora bien. En lugar de añadir diretamente todos nuestros objetos a las UIs, es más conveniente usar
+	//Ahora bien. En lugar de añadir directamente todos nuestros objetos a las UIs, es más conveniente usar
 	//ramas intermedias.
 	//Para eso usaremos AngleObjects como grupos de objetos.
 	private AngleObject ogMenuTexts;
@@ -44,7 +47,7 @@ public class MenuUI extends AngleUI
 		//Por partes:
 		//AddObject añade un objeto. en este caso a this y además devuelve el objeto añadido (más adelante veremos para que usarlo)
 		//El objeto que estamos añadiendo es un AngleSprite y usamos su constructor (X, Y, AngleSpriteLayout)
-		//El AngleSpriteLayout lo creamos también inline. Usando su 2º constructo más sencillo (como especificamos las dimensiones, no podemos usar el más simple)
+		//El AngleSpriteLayout lo creamos también inline. Usando su 2º constructor más sencillo (como especificamos las dimensiones, no podemos usar el más simple)
 		//En cualquier caso, siempre hay que pasarle la instancia de la view principal y el Drawable con la imagen
 		
 		//PASO 9:
@@ -61,8 +64,8 @@ public class MenuUI extends AngleUI
 		//PASO 11:
 		//Creamos y añadimos los 3 textos del menú a ogMenuTexts
 		//Ahora veremos la utilidad de que addObject devuelva el objeto añadido para hacerlo todo inline
-		//Podriamos añadirlos antes del paso 9. No importa el orden en el que se construya el árbol
-		//En el constructor del String, tenemos: la fuente que usa, la posición en pantalla de la linea de esctritura 
+		//Podríamos añadirlos antes del paso 9. No importa el orden en el que se construya el árbol
+		//En el constructor del String, tenemos: la fuente que usa, la posición en pantalla de la linea de escritura 
 		//(en este caso, al usar una alineación al centro, la posición en X, marca el centro) y la alineación horizontal
 		strPlay = (AngleString) ogMenuTexts.addObject(new AngleString(fntCafe, "Play", 160, 180, AngleString.aCenter));
 		strHiScore = (AngleString) ogMenuTexts.addObject(new AngleString(fntCafe, "Hi Score", 160, 210, AngleString.aCenter));
@@ -112,5 +115,5 @@ public class MenuUI extends AngleUI
 		super.onActivate();
 	}
 	
-	//(continua em GameUI)
+	//(continua en GameUI)
 }

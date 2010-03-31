@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 
 /**
  * An EGL helper class.
+ * @author Ivan Pajuelo. Based in Google EglHelper
  */
 
 class EglHelper

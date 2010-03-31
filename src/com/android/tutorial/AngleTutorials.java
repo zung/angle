@@ -9,7 +9,8 @@ import android.view.View.OnClickListener;
 import com.android.game.StepByStepGame;
 
 /**
- * Set of tutorials to learn to use Angle.
+ * Set of tutorials to learn how to use ANGLE.
+ * >Serie de tutoriales para aprender a usar ANGLE
  * 
  * @author Ivan Pajuelo
  * 

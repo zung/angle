@@ -2,6 +2,11 @@ package com.android.angle;
 
 import android.util.Log;
 
+/**
+ * FPS displayed in LogCat
+ * @author Ivan Pajuelo
+ *
+ */
 public class FPSCounter extends AngleObject
 {
 	private int frameCount;

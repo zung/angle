@@ -242,6 +242,11 @@ public class AngleFont
 		return -1;
 	}
 
+	/**
+	 * 
+	 * @param c Index of the character in font character array
+	 * @return The character width in pixels
+	 */
 	public int charWidth(char c)
 	{
 		int chr = getChar(c);

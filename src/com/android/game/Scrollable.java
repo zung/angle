@@ -3,6 +3,9 @@ package com.android.game;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteLayout;
 
+/** 
+* @author Ivan Pajuelo
+*/
 public class Scrollable extends AngleSprite
 {
 	float mFieldX;
