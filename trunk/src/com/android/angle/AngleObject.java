@@ -49,10 +49,9 @@ public class AngleObject
 	}
 
 	/**
-	 * Called every frame 
-	 * @param secondsElapsed Seconds elapsed since last frame
+	 * Used by the engine to put the new objects in the childs list. Do not use after engine is running.
 	 */
-	public void step(float secondsElapsed)
+	public void commit()
 	{
 		if (mNewChildsCount>0)
 		{
@@ -65,6 +64,14 @@ public class AngleObject
 			mNewChildsCount=0;
 			updating.set(false);
 		}
+	}
+	/**
+	 * Called every frame 
+	 * @param secondsElapsed Seconds elapsed since last frame
+	 */
+	public void step(float secondsElapsed)
+	{
+		commit();
 		for (int t=0;t<mChildsCount;t++)
 		{
 			if (mChilds[t].mDie)

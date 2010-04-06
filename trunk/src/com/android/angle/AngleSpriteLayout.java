@@ -25,7 +25,7 @@ public class AngleSpriteLayout
 	public int roCropTop;
 	public int roCropWidth;
 	public int roCropHeight; //Crop information (ReadOnly) 
-	protected int mFrameCount;
+	public int roFrameCount;
 	protected int mFrameColumns;
 	private AngleTextureEngine mTextureEngine;
 
@@ -147,11 +147,11 @@ public class AngleSpriteLayout
 			roCropWidth = cropWidth;
 			roCropHeight = cropHeight;
 		}
-		mFrameCount = frameCount;
+		roFrameCount = frameCount;
 		mFrameColumns = frameColumns;
 
-		mPivot=new AngleVector[mFrameCount];
-		for (int f=0;f<mFrameCount;f++)
+		mPivot=new AngleVector[roFrameCount];
+		for (int f=0;f<roFrameCount;f++)
 			mPivot[f]=new AngleVector(roWidth / 2, roHeight / 2);
 
 	}
@@ -164,7 +164,7 @@ public class AngleSpriteLayout
 	 */
 	public void setPivot(int frame, float x, float y)
 	{
-		if (frame<mFrameCount)
+		if (frame<roFrameCount)
 			mPivot[frame].set(x,y);
 	}
 
@@ -175,7 +175,7 @@ public class AngleSpriteLayout
 	 */
 	public void setPivot(float x, float y)
 	{
-		for (int f=0;f<mFrameCount;f++)
+		for (int f=0;f<roFrameCount;f++)
 			mPivot[f].set(x,y);
 	}
 
@@ -187,14 +187,14 @@ public class AngleSpriteLayout
 	 */
 	public AngleVector getPivot(int frame)
 	{
-		if (frame<mFrameCount)
+		if (frame<roFrameCount)
 			return mPivot[frame];
 		return null;
 	}
 
 	public void fillVertexValues(int frame, float[] vertexValues)
 	{
-		if (frame<mFrameCount)
+		if (frame<roFrameCount)
 		{
 			vertexValues[0] = -mPivot[frame].mX;
 			vertexValues[1] = roHeight - mPivot[frame].mY;
@@ -268,7 +268,7 @@ public class AngleSpriteLayout
 		roCropWidth = cropWidth;
 		roCropTop = cropTop;
 		roCropHeight = cropHeight;
-		mFrameCount = frameCount;
+		roFrameCount = frameCount;
 		mFrameColumns = frameColumns;
 		changeTexture (resourceId);
 	}

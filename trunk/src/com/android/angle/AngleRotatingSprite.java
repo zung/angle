@@ -89,7 +89,7 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	{
 		if (roLayout != null)
 		{
-			if (frame < roLayout.mFrameCount)
+			if (frame < roLayout.roFrameCount)
 			{
 				roFrame = frame;
 				float W = roLayout.roTexture.mWidth;
@@ -97,26 +97,45 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 				float frameLeft = (roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth;
 				float frameTop = (roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight;
 
-				mTexCoordValues[0] = (roLayout.roCropLeft + frameLeft) / W;
-				mTexCoordValues[1] = (roLayout.roCropTop + roLayout.roCropHeight + frameTop) / H;
-				mTexCoordValues[2] = (roLayout.roCropLeft + roLayout.roCropHeight + frameLeft) / W;
-				mTexCoordValues[3] = (roLayout.roCropTop + roLayout.roCropHeight + frameTop) / H;
-				mTexCoordValues[4] = (roLayout.roCropLeft + frameLeft) / W;
-				mTexCoordValues[5] = (roLayout.roCropTop + frameTop) / H;
-				mTexCoordValues[6] = (roLayout.roCropLeft + roLayout.roCropHeight + frameLeft) / W;
-				mTexCoordValues[7] = (roLayout.roCropTop + frameTop) / H;
+				float left = (roLayout.roCropLeft + frameLeft) / W;
+				float bottom = (roLayout.roCropTop + roLayout.roCropHeight + frameTop) / H;
+				float right = (roLayout.roCropLeft + roLayout.roCropWidth + frameLeft) / W;
+				float top = (roLayout.roCropTop + frameTop) / H;
+
+				if (mFlipHorizontal)
+				{
+					mTexCoordValues[0] = right;
+					mTexCoordValues[2] = left;
+					mTexCoordValues[4] = right;
+					mTexCoordValues[6] = left;
+				}
+				else
+				{
+					mTexCoordValues[0] = left;
+					mTexCoordValues[2] = right;
+					mTexCoordValues[4] = left;
+					mTexCoordValues[6] = right;
+				}
+				if (mFlipVertical)
+				{
+					mTexCoordValues[1] = top;
+					mTexCoordValues[3] = top;
+					mTexCoordValues[5] = bottom;
+					mTexCoordValues[7] = bottom;
+				}
+				else
+				{
+					mTexCoordValues[1] = bottom;
+					mTexCoordValues[3] = bottom;
+					mTexCoordValues[5] = top;
+					mTexCoordValues[7] = top;
+				}
 
 				roLayout.fillVertexValues(roFrame, mVertexValues);
+				
+				mTextureCoordBufferIndex=-1;
+				mVertBufferIndex=-1;
 			}
-		}
-	}
-
-	@Override
-	public void setFlip(boolean flipHorizontal, boolean flipVertical)
-	{
-		if (roLayout != null)
-		{
-			// TODO
 		}
 	}
 
