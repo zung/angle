@@ -11,6 +11,8 @@ public abstract class AngleAbstractSprite extends AngleObject
 	public int roFrame; //Frame number. (ReadOnly)
 	public AngleVector mPosition; //Set to change the position of the sprite
 	public AngleVector mScale; //Set to change the scale of the sprite
+	protected boolean mFlipHorizontal;
+	protected boolean mFlipVertical;
 	public float mRed;   //Red tint (0 - 1)
 	public float mGreen;	//Green tint (0 - 1)
 	public float mBlue;	//Blue tint (0 - 1)
@@ -42,7 +44,12 @@ public abstract class AngleAbstractSprite extends AngleObject
 	 * @param flipHorizontal
 	 * @param flipVertical
 	 */
-	public abstract void setFlip(boolean flipHorizontal, boolean flipVertical);
+	public void setFlip(boolean flipHorizontal, boolean flipVertical)
+	{
+		mFlipHorizontal=flipHorizontal;
+		mFlipVertical=flipVertical;
+		setFrame(roFrame);
+	}
 	
 	/**
 	 * Change the AngleSpriteLayout

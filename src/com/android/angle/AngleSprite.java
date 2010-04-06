@@ -74,40 +74,30 @@ public class AngleSprite extends AngleAbstractSprite
 	{
 		if (roLayout != null)
 		{
-			if (frame < roLayout.mFrameCount)
+			if (frame < roLayout.roFrameCount)
 			{
 				roFrame = frame;
-				mTextureIV[0] = roLayout.roCropLeft + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
-				mTextureIV[1] = (roLayout.roCropTop + roLayout.roCropHeight) + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
-			}
-		}
-	}
+				if (mFlipHorizontal)
+				{
+					mTextureIV[0] = (roLayout.roCropLeft + roLayout.roCropWidth) + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
+					mTextureIV[2] = -roLayout.roCropWidth; // Wcr
+				}
+				else
+				{
+					mTextureIV[0] = roLayout.roCropLeft + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
+					mTextureIV[2] = roLayout.roCropWidth; // Wcr
+				}
 
-	@Override
-	public void setFlip(boolean flipHorizontal, boolean flipVertical)
-	{
-		if (roLayout != null)
-		{
-			if (flipHorizontal)
-			{
-				mTextureIV[0] = (roLayout.roCropLeft + roLayout.roCropWidth) + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
-				mTextureIV[2] = -roLayout.roCropWidth; // Wcr
-			}
-			else
-			{
-				mTextureIV[0] = roLayout.roCropLeft + ((roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth);// Ucr
-				mTextureIV[2] = roLayout.roCropWidth; // Wcr
-			}
-
-			if (flipVertical)
-			{
-				mTextureIV[1] = roLayout.roCropTop + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
-				mTextureIV[3] = roLayout.roCropHeight; // Hcr
-			}
-			else
-			{
-				mTextureIV[1] = (roLayout.roCropTop + roLayout.roCropHeight) + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
-				mTextureIV[3] = -roLayout.roCropHeight; // Hcr
+				if (mFlipVertical)
+				{
+					mTextureIV[1] = roLayout.roCropTop + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
+					mTextureIV[3] = roLayout.roCropHeight; // Hcr
+				}
+				else
+				{
+					mTextureIV[1] = (roLayout.roCropTop + roLayout.roCropHeight) + ((roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight);// Vcr
+					mTextureIV[3] = -roLayout.roCropHeight; // Hcr
+				}
 			}
 		}
 	}
