@@ -128,6 +128,7 @@ public class AngleSoundSystem
 				mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
 				mMusicPlayer.setLooping(loop);
 				mMusicPlayer.start();
+				while (!mMusicPlayer.isPlaying());
 			}
 		}
 	}
@@ -137,6 +138,7 @@ public class AngleSoundSystem
 		if (mMusicPlayer != null)
 		{
 			mMusicPlayer.stop();
+			while (mMusicPlayer.isPlaying());
 			mMusicPlayer.release();
 			mMusicPlayer = null;
 		}
