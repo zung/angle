@@ -48,6 +48,7 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	protected AngleObject[]mNewChilds;
 	protected int mChildsCount;
 	protected int mNewChildsCount;
+	private AngleActivity mActivity;
 	
 	public static int roWidth;
 	public static int roHeight;
@@ -81,17 +82,19 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	public AngleSurfaceView(Context context)
 	{
 		super(context);
-		init();
+		init(context);
 	}
 
 	public AngleSurfaceView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		init();
+		init(context);
 	}
 
-	private void init()
+	private void init(Context context)
 	{
+		if (context instanceof AngleActivity)
+			mActivity=(AngleActivity)context;
 		mMaxObjects=sMaxObjects;
 		updating=new AtomicBoolean();
 		mChilds=new AngleObject[mMaxObjects];
@@ -255,6 +258,7 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	 */
 	public void step(float secondsElapsed)
 	{
+		mActivity.SS.step(secondsElapsed);
 		if (mNewChildsCount>0)
 		{
 			updating.set(true);

@@ -1,7 +1,10 @@
 package com.android.angle;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -14,7 +17,8 @@ public class AngleActivity extends Activity
 {
 	public AngleSurfaceView mGLSurfaceView; //The main GL View
 	public AngleSoundSystem SS; //Sounds and music manager
-	private AngleUI mCurrentUI=null;
+	public XmlPullParser xmlParser;
+	protected AngleUI mCurrentUI=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -103,6 +107,29 @@ public class AngleActivity extends Activity
 		mGLSurfaceView.delete();
 		SS.delete();
 		super.finish();
+	}
+	
+	public boolean executeXML (int resId)
+	{
+		xmlParser=getResources().getXml(resId);
+		Log.d("XML","executeXML "+resId);
+		return nextXMLCommand();
+	}
+
+	public boolean nextXMLCommand()
+	{
+		if (XMLHelper.nextXMLTag(xmlParser, 2))
+		{
+			Log.d("XML","nextXMLCommand");
+			executeXMLCommand(xmlParser.getName().toLowerCase());
+			return true;
+		}
+		return false;
+	}
+
+	protected void executeXMLCommand(String command)
+	{
+		
 	}
 
 }

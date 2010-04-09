@@ -24,6 +24,8 @@ public class AngleSoundSystem
 	private MediaPlayer[] mSoundPlayer;
 	private int mCurrentSound;
 	private int[] mResID;
+	private float mVolumeTo;
+	private float mVolumeChangeSpeed;
 
 	public AngleSoundSystem(Activity activity)
 	{
@@ -59,7 +61,16 @@ public class AngleSoundSystem
 		java.lang.System.gc();
 	}
 
-	public void setMusicVolume(float volume)
+	public void setMusicVolume(float volume, float time)
+	{
+		mVolumeTo=volume;
+		if (time>0)
+			mVolumeChangeSpeed=Math.abs(roMusicVolume-mVolumeTo)/time;
+		else
+			setMusicVolume(volume);
+	}
+	
+	private void setMusicVolume(float volume)
 	{
 		if (!isMusicDisabled)
 		{
@@ -70,7 +81,10 @@ public class AngleSoundSystem
 					roMusicVolume = 1;
 				if (roMusicVolume < 0)
 					roMusicVolume = 0;
-				mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
+				if (roMusicVolume>0)
+					mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
+				else
+					stopMusic();
 			}
 		}
 	}
@@ -232,5 +246,23 @@ public class AngleSoundSystem
 				return mMusicPlayer.isPlaying();
 		}
 		return false;
+	}
+	
+	public void step (float secondsElapsed)
+	{
+		if (roMusicVolume<mVolumeTo)
+		{
+			roMusicVolume+=secondsElapsed*mVolumeChangeSpeed;
+			if (roMusicVolume>mVolumeTo)
+				roMusicVolume=mVolumeTo;
+			setMusicVolume(roMusicVolume);
+		}
+		else if (roMusicVolume>mVolumeTo)
+		{
+			roMusicVolume-=secondsElapsed*mVolumeChangeSpeed;
+			if (roMusicVolume<mVolumeTo)
+				roMusicVolume=mVolumeTo;
+			setMusicVolume(roMusicVolume);
+		}
 	}
 };
