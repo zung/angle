@@ -1,6 +1,9 @@
 package com.android.angle;
 
+import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -44,6 +47,8 @@ public class AngleActivity extends Activity
 	 */
 	public void setUI(AngleUI currentUI)
 	{
+		if (mCurrentUI!=currentUI)
+		{
 		if (mCurrentUI!=null)
 		{
 			mCurrentUI.onDeactivate();
@@ -54,6 +59,7 @@ public class AngleActivity extends Activity
 		{
 			mCurrentUI.onActivate();
 			mGLSurfaceView.addObject(mCurrentUI);
+		}
 		}
 	}
 
@@ -118,11 +124,27 @@ public class AngleActivity extends Activity
 
 	public boolean nextXMLCommand()
 	{
-		if (XMLHelper.nextXMLTag(xmlParser, 2))
+		try
 		{
-			Log.d("XML","nextXMLCommand");
-			executeXMLCommand(xmlParser.getName().toLowerCase());
-			return true;
+			xmlParser.next();
+			while (((xmlParser.getEventType() != XmlPullParser.START_TAG)&&(xmlParser.getEventType()!=XmlPullParser.END_DOCUMENT))||(xmlParser.getDepth()!=2))
+				xmlParser.next();// skip comments
+			if (xmlParser.getEventType()!=XmlPullParser.END_DOCUMENT)
+			{
+				Log.d("XML","nextXMLCommand");
+				executeXMLCommand(xmlParser.getName().toLowerCase());
+				return true;
+			}
+			else
+				executeXMLCommand(null);
+		}
+		catch (XmlPullParserException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 		return false;
 	}

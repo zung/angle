@@ -327,6 +327,8 @@ public class AngleString extends AngleObject
 	private int linesCount()
 	{
 		int result=1;
+		if (mLength>mString.length())
+			mLength=mString.length();
 		for (int c=0;c<mLength;c++)
 		{
 			if (mString.charAt(c)=='\n')
