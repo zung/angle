@@ -22,6 +22,7 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 	protected int mTextureCoordBufferIndex;
 	public float[] mVertexValues;
 	public int mVertBufferIndex;
+	private boolean isFrameInvalid;
 
 	/**
 	 * 
@@ -63,11 +64,12 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 		mRotation = 0;
 		mTexCoordValues = new float[8];
 		mTextureCoordBufferIndex = -1;
-		mVertexValues = new float[12];
+		mVertexValues = new float[8];
 		mVertBufferIndex = -1;
 		setLayout(roLayout);
 		mPosition.set(x,y);
 		mAlpha=alpha;
+		isFrameInvalid=true;
 	}
 
 	@Override
@@ -94,6 +96,8 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 				roFrame = frame;
 				float W = roLayout.roTexture.mWidth;
 				float H = roLayout.roTexture.mHeight;
+				if ((W>0)&(H>0))
+				{
 				float frameLeft = (roFrame % roLayout.mFrameColumns) * roLayout.roCropWidth;
 				float frameTop = (roFrame / roLayout.mFrameColumns) * roLayout.roCropHeight;
 
@@ -132,7 +136,8 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 				}
 
 				roLayout.fillVertexValues(roFrame, mVertexValues);
-				
+				isFrameInvalid=false;
+				}
 				mTextureCoordBufferIndex=-1;
 				mVertBufferIndex=-1;
 			}
@@ -164,7 +169,8 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 		int[] hwBuffers = new int[2];
 		hwBuffers[0] = mTextureCoordBufferIndex;
 		hwBuffers[1] = mVertBufferIndex;
-		((GL11) gl).glDeleteBuffers(2, hwBuffers, 0);
+		if (gl!=null)
+			((GL11) gl).glDeleteBuffers(2, hwBuffers, 0);
 		mTextureCoordBufferIndex = -1;
 		mVertBufferIndex = -1;
 	}
@@ -178,6 +184,8 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 			{
 				if (roLayout.roTexture.mHWTextureID > -1)
 				{
+					if (isFrameInvalid)
+						setFrame(roFrame);
 
 					gl.glPushMatrix();
 					gl.glLoadIdentity();
@@ -193,7 +201,7 @@ public class AngleRotatingSprite extends AngleAbstractSprite
 
 					if (AngleSurfaceView.sUseHWBuffers)
 					{
-						if (mTextureCoordBufferIndex < 0)
+						if ((mTextureCoordBufferIndex < 0)||(mVertBufferIndex < 0))
 							invalidateHardwareBuffers(gl);
 
 						((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, mVertBufferIndex);
