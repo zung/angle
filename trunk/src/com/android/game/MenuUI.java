@@ -16,19 +16,30 @@ import com.android.angle.AngleUI;
 */
 public class MenuUI extends AngleUI
 {
+	//STEP 6:
+	//As we have said, the engine uses a main View. In this View we have added an UI (MenuUI)
+	//And now in this UI, we will add more. (Do the same with the IU for the game)
+	//The main characteristic of the UIs, is that there can be only one active
+	//In this way, when we set one, what we do is to leave active only a branch of the object tree
+	//Both for drawing and logic.
+	//Now. Instead of adding all our objects directly to the UIs, it is more convenient to use
+	//intermediate branches.
+	//For this we use AngleObjects as groups of objects.	
 	//PASO 6:
-	//Como ya hemos dicho, el motor usa una View principal. En esta View hemos añadido una UI (MenuUI)
-	//y ahora en esta UI añadiremos más cosas.
-	//Haremos lo mismo con la UI de juego. La gracia de las UIs, es que sólo hay una activa,
-	//de esta manera, cuando establecemos una, lo que hacemos es dejar activa sólo una de las ramas del árbol
-	//tanto para su dibujado como para su lógica.
-	//Ahora bien. En lugar de añadir directamente todos nuestros objetos a las UIs, es más conveniente usar
-	//ramas intermedias.
-	//Para eso usaremos AngleObjects como grupos de objetos.
+	//>Como ya hemos dicho, el motor usa una View principal. En esta View hemos añadido una UI (MenuUI)
+	//>y ahora en esta UI añadiremos más cosas.
+	//>Haremos lo mismo con la UI de juego. La gracia de las UIs, es que sólo hay una activa,
+	//>de esta manera, cuando establecemos una, lo que hacemos es dejar activa sólo una de las ramas del árbol
+	//>tanto para su dibujado como para su lógica.
+	//>Ahora bien. En lugar de añadir directamente todos nuestros objetos a las UIs, es más conveniente usar
+	//>ramas intermedias.
+	//>Para eso usaremos AngleObjects como grupos de objetos.
 	private AngleObject ogMenuTexts;
 	
+	//STEP 7:
+	//We will create 3 strings for the menu
 	//PASO 7:
-	//Vamos a crear 2 textos para el menú. Para ello, necesitaremos una fuente 
+	//Vamos a crear 3 textos para el menú 
 	private AngleString strPlay;
 	private AngleString strHiScore;
 	private AngleString strExit;

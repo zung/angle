@@ -120,7 +120,7 @@ public class Game extends AngleActivity
 			//Font and text
 			//>Fuente y texto
 			AngleFont fntCafe25 = new AngleFont(mActivity.mGLSurfaceView, 25, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, 30, 200, 255, 255);
-			ogDashboard.addObject(new AngleString(fntCafe25,"Hello!!!",160,440,AngleString.aCenter));
+			ogDashboard.addObject(new AngleString(fntCafe25,"Hello!!!\nPepito",160,440,AngleString.aCenter));
 		}
 
 		@Override
