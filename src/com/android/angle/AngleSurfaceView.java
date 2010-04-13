@@ -57,7 +57,7 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 
 	public static final char[] sIndexValues = new char[] { 0, 1, 2, 1, 2, 3 };
 	public static int roIndexBufferIndex = -1;
-	public static final boolean sUseHWBuffers=false;
+	public static final boolean sUseHWBuffers=true;
 	
 	public static void invalidateHardwareBuffers (GL10 gl)
 	{

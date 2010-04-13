@@ -132,7 +132,7 @@ public class AngleString extends AngleObject
 				for (int t = 0; t < mTabLength; t++)
 					mStep1=mStep1.concat(" ");
 			}
-			else if (src.charAt(c) >= ' ')
+			else if ((src.charAt(c) >= ' ')||(src.charAt(c) == '\n'))
 				mStep1=mStep1.concat(src.substring(c, c + 1));
 		}
 		if (mDisplayWidth > 0)
@@ -191,6 +191,12 @@ public class AngleString extends AngleObject
 		}
 		else
 			mWantString = mStep1;
+		mDisplayLines=1;
+		for (int c=0;c<mWantString.length();c++)
+		{
+			if (mWantString.charAt(c) == '\n')
+				mDisplayLines++;
+		}
 		mNewString=true;
 	}
 	
