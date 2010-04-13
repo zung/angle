@@ -7,6 +7,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Log;
 
+/**
+ * XML Object base class
+ * @author Ivan Pajuelo
+ *
+ */
 public abstract class XMLClass
 {
 	protected String mCommand;
