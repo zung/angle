@@ -79,7 +79,7 @@ public class Tutorial05 extends AngleActivity
 			mSprite.draw(gl);
 			//Draw colliders (beware calls GC)
 			//>Dibujado de los lolisionadores (cuidado, llama al GC)
-		// drawColliders(gl);
+			//drawColliders(gl);
 		}
 		
 		

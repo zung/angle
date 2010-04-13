@@ -13,15 +13,16 @@ import android.view.MotionEvent;
 
 /**
  * Main Activity
+ * 
  * @author Ivan Pajuelo
- *
+ * 
  */
 public class AngleActivity extends Activity
 {
-	public AngleSurfaceView mGLSurfaceView; //The main GL View
-	public AngleSoundSystem SS; //Sounds and music manager
+	public AngleSurfaceView mGLSurfaceView; // The main GL View
+	public AngleSoundSystem SS; // Sounds and music manager
 	public XmlPullParser xmlParser;
-	protected AngleUI mCurrentUI=null;
+	protected AngleUI mCurrentUI = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -29,7 +30,7 @@ public class AngleActivity extends Activity
 		super.onCreate(savedInstanceState);
 		try
 		{
-			SS=new AngleSoundSystem(this);
+			SS = new AngleSoundSystem(this);
 			Thread.sleep(100);
 			mGLSurfaceView = new AngleSurfaceView(this);
 			mGLSurfaceView.setAwake(true);
@@ -43,58 +44,60 @@ public class AngleActivity extends Activity
 
 	/**
 	 * Set the current user interface
+	 * 
 	 * @param currentUI
 	 */
 	public void setUI(AngleUI currentUI)
 	{
-		if (mCurrentUI!=currentUI)
+		if (mCurrentUI != currentUI)
 		{
-		if (mCurrentUI!=null)
-		{
-			mCurrentUI.onDeactivate();
-			mGLSurfaceView.removeObject(mCurrentUI);
-		}
-		mCurrentUI=currentUI;
-		if (mCurrentUI!=null)
-		{
-			mCurrentUI.onActivate();
-			mGLSurfaceView.addObject(mCurrentUI);
-		}
+			if (mCurrentUI != null)
+			{
+				mCurrentUI.onDeactivate();
+				mGLSurfaceView.removeObject(mCurrentUI);
+			}
+			mCurrentUI = currentUI;
+			if (mCurrentUI != null)
+			{
+				mCurrentUI.onActivate();
+				mGLSurfaceView.addObject(mCurrentUI);
+			}
 		}
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
-		if (mCurrentUI!=null)
+		if (mCurrentUI != null)
 			if (mCurrentUI.onTouchEvent(event))
-				return true; 
+				return true;
 		return super.onTouchEvent(event);
 	}
 
 	@Override
 	public boolean onTrackballEvent(MotionEvent event)
 	{
-		if (mCurrentUI!=null)
+		if (mCurrentUI != null)
 			if (mCurrentUI.onTrackballEvent(event))
 				return true;
 		return super.onTrackballEvent(event);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		if (mCurrentUI!=null)
+		if (mCurrentUI != null)
 			if (mCurrentUI.onKeyDown(keyCode, event))
 				return true;
 		return super.onKeyDown(keyCode, event);
-}
+	}
+
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
 		mGLSurfaceView.onPause();
-		if (mCurrentUI!=null)
+		if (mCurrentUI != null)
 			mCurrentUI.onPause();
 	}
 
@@ -103,7 +106,7 @@ public class AngleActivity extends Activity
 	{
 		super.onResume();
 		mGLSurfaceView.onResume();
-		if (mCurrentUI!=null)
+		if (mCurrentUI != null)
 			mCurrentUI.onResume();
 	}
 
@@ -114,11 +117,11 @@ public class AngleActivity extends Activity
 		SS.delete();
 		super.finish();
 	}
-	
-	public boolean executeXML (int resId)
+
+	public boolean executeXML(int resId)
 	{
-		xmlParser=getResources().getXml(resId);
-		Log.d("XML","executeXML "+resId);
+		xmlParser = getResources().getXml(resId);
+		Log.d("XML", "executeXML " + resId);
 		return nextXMLCommand();
 	}
 
@@ -127,11 +130,12 @@ public class AngleActivity extends Activity
 		try
 		{
 			xmlParser.next();
-			while (((xmlParser.getEventType() != XmlPullParser.START_TAG)&&(xmlParser.getEventType()!=XmlPullParser.END_DOCUMENT))||(xmlParser.getDepth()!=2))
+			while (((xmlParser.getEventType() != XmlPullParser.START_TAG) && (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT))
+					|| (xmlParser.getDepth() != 2))
 				xmlParser.next();// skip comments
-			if (xmlParser.getEventType()!=XmlPullParser.END_DOCUMENT)
+			if (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT)
 			{
-				Log.d("XML","nextXMLCommand");
+				Log.d("XML", "nextXMLCommand");
 				executeXMLCommand(xmlParser.getName().toLowerCase());
 				return true;
 			}
@@ -151,7 +155,7 @@ public class AngleActivity extends Activity
 
 	protected void executeXMLCommand(String command)
 	{
-		
+
 	}
 
 }
