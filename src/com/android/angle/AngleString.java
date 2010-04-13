@@ -120,6 +120,7 @@ public class AngleString extends AngleObject
 			return;
 
 		String mStep1 = "";
+		int lineLength=0;
 		for (int c = 0; c < src.length(); c++)
 		{
 			if ((src.charAt(c) == '\n') && mIgnoreNL)
@@ -127,13 +128,27 @@ public class AngleString extends AngleObject
 				mStep1=mStep1.concat(" ");
 				continue;
 			}
-			if (src.charAt(c) == '\t')
+			if (src.charAt(c) == '\n')
 			{
-				for (int t = 0; t < mTabLength; t++)
-					mStep1=mStep1.concat(" ");
-			}
-			else if ((src.charAt(c) >= ' ')||(src.charAt(c) == '\n'))
 				mStep1=mStep1.concat(src.substring(c, c + 1));
+				lineLength = 0;
+			}
+			else if (src.charAt(c) == '\t')
+			{
+				int tab=mTabLength-(lineLength%mTabLength);
+				if (tab==0)
+					tab=mTabLength;
+				for (int t = 0; t < tab; t++)
+				{
+					mStep1=mStep1.concat(" ");
+					lineLength++;
+				}
+			}
+			else if (src.charAt(c) >= ' ')
+			{
+				mStep1=mStep1.concat(src.substring(c, c + 1));
+				lineLength++;
+			}
 		}
 		if (mDisplayWidth > 0)
 		{
