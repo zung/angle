@@ -81,10 +81,13 @@ public class AngleSoundSystem
 					roMusicVolume = 1;
 				if (roMusicVolume < 0)
 					roMusicVolume = 0;
-				if (roMusicVolume>0)
-					mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
-				else
-					stopMusic();
+				if (mMusicPlayer.isPlaying())
+				{
+					if (roMusicVolume>0)
+						mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
+					else
+						stopMusic();
+				}
 			}
 		}
 	}
@@ -109,6 +112,7 @@ public class AngleSoundSystem
 					AssetFileDescriptor afd = mActivity.getAssets().openFd(fileName);
 					mMusicPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 					mMusicPlayer.prepare();
+					mVolumeTo=volume;
 					roMusicVolume = volume;
 					mMusicPlayer.setAudioStreamType(sMusicStream);
 					mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
@@ -137,6 +141,7 @@ public class AngleSoundSystem
 			mMusicPlayer = MediaPlayer.create(mActivity, resId);
 			if (mMusicPlayer != null)
 			{
+				mVolumeTo=volume;
 				roMusicVolume = volume;
 				mMusicPlayer.setAudioStreamType(sMusicStream);
 				mMusicPlayer.setVolume(roMusicVolume, roMusicVolume);
@@ -156,6 +161,23 @@ public class AngleSoundSystem
 			mMusicPlayer.release();
 			mMusicPlayer = null;
 		}
+	}
+
+	public void seekMusic(int pSeek)
+	{
+		if (mMusicPlayer != null)
+			mMusicPlayer.seekTo(pSeek);
+	}
+	public void pauseMusic()
+	{
+		if (mMusicPlayer != null)
+			mMusicPlayer.pause();
+	}
+
+	public void resumeMusic()
+	{
+		if (mMusicPlayer != null)
+			mMusicPlayer.start();
 	}
 
 	/**
@@ -207,18 +229,6 @@ public class AngleSoundSystem
 		}
 	}
 
-	public void pauseMusic()
-	{
-		if (mMusicPlayer != null)
-			mMusicPlayer.pause();
-	}
-
-	public void resumeMusic()
-	{
-		if (mMusicPlayer != null)
-			mMusicPlayer.start();
-	}
-
 	/**
 	 * Play sound from raw resource at maximum volume with no loop
 	 * @param resId resource id
@@ -265,4 +275,5 @@ public class AngleSoundSystem
 			setMusicVolume(roMusicVolume);
 		}
 	}
+
 };
