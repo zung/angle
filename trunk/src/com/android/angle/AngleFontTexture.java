@@ -83,6 +83,11 @@ public class AngleFontTexture extends AngleTexture
 			}
 			paint.getTextBounds(" ", 0, 1, rect);
 			mFont.mSpaceWidth = (short) (rect.right - rect.left + mFont.mBorder);
+			if (mFont.mSpaceWidth==0)
+			{
+				paint.getTextBounds("x", 0, 1, rect);
+				mFont.mSpaceWidth = (short) (rect.right - rect.left + mFont.mBorder);
+			}
 		}
 		if (mTextSizeX < 11)
 		{
