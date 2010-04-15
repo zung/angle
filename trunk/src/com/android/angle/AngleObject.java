@@ -49,6 +49,13 @@ public class AngleObject
 	}
 
 	/**
+	 * Called when this object dies
+	 */
+	protected void onDie()
+	{
+	}
+
+	/**
 	 * Used by the engine to put the new objects in the childs list. Do not use after engine is running.
 	 */
 	public void commit()
@@ -90,13 +97,6 @@ public class AngleObject
 		}
 	}
 	
-	/**
-	 * Called when this object dies
-	 */
-	protected void onDie()
-	{
-	}
-
 	/**
 	 * 
 	 * @param object Object to add
