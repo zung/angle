@@ -48,7 +48,7 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	protected AngleObject[]mNewChilds;
 	protected int mChildsCount;
 	protected int mNewChildsCount;
-	private AngleActivity mActivity;
+	private AngleActivity mActivity; //For future use
 	
 	public static int roWidth;
 	public static int roHeight;
@@ -253,12 +253,10 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	//-- Problemas de no tener herencia múltiple --
 	//---------------------------------------------
 	/**
-	 * Called every frame 
-	 * @param secondsElapsed Seconds elapsed since last frame
+	 * Used by the engine to put the new objects in the childs list. Do not use after engine is running.
 	 */
-	public void step(float secondsElapsed)
+	public void commit()
 	{
-		mActivity.SS.step(secondsElapsed);
 		if (mNewChildsCount>0)
 		{
 			updating.set(true);
@@ -270,10 +268,19 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 			mNewChildsCount=0;
 			updating.set(false);
 		}
+	}
+	/**
+	 * Called every frame 
+	 * @param secondsElapsed Seconds elapsed since last frame
+	 */
+	public void step(float secondsElapsed)
+	{
+		commit();
 		for (int t=0;t<mChildsCount;t++)
 		{
 			if (mChilds[t].mDie)
 			{
+				mChilds[t].onDie();
 				mChilds[t].mDie=false;
 				mChilds[t].mParent=null;
 				mChildsCount--;
@@ -291,21 +298,25 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	 * 
 	 * @param object Object to add
 	 */
-	public void addObject(AngleObject object)
+	public AngleObject addObject(AngleObject object)
 	{
+		object.mDie=false;
 		while (updating.get());
 		for (int t=0;t<mChildsCount;t++)
 		{
 			if (mChilds[t]==object)
-				return;
+				return object;
 		}
 		for (int t=0;t<mNewChildsCount;t++)
 		{
 			if (mNewChilds[t]==object)
-				return;
+				return object;
 		}
-		if (mChildsCount<mMaxObjects)
+		if (mChildsCount+mNewChildsCount<mMaxObjects)
+		{
 			mNewChilds[mNewChildsCount++]=object;
+		}
+		return object;
 	}
 
 	/**
@@ -327,7 +338,16 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		if (idx<mChildsCount)
 			mChilds[idx].mDie=true;
 	}
-	
+
+	/**
+	 * 
+	 * @return Number of childs
+	 */
+	public int count()
+	{
+		return mChildsCount;
+	}
+
 	/**
 	 * Called before object is deleted
 	 */
@@ -335,6 +355,37 @@ public class AngleSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	{
 		for (int t=0;t<mChildsCount;t++)
 			mChilds[t].delete();
+	}
+
+	/**
+	 * invalidate the textures of this branch
+	 * @param gl
+	 */
+	public void invalidateTexture(GL10 gl)
+	{
+		for (int t=0;t<mChildsCount;t++)
+			mChilds[t].invalidateTexture(gl);
+	}
+
+	/**
+	 * 
+	 * @param idx
+	 * @return child at index idx
+	 */
+	public AngleObject childAt(int idx)
+	{
+		if ((idx>=0)&&(idx<mChildsCount))
+			return mChilds[idx];
+		return null;
+	}
+
+	/**
+	 * remove all children
+	 */
+	public void removeAll()
+	{
+		for (int t=0;t<mChildsCount;t++)
+			mChilds[t].mDie=true;
 	}
 	//---------------------------------------------
 	//-- ####################################### --

@@ -20,7 +20,6 @@ import android.view.MotionEvent;
 public class AngleActivity extends Activity
 {
 	public AngleSurfaceView mGLSurfaceView; // The main GL View
-	public AngleSoundSystem SS; // Sounds and music manager
 	public XmlPullParser xmlParser;
 	protected AngleUI mCurrentUI = null;
 
@@ -30,7 +29,6 @@ public class AngleActivity extends Activity
 		super.onCreate(savedInstanceState);
 		try
 		{
-			SS = new AngleSoundSystem(this);
 			Thread.sleep(100);
 			mGLSurfaceView = new AngleSurfaceView(this);
 			mGLSurfaceView.setAwake(true);
@@ -114,7 +112,6 @@ public class AngleActivity extends Activity
 	public void finish()
 	{
 		mGLSurfaceView.delete();
-		SS.delete();
 		super.finish();
 	}
 
@@ -130,8 +127,7 @@ public class AngleActivity extends Activity
 		try
 		{
 			xmlParser.next();
-			while (((xmlParser.getEventType() != XmlPullParser.START_TAG) && (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT))
-					|| (xmlParser.getDepth() != 2))
+			while ( ((xmlParser.getEventType() != XmlPullParser.START_TAG)|| (xmlParser.getDepth() != 2)) && (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT) )
 				xmlParser.next();// skip comments
 			if (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT)
 			{
@@ -142,7 +138,7 @@ public class AngleActivity extends Activity
 			else
 				executeXMLCommand(null);
 		}
-		catch (XmlPullParserException e)
+		catch (XmlPullParserException e) 
 		{
 			e.printStackTrace();
 		}

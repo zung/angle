@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import com.android.angle.AngleActivity;
 import com.android.angle.AngleFont;
 import com.android.angle.AngleObject;
+import com.android.angle.AngleSound;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteLayout;
 import com.android.angle.AngleString;
@@ -30,13 +31,17 @@ public class GameUI extends AngleUI
 	public AngleSpriteLayout slGround;
 	public AngleSpriteLayout slSmiley;
 	public AngleSpriteLayout slSight;
+	private AngleSound sndMachineGun;
 	public int mScore;
 	private int mLifes;
 	private boolean mInverted;
 	
-	//PASO 15:
-	//Este será el punto de entrada
-	//Aquí inicializaremos todas la variables que necesitemos cuando se acabe de activar esta UI
+	//STEP 15
+	//This is the entry point
+	//Here we initialize all the variables that need when this UI is just activated
+	//>PASO 15:
+	//>Este será el punto de entrada
+	//>Aquí inicializaremos todas la variables que necesitemos cuando se acabe de activar esta UI
 	@Override
 	public void onActivate()
 	{
@@ -51,34 +56,55 @@ public class GameUI extends AngleUI
 	{
 		super(activity);
 		
-		//PASO 16:
-		//Creamos todos los SspriteLayouts que vayamos a necesitar
+		//STEP 16:
+		//We created all the SpriteLayouts that we will need 
+		//>PASO 16:
+		//>Creamos todos los SpriteLayouts que vayamos a necesitar
 		slGround=new AngleSpriteLayout(mActivity.mGLSurfaceView,com.android.tutorial.R.drawable.fondo);
 		slSmiley=new AngleSpriteLayout(mActivity.mGLSurfaceView,32,45,com.android.tutorial.R.drawable.salto,0,0,32,45,8,8); 
 		slSight=new AngleSpriteLayout(mActivity.mGLSurfaceView,32,32,com.android.tutorial.R.drawable.mira,0,0,32,32,2,2);
 
-		//PASO 17:
-		//Creamos una fuente para los marcadores
+		//STEP 17:
+		//Create and load a sound effect		
+		//>PASO 17:
+		//>Creamos y cargamos un efecto de sonido
+		sndMachineGun=new AngleSound(mActivity,com.android.tutorial.R.raw.machinegun);
+		
+		//STEP 18:
+		//Create a font for the dashboard strings		
+		//>PASO 18:
+		//>Creamos una fuente para los marcadores
 		AngleFont fntBazaronite=new AngleFont(mActivity.mGLSurfaceView, 18, Typeface.createFromAsset(mActivity.getAssets(),"bazaronite.ttf"), 222, 0, 2, 255, 100, 255, 255);
 
-		//PASO 18:
-		//Creación de los objetos de juego
-		//Aquí usamos la forma de inserción rápida
-		//Para el campo de batalla,
+		//STEP 19:
+		//Create the game objects
+		//Here we use the quick insertion form
+		//>PASO 19:
+		//>Creación de los objetos de juego
+		//>Aquí usamos la forma de inserción rápida
+
+		//For the battlefield,
+		//>Para el campo de batalla,
 		mField=(Field)addObject(new Field(this));
-		//El punto de mira
+		//The sight
+		//>El punto de mira
 		mSight=(Sight)addObject(new Sight(this));
-		//y un grupo para marcadores y demás cosas flotantes
+		//And a group for dashboard and other floating things
+		//>y un grupo para marcadores y demás cosas flotantes
 		ogDashboard=addObject(new AngleObject());
 		sprTrackPad=(AngleSprite) ogDashboard.addObject(new AngleSprite(160,380,new AngleSpriteLayout(mActivity.mGLSurfaceView,320,200,com.android.tutorial.R.drawable.panel)));
 
-		//PASO 19:
-		//Insertamos los 2 Strings de los marcadores
+		//STEP 20:
+		//Add the 2 dashboard strings
+		//>PASO 20:
+		//>Insertamos los 2 Strings de los marcadores
 		strScore = (AngleString) ogDashboard.addObject(new AngleString(fntBazaronite, "0", 310, 30, AngleString.aRight));
 		strLifes = (AngleString) ogDashboard.addObject(new AngleString(fntBazaronite, "0", 60, 30, AngleString.aRight));
 		
-		//PASO 20:
-		//Creamos unos vectores para guardar varios valores bidimensionales
+		//STEP 21:
+		//Create some vectors to store bidimensional values
+		//>PASO 21:
+		//>Creamos unos vectores para guardar varios valores bidimensionales
 		mAim=new AngleVector();
 		mTrackPadPos=new AngleVector();
 		mTrackPadDelta=new AngleVector();
@@ -87,14 +113,22 @@ public class GameUI extends AngleUI
 		mInverted=false;
 	}
 
-	//Paso 21:
-	//Creamos una función para la lógica del juego.
-	//Esta función será llamada cada vez que se pinte la pantalla y recibe como parámetro
-	//la cantidad de segundos que han pasado desde la última vez que se la llamó.
-	//Al llamar a super.step, hacemos que se llame a la función step de todos los hijos que 
-	//tenga este objeto por debajo. En este caso, el campo de batalla, la mirilla y los marcadores
-	//En este paso a paso, no voy a comentar la lógica del juego. Sólo las partes que correspondan 
-	//al motor en si.
+	//Step 22:
+	//Create a function for the game logic.
+	//This function will be called every time you paint the screen and get as parameter
+	//the number of seconds that have elapsed since the last time you called it.
+	//Calling super.step, the step function of all children is called
+	//In this case, the field of battle, the sight and dashboard
+	//In this step by step, I will not comment on the game logic. Only the parts of
+	//the engine itself.
+	//>Paso 22:
+	//>Creamos una función para la lógica del juego.
+	//>Esta función será llamada cada vez que se pinte la pantalla y recibe como parámetro
+	//>la cantidad de segundos que han pasado desde la última vez que se la llamó.
+	//>Al llamar a super.step, hacemos que se llame a la función step de todos los hijos que 
+	//>tenga este objeto por debajo. En este caso, el campo de batalla, la mirilla y los marcadores
+	//>En este paso a paso, no voy a comentar la lógica del juego. Sólo las partes que correspondan 
+	//>al motor en si.
 	@Override
 	public void step(float secondsElapsed)
 	{
@@ -114,16 +148,22 @@ public class GameUI extends AngleUI
 		mField.moveTo(mAim);
 	}
 
-	//Paso 22:
-	//Sobrecargamos el evento onTouchEvent para responder a las pulsaciones que haga
-	//el jugador en la pantalla.
-	//También podemos sobrecargar otros eventos como onKeyDown y onTrackballEvent para 
-	//responder a distintos métodos de entrada.
+	//Step 23:
+	//Overload the onTouchEvent event to handle when the 
+	//player touchs the screen.
+	//Also we can overload any other events such as onKeyDown or onTrackballEvent to
+	//respond to different input methods.
+	//>Paso 23:
+	//>Sobrecargamos el evento onTouchEvent para responder a las pulsaciones que haga
+	//>el jugador en la pantalla.
+	//>También podemos sobrecargar otros eventos como onKeyDown y onTrackballEvent para 
+	//>responder a distintos métodos de entrada.
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
-		//Impedimos que el sistema sea sobrecargado por eventos de touch
-		//Máximo 60 por segundo
+		//Prevent event flooding
+		//>Impedimos que el sistema sea sobrecargado por eventos de touch
+		//>Máximo 60 por segundo
 		try
 		{
 			Thread.sleep(16);
@@ -141,17 +181,21 @@ public class GameUI extends AngleUI
 					if (eX<sprTrackPad.mPosition.mX+sprTrackPad.roLayout.roWidth/2)
 						if (eY<sprTrackPad.mPosition.mY+sprTrackPad.roLayout.roHeight/2)
 						{
-							//PASO 23:
-							//Aquí vemos como reproducir un sonido con volumen al 100%(1) y en un bucle infinito
-							mActivity.SS.playSound(com.android.tutorial.R.raw.machinegun,1,true);
+							//STEP 24:
+							//Play a sound effect in an infinite loop with volume at 1005(1)
+							//>PASO 24:
+							//>Aquí vemos como reproducir un sonido con volumen al 100%(1) y en un bucle infinito
+							sndMachineGun.play(1,true);
 							mSight.fire(true);
 						}
 		}
 		else if (event.getAction()==MotionEvent.ACTION_UP)
 		{
-			//PASO 24:
-			//Para detener la reproducción de un sonido, sólo hay que pasarle su ResourceId
-			mActivity.SS.stopSound(com.android.tutorial.R.raw.machinegun);
+			//STEP 25:
+			//Stop the sound playing
+			//>PASO 25:
+			//>Detenemos la reproducción del sonido
+			sndMachineGun.stop();
 			mSight.fire(false);
 			mTrackPadPos.set(0,0);
 		}
@@ -171,9 +215,12 @@ public class GameUI extends AngleUI
 		return true;
 	}
 
-	//PASO 25:
-	//En este callback para actualizar la cantidad de vidas restantes, vemos como volver al menú
-	//estableciendo su UI
+	//STEP 26:
+	//This callback updates the number of remaining lives, also see how to return to the menu
+	//setting its UI	
+	//>PASO 26:
+	//>En este callback para actualizar la cantidad de vidas restantes, vemos como volver al menú
+	//>estableciendo su UI
 	public void updateLifes(int lifes)
 	{
 		mLifes+=lifes;
@@ -188,17 +235,21 @@ public class GameUI extends AngleUI
 		strScore.set(""+mScore);
 	}
 
-	//PASO 26:
-	//Sobrecargamos el evento onDeactivate para vaciar la lista de smileys y parar el sonido
-	//por si está sonando
+	//STEP 27:
+	//Overload the onDeactivate event to empty the smileys' list and stop the sound
+	//if it is playing
+	//>PASO 27:
+	//>Sobrecargamos el evento onDeactivate para vaciar la lista de smileys y parar el sonido
+	//>si está sonando
 	@Override
 	public void onDeactivate()
 	{
-		mActivity.SS.stopSound(com.android.tutorial.R.raw.machinegun);
+		sndMachineGun.stop();
 		for (int s=1;s<mField.count();s++)
 			mField.childAt(s).mDie=true;
 		super.onDeactivate();
 	}
 
+	///Continues in FIeld)
 	//(continua en Field)
 }

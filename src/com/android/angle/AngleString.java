@@ -135,13 +135,16 @@ public class AngleString extends AngleObject
 			}
 			else if (src.charAt(c) == '\t')
 			{
-				int tab=mTabLength-(lineLength%mTabLength);
-				if (tab==0)
-					tab=mTabLength;
-				for (int t = 0; t < tab; t++)
+				if (mTabLength>0)
 				{
-					mStep1=mStep1.concat(" ");
-					lineLength++;
+					int tab=mTabLength-(lineLength%mTabLength);
+					if (tab==0)
+						tab=mTabLength;
+					for (int t = 0; t < tab; t++)
+					{
+						mStep1=mStep1.concat(" ");
+						lineLength++;
+					}
 				}
 			}
 			else if (src.charAt(c) >= ' ')
@@ -264,9 +267,9 @@ public class AngleString extends AngleObject
 			left=mPosition.mX - mWidth / 2;
 
 		if (x >= left)
-			if (y >= mPosition.mY - mFont.mHeight - mFont.mLineat)
+			if (y >= mPosition.mY + mFont.mLineat)
 				if (x < left + mWidth)
-					if (y < mPosition.mY - mFont.mHeight - mFont.mLineat + getHeight())
+					if (y < mPosition.mY + mFont.mLineat + getHeight())
 						return true;
 		return false;
 	}
