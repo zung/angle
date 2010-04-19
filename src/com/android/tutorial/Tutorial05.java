@@ -63,7 +63,7 @@ public class Tutorial05 extends AngleActivity
 			mSprite=new AngleSprite(layout);
 			addCircleCollider(new AngleCircleCollider(0, 0, 29));
 			mMass = 10;
-			mBounce = 0.8f; // Coefficient of restitution (1 return all the energy)  >Coeficiente de restitución (1 devuelve toda la energia)
+			mBounce = 0.6f; // Coefficient of restitution (1 return all the energy)  >Coeficiente de restitución (1 devuelve toda la energia)
 		}
 
 		@Override
@@ -152,7 +152,7 @@ public class Tutorial05 extends AngleActivity
 
 		public void setGravity(float x, float y)
 		{
-			mPhysics.mGravity.set(x,y);
+			mPhysics.mGravity.set(x*3,y*3);
 		}
 		
 	}
