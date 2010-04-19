@@ -127,6 +127,14 @@ public class AngleAudioObject extends AngleObject
 		}
 	}
 
+	public void fastPlay()
+	{
+		if (mPlayer[mCurrentSound] != null)
+			mPlayer[mCurrentSound].start();
+		mCurrentSound++;
+		mCurrentSound %= mSimultaneousSounds;
+	}
+	
 	public void play()
 	{
 		play(1, false);
@@ -146,8 +154,7 @@ public class AngleAudioObject extends AngleObject
 	{
 		if (mPlayer[mCurrentSound] != null)
 		{
-			roVolume=volume;
-			mPlayer[mCurrentSound].setVolume(roVolume, roVolume);
+			setVolume(volume,0);
 			mPlayer[mCurrentSound].setLooping(loop);
 			mPlayer[mCurrentSound].start();
 		}
