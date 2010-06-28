@@ -132,7 +132,7 @@ public class RenderThread extends Thread
 			if ((AngleSurfaceView.roWidth > 0) && (AngleSurfaceView.roHeight > 0))
 			{
 				float secondsElapsed = 0;
-				long CTM = System.currentTimeMillis();
+				long CTM = android.os.SystemClock.uptimeMillis();
 				if (lCTM > 0)
 					secondsElapsed = (CTM - lCTM) / 1000.f;
 				lCTM = CTM;

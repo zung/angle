@@ -139,7 +139,7 @@ public class Game extends AngleActivity
 			}
 			// -------------------------
 			mShip.mDestination.set(event.getX(), event.getY() - 32 - slShip.roHeight / 2); // Position the ship
-			long CTM = System.currentTimeMillis();
+			long CTM = android.os.SystemClock.uptimeMillis();
 			if (CTM > mShotColdDown) // Prevent shoot in less than mShotColdDownTime milliseconds
 			{
 				mShotColdDown = CTM + mShotColdDownTime;

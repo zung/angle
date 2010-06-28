@@ -20,7 +20,7 @@ public class FPSCounter extends AngleObject
 		frameCount++;
 		if (frameCount >= 100)
 		{
-			long CTM = System.currentTimeMillis();
+			long CTM = android.os.SystemClock.uptimeMillis();
 			frameCount = 0;
 			if (lCTM > 0)
 			{
