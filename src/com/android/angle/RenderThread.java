@@ -146,7 +146,7 @@ public class RenderThread extends Thread
 		if (restartEgl)
 		{
 			mEglHelper.start(configSpec);
-			gl = (GL10) mEglHelper.createSurface(mView.getHolder());
+			//gl = (GL10) mEglHelper.createSurface(mView.getHolder());
 		}
 
 		if (gl != null)
