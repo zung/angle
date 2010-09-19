@@ -93,6 +93,7 @@ public class Tutorial05 extends AngleActivity
 		public MyDemo(AngleActivity activity)
 		{
 			super(activity);
+
 			mBallLayout = new AngleSpriteLayout(mGLSurfaceView, 64, 64, R.drawable.ball, 0, 0, 128, 128);
 			mPhysics=new AnglePhysicsEngine(20);
 			mPhysics.mViscosity = 0f; // Air viscosity >Viscosidad del aire
