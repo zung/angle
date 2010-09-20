@@ -20,8 +20,11 @@ import com.android.angle.AngleSegmentCollider;
 import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteLayout;
 import com.android.angle.AngleUI;
-import com.android.angle.Box2D;
 import com.android.angle.FPSCounter;
+import com.android.box2d.Box2D;
+import com.android.box2d.BodyDef;
+import com.android.box2d.PolygonShape;
+import com.android.box2d.Vec2;
 
 public class Tutorial06 extends AngleActivity
 {
@@ -86,8 +89,15 @@ public class Tutorial06 extends AngleActivity
 		public MyDemo(AngleActivity activity)
 		{
 			super(activity);
+ 
+			Box2D.createWorld(new Vec2(0f, -10f), true);
+			final BodyDef groundBodyDef = new BodyDef();
+			groundBodyDef.position.y=-10;  
+			int groundBody=Box2D.createBody(groundBodyDef);
 
-			Box2D.createWorld(0f,-10f,false);
+			final PolygonShape groundBox = new PolygonShape();
+			groundBox.SetAsBox(50.0f, 10.0f);
+			Box2D.createFixture(groundBody, groundBox, 0);
 
 			mBallLayout = new AngleSpriteLayout(mGLSurfaceView, 64, 64, R.drawable.ball, 0, 0, 128, 128);
 			mPhysics=new AnglePhysicsEngine(20);
@@ -102,7 +112,7 @@ public class Tutorial06 extends AngleActivity
 			mWall.mBounce = 0.5f;
 			mPhysics.addObject(mWall); // Down wall
 			
-			mWall = new AnglePhysicObject(1, 0);
+			mWall = new AnglePhysicObject(1, 0); 
 			mWall.mPosition.set(160, 0);
 			mWall.addSegmentCollider(new AngleSegmentCollider(160, 0, -160, 0));
 			mWall.mBounce = 0.5f;
