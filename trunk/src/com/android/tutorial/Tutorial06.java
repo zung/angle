@@ -21,9 +21,8 @@ import com.android.angle.AngleSprite;
 import com.android.angle.AngleSpriteLayout;
 import com.android.angle.AngleUI;
 import com.android.angle.FPSCounter;
-import com.android.box2d.Box2D;
 import com.android.box2d.BodyDef;
-import com.android.box2d.PolygonShape;
+import com.android.box2d.Box2D;
 import com.android.box2d.Vec2;
 
 public class Tutorial06 extends AngleActivity
@@ -49,33 +48,20 @@ public class Tutorial06 extends AngleActivity
 
 	private SensorManager mSensorManager; 	
 
-	private class Ball extends AnglePhysicObject
+	private class Ball extends AngleSprite
 	{
-		private AngleSprite mSprite;
 
 		public Ball(AngleSpriteLayout layout)
 		{
-			super(0, 1);
-			mSprite=new AngleSprite(layout);
-			addCircleCollider(new AngleCircleCollider(0, 0, 29));
-			mMass = 10;
-			mBounce = 0.6f; // Coefficient of restitution (1 return all the energy)  >Coeficiente de restitución (1 devuelve toda la energia)
+			super(layout);
+			// TODO Auto-generated constructor stub
 		}
 
 		@Override
-		public float getSurface()
+		public void step(float secondsElapsed)
 		{
-			return 29 * 2; // Radius * 2  >Radio * 2
-		}
-
-		@Override
-		public void draw(GL10 gl)
-		{
-			mSprite.mPosition.set(mPosition);
-			mSprite.draw(gl);
-			//Draw colliders (beware calls GC)
-			//>Dibujado de los lolisionadores (cuidado, llama al GC)
-			//drawColliders(gl);
+			// TODO Auto-generated method stub
+			super.step(secondsElapsed);
 		}
 		
 		
@@ -84,7 +70,6 @@ public class Tutorial06 extends AngleActivity
 	private class MyDemo extends AngleUI
 	{
 		AngleSpriteLayout mBallLayout;
-		AnglePhysicsEngine mPhysics;
 		
 		public MyDemo(AngleActivity activity)
 		{
@@ -95,40 +80,11 @@ public class Tutorial06 extends AngleActivity
 			groundBodyDef.position.y=-10;  
 			int groundBody=Box2D.createBody(groundBodyDef);
 
-			final PolygonShape groundBox = new PolygonShape();
-			groundBox.SetAsBox(50.0f, 10.0f);
+			int groundBox=Box2D.createShape(Box2D.stPolygon);
+			Box2D.setPolygonShapeAsBox(groundBox, 50.0f, 10.0f);
 			Box2D.createFixture(groundBody, groundBox, 0);
 
 			mBallLayout = new AngleSpriteLayout(mGLSurfaceView, 64, 64, R.drawable.ball, 0, 0, 128, 128);
-			mPhysics=new AnglePhysicsEngine(20);
-			mPhysics.mViscosity = 0f; // Air viscosity >Viscosidad del aire
-			addObject(mPhysics);
-
-			// Add 4 segment colliders to simulate walls
-			//>Añadimos 2 colisionadores de segmento para simular las paredes
-			AnglePhysicObject mWall = new AnglePhysicObject(1, 0);
-			mWall.mPosition.set(160, 479);
-			mWall.addSegmentCollider(new AngleSegmentCollider(-160, 0, 160, 0));
-			mWall.mBounce = 0.5f;
-			mPhysics.addObject(mWall); // Down wall
-			
-			mWall = new AnglePhysicObject(1, 0); 
-			mWall.mPosition.set(160, 0);
-			mWall.addSegmentCollider(new AngleSegmentCollider(160, 0, -160, 0));
-			mWall.mBounce = 0.5f;
-			mPhysics.addObject(mWall); // Up wall
-			
-			mWall = new AnglePhysicObject(1, 0);
-			mWall.mPosition.set(319, 240);
-			mWall.addSegmentCollider(new AngleSegmentCollider(0, 240, 0, -240));
-			mWall.mBounce = 0.5f;
-			mPhysics.addObject(mWall); // Right wall
-			
-			mWall = new AnglePhysicObject(1, 0);
-			mWall.mPosition.set(0, 240);
-			mWall.addSegmentCollider(new AngleSegmentCollider(0, -240, 0, 240));
-			mWall.mBounce = 0.5f;
-			mPhysics.addObject(mWall); // Left wall
 		}
 
 		@Override
@@ -142,14 +98,22 @@ public class Tutorial06 extends AngleActivity
 					mBall.mPosition.set(event.getX(), event.getY());
 					// Ensure that there isn't any ball in this place
 					// >Nos aseguramos de que ninguna pelota ocupa esta posición
-					for (int b = 0; b < mPhysics.count(); b++)
+					for (int b = 0; b < count(); b++)
 					{
-						AngleObject O=mPhysics.childAt(b);
+						AngleObject O=childAt(b);
 						if (O instanceof Ball)
-							if (mBall.test((Ball)O))
+//							if (mBall.test((Ball)O))
 								return true;
 					}
-					mPhysics.addObject(mBall);
+					final BodyDef ballDef = new BodyDef();
+					ballDef.type=BodyDef.b2_dynamicBody;
+					ballDef.position.y=4;  
+					int ballBody=Box2D.createBody(ballDef);
+
+					int ballShape=Box2D.createShape(Box2D.stCircle);
+					Box2D.setPolygonShapeAsBox(ballShape, 50.0f, 10.0f);
+					Box2D.createFixture(ballBody, ballShape, 0);
+					addObject(mBall);
 				}
 				return true;
 			}
@@ -158,7 +122,7 @@ public class Tutorial06 extends AngleActivity
 
 		public void setGravity(float x, float y)
 		{
-			mPhysics.mGravity.set(x*3,y*3);
+//			mPhysics.mGravity.set(x*3,y*3);
 		}
 		
 	}
