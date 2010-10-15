@@ -1,4 +1,4 @@
-set solib-search-path /cygdrive/k/Code/ANGLE/obj/local/armeabi
+set solib-search-path /cygdrive/k/code/ANGLE/obj/local/armeabi
 directory /cygdrive/k/ndk/build/platforms/android-3/arch-arm/usr/include
-directory /cygdrive/k/Code/ANGLE/jni
-directory /cygdrive/k/Code/ANGLE/jni
+directory /cygdrive/k/code/ANGLE/jni
+directory /cygdrive/k/code/ANGLE/jni

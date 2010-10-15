@@ -14,7 +14,7 @@ JNIEXPORT jboolean 	JNICALL Java_com_android_box2d_Box2D_createWorld			(JNIEnv *
 JNIEXPORT jint 		JNICALL Java_com_android_box2d_Box2D_createBody				(JNIEnv *env, jclass cls, jobject bodyDef);
 JNIEXPORT void 		JNICALL Java_com_android_box2d_Box2D_setBodyDef				(JNIEnv *env, jclass cls, jint bodyId, jobject bodyDef);
 
-JNIEXPORT jint 		JNICALL Java_com_android_box2d_Box2D_createPolygonShape	(JNIEnv *env, jclass cls);
+JNIEXPORT jint 		JNICALL Java_com_android_box2d_Box2D_createShape			(JNIEnv *env, jclass cls, jint shapeType);
 JNIEXPORT void 		JNICALL Java_com_android_box2d_Box2D_setPolygonShapeAsBox(JNIEnv *env, jclass cls, jint shapeId, jfloat hx, jfloat hy);
 
 JNIEXPORT void 		JNICALL Java_com_android_box2d_Box2D_createFixture 		(JNIEnv *env, jclass cls, jint bodyId, jint shapeId, jint density);
@@ -67,7 +67,7 @@ JNIEXPORT jint JNICALL Java_com_android_box2d_Box2D_createBody(JNIEnv *env, jcla
 	mBodiesDef.push_back(bodyDef);
 	mBodies.push_back(body);
 
-	Java_com_android_box2d_Box2D_setBodyDef(env, cls, id, def);
+	Java_com_android_box2d_Box2D_setBodyDef(env, cls, bodyId, def);
 
 #ifdef LOG
 	__android_log_print(ANDROID_LOG_INFO, "Box2D", "createBody");
@@ -101,22 +101,36 @@ JNIEXPORT void JNICALL Java_com_android_box2d_Box2D_setBodyDef(JNIEnv *env, jcla
 
 //-----------------------------------------------------------------------------
 
-JNIEXPORT jint JNICALL Java_com_android_box2d_Box2D_createPolygonShape(JNIEnv *env, jclass cls)
+#define stCircle 	0
+#define stEdge		1
+#define stLoop		2
+#define stPolygon	3
+
+JNIEXPORT jint JNICALL Java_com_android_box2d_Box2D_createShape(JNIEnv *env, jclass cls, jint shapeType)
 {
 	int id=mShapes.size();
-	b2Shape *shape=new b2PolygonShape();
-	mShapes.push_back(shape);
-
+	b2Shape *shape=0;
+	switch (shapeType)
+	{
+		case stCircle: 	shape=new b2CircleShape(); 	break;
+		case stEdge: 		shape=new b2EdgeShape(); 		break;
+		case stLoop: 		shape=new b2LoopShape(); 		break;
+		case stPolygon:	shape=new b2PolygonShape();	break;
+	}
+	if (shape!=0)
+	{
+		mShapes.push_back(shape);
 #ifdef LOG
 	__android_log_print(ANDROID_LOG_INFO, "Box2D", "createShape");
 #endif
-
-	return id;
+		return id;
+	}
+	return -1;
 }
 
 JNIEXPORT void JNICALL Java_com_android_box2d_Box2D_setPolygonShapeAsBox(JNIEnv *env, jclass cls, jint shapeId, jfloat hx, jfloat hy)
 {
-	b2PolygonShape *shape=mShapes[shapeId];
+	b2PolygonShape *shape=(b2PolygonShape *)mShapes[shapeId];
 	shape->SetAsBox(hx,hy);
 
 #ifdef LOG
