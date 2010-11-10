@@ -1,5 +1,6 @@
 package com.alt90.angle2;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 
@@ -29,9 +30,12 @@ public class TestAngle2 extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 		AngleSpriteLayout slLogo=new AngleSpriteLayout(128,128,R.drawable.anglelogo);
+		AngleFont fntCafe=new AngleFont(25, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, 30, 200, 255, 255);
+
 		AngleObject myScene=new AngleObject(30);
 		myScene.addObject(new AngleScreenEraser(0.2f,0.2f,0.2f));
 		myScene.addObject(new Logo(slLogo));
+		myScene.addObject(new AngleString(fntCafe,"Hola",100,100,AngleString.aLeft));
 		myScene.addObject(new AngleFPSCounter());
 		AngleRenderer.setRenderTree(myScene);
 	}

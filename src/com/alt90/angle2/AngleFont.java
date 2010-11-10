@@ -17,7 +17,7 @@ import android.util.Log;
  */
 public class AngleFont
 {
-	protected static final short DEFAULT_FONT_CHARS = 93;
+	private static final short DEFAULT_FONT_CHARS = 93;
 	protected AngleTexture lTexture;
 	protected float lFontSize;
 	protected Typeface lTypeface;
@@ -36,7 +36,19 @@ public class AngleFont
 	protected short lHeight;
 	protected short lSpace;
 	protected short lSpaceWidth;
+	protected short lLineat;
 
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param fontSize	Size of the font
+	 * @param typeface	Typeface
+	 * @param space		Space between characters
+	 * @param red			Color of the font (Red)
+	 * @param green		Color of the font (Green)
+	 * @param blue			Color of the font (Blue)
+	 * @param alpha		Color of the font (Alpha channel)
+	 */
 	public AngleFont(float fontSize, Typeface typeface, int space, int red, int green, int blue, int alpha)
 	{
 		doInit(fontSize, typeface, DEFAULT_FONT_CHARS, (short) space, red, green, blue, alpha);
@@ -46,6 +58,19 @@ public class AngleFont
 		lTexture=AngleTextureEngine.createTextureFromFont(this);
 	}
 
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param fontSize	Size of the font
+	 * @param typeface	Typeface
+	 * @param charCount	Number of characters into font
+	 * @param border		Border of every character
+	 * @param space		Space between characters
+	 * @param red			Color of the font (Red)
+	 * @param green		Color of the font (Green)
+	 * @param blue			Color of the font (Blue)
+	 * @param alpha		Color of the font (Alpha channel)
+	 */
 	public AngleFont(float fontSize, Typeface typeface, int charCount, int border, int space, int red, int green,
 			int blue, int alpha)
 	{
@@ -56,6 +81,19 @@ public class AngleFont
 		lTexture=AngleTextureEngine.createTextureFromFont(this);
 	}
 
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param fontSize	Size of the font
+	 * @param typeface	Typeface
+	 * @param chars		String with characters into font 
+	 * @param border		Border of every character
+	 * @param space		Space between characters
+	 * @param red			Color of the font (Red)
+	 * @param green		Color of the font (Green)
+	 * @param blue			Color of the font (Blue)
+	 * @param alpha		Color of the font (Alpha channel)
+	 */
 	public AngleFont(float fontSize, Typeface typeface, char[] chars, int border, int space, int red, int green,
 			int blue, int alpha)
 	{
@@ -66,6 +104,13 @@ public class AngleFont
 		lTexture=AngleTextureEngine.createTextureFromFont(this);
 	}
 
+	/**
+	 * 
+	 * @param view			Main AngleSurfaceView
+	 * @param asset		FNT file (to load font from) 
+	 * @param resourceId PNG file (to load font from)
+	 * @param space		Space between characters
+	 */
 	public AngleFont(String asset, int resourceId, int space)
 	{
 		loadFrom(asset);
@@ -97,6 +142,11 @@ public class AngleFont
 		lBlue = blue;
 	}
 
+	/**
+	 * Save texture to the root of the SD card using 2 files. 1 PNG with graphics and 1 FNT with data.
+	 * Edit the PNG and use it as a drawable resource and put the FNT into asset folder to reload edited font.  
+	 * @param fileName
+	 */
 	public void saveTo(String fileName)
 	{
 		Bitmap bitmap=lTexture.create();
@@ -108,11 +158,12 @@ public class AngleFont
 				bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 				stream.flush();
 				stream.close();
-				ByteBuffer out = ByteBuffer.allocate(8 + lCharCount * 12);
+				ByteBuffer out = ByteBuffer.allocate(10 + lCharCount * 12);
 				out.putShort(lCharCount);
 				out.putShort(lHeight);
 				out.putShort(lSpace);
 				out.putShort(lSpaceWidth);
+				out.putShort(lLineat);
 				for (int c = 0; c < lCharCount; c++)
 				{
 					out.putInt(lCodePoints[c]);
@@ -135,18 +186,19 @@ public class AngleFont
 		}
 	}
 
-	public void loadFrom(String asset)
+	private void loadFrom(String asset)
 	{
 		InputStream is=null;
 		try
 		{
 			is = AngleActivity.uInstance.getAssets().open(asset);
-			ByteBuffer in = ByteBuffer.allocate(8);
+			ByteBuffer in = ByteBuffer.allocate(10);
 			is.read(in.array());
 			doInit(in.getShort(0));
 			lHeight = in.getShort(2);
 			lSpace = in.getShort(4);
 			lSpaceWidth = in.getShort(6);
+			lLineat = in.getShort(8);
 			in = ByteBuffer.allocate(lCharCount * 12);
 			is.read(in.array());
 			for (int c = 0; c < lCharCount; c++)
@@ -175,13 +227,27 @@ public class AngleFont
 		}
 	}
 
-	public char getChar(char chr)
+	protected int getChar(char chr)
 	{
 		for (int c = 0; c < lCharCount; c++)
 		{
 			if (lCodePoints[c] == chr)
-				return (char) c;
+				return c;
 		}
-		return (char) -1;
+		return -1;
+	}
+
+	/**
+	 * 
+	 * @param c Index of the character in font character array
+	 * @return The character width in pixels
+	 */
+	public int charWidth(char c)
+	{
+		int chr = getChar(c);
+		if (chr == -1)
+			return lSpaceWidth;
+		else
+			return lCharRight[chr] + lSpace;
 	}
 }
