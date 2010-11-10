@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ANGLE</name>
+	<name>ANGLE2.0</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -30,10 +30,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<variableList>
-		<variable>
-			<name>NDK</name>
-			<value>file:/K:/ndk.old/build/platforms/android-8/arch-arm/usr/include</value>
-		</variable>
-	</variableList>
 </projectDescription>
