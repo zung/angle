@@ -27,7 +27,7 @@ public class AngleObject
 	}
 
 	/**
-	 * Create a new AngleObject with defined amount of children
+	 * Create a new AngleObject with a defined amount of children
 	 * @param maxChildren amount of children
 	 */
 	public AngleObject (int maxChildren)

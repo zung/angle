@@ -23,10 +23,7 @@ public class AngleString extends AngleObject
 	protected int[] lTextureIV_tx = new int[4]; // Texture coordinates
 	public AngleVector fPosition_uu; // Position
 	public int fAlignment; // Text alignment
-	public float fRed; // Red tint (0 - 1)
-	public float fGreen; // Green tint (0 - 1)
-	public float fBlue; // Blue tint (0 - 1)
-	public float fAlpha; // Alpha channel (0 - 1)
+	public AngleColor lColor;
 	public float fDisplayWidth_uu;
 	public int fDisplayLines_ln;
 	protected boolean lIgnoreNL;
@@ -89,10 +86,7 @@ public class AngleString extends AngleObject
 		fLength_ch = 0;
 		lLinesCount_ln = 0;
 		fAlignment = aLeft;
-		fRed = 1;
-		fGreen = 1;
-		fBlue = 1;
-		fAlpha = 1;
+		lColor=AngleColor.cWhite;
 		fDisplayWidth_uu = 0;
 		fDisplayLines_ln = 1;
 		lTabLength_ch = tabLength_ch;
@@ -319,10 +313,10 @@ public class AngleString extends AngleObject
 				lTextureIV_tx[3] = -lFont.lHeight_tx;
 				((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 
-				((GL11Ext) gl).glDrawTexfOES((x_uu + lFont.lCharLeft_tx[chr])* AngleRenderer.vHorizontalFactor_px,
-						AngleRenderer.vViewportHeight_px - (y_uu + lFont.lHeight_tx + lFont.lLineat_tx)* AngleRenderer.vVerticalFactor_px, 0,
+				((GL11Ext) gl).glDrawTexfOES((x_uu + lFont.lCharLeft_tx[chr]* AngleRenderer.vHorizontalFactor_uu)* AngleRenderer.vHorizontalFactor_px,
+						AngleRenderer.vViewportHeight_px - (y_uu*AngleRenderer.vVerticalFactor_px + lFont.lHeight_tx + lFont.lLineat_tx), 0,
 						chrWidth * AngleRenderer.vHorizontalFactor_px, lFont.lHeight_tx * AngleRenderer.vVerticalFactor_px);
-				x_uu += (lFont.lCharRight_tx[chr] + lFont.lSpace_uu) * AngleRenderer.vHorizontalFactor_uu;
+				x_uu += lFont.lCharRight_tx[chr]* AngleRenderer.vHorizontalFactor_uu + lFont.lSpace_uu ;
 			}
 			return lFont.lHeight_tx;
 		}
@@ -345,7 +339,7 @@ public class AngleString extends AngleObject
 						if (fLength_ch > 0)
 						{
 							gl.glBindTexture(GL10.GL_TEXTURE_2D, lFont.lTexture.lHWTextureID);
-							gl.glColor4f(fRed, fGreen, fBlue, fAlpha);
+							gl.glColor4f(lColor.fRed, lColor.fGreen, lColor.fBlue, lColor.fAlpha);
 
 							int LC_ln = linesCount_ln();
 							float y_uu = fPosition_uu.fY;
