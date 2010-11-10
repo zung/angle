@@ -11,14 +11,17 @@ public class TestAngle2 extends AngleActivity
 
 		public Logo(AngleSpriteLayout layout)
 		{
-			super(240,160,layout);
+			super(AngleRenderer.rViewportExtent_uu.fX/2,0,layout);
 		}
 
 		@Override
 		protected void step(float secondsElapsed)
 		{
-			fPosition.fX+=10*secondsElapsed;
-			fPosition.fY+=5*secondsElapsed;
+			if (iPointer[0].isDown)
+			{
+				fPosition_uu.fX=iPointer[0].fPosition_uu.fX;
+				fPosition_uu.fY=iPointer[0].fPosition_uu.fY-150;
+			}
 		}
 	}
 	@Override
@@ -26,9 +29,10 @@ public class TestAngle2 extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 		AngleSpriteLayout slLogo=new AngleSpriteLayout(128,128,R.drawable.anglelogo);
-		AngleObject myScene=new AngleObject();
-		myScene.addObject(new AngleScreenEraser());
+		AngleObject myScene=new AngleObject(30);
+		myScene.addObject(new AngleScreenEraser(0.2f,0.2f,0.2f));
 		myScene.addObject(new Logo(slLogo));
+		myScene.addObject(new AngleFPSCounter());
 		AngleRenderer.setRenderTree(myScene);
 	}
 	

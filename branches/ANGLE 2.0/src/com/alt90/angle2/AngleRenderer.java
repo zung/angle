@@ -7,15 +7,18 @@ import android.opengl.GLSurfaceView.Renderer;
 
 public class AngleRenderer implements Renderer
 {
-	public static float vViewportHeight=0;
-	private static AngleRect lViewport=null; //TODO Intentar que sea privado
-	private static AngleVector lUserExtent=null;
-	private static AngleObject lRenderTree=null;
 	private static long lCTM;
+	private static AngleRect lViewport_px=null; 
+	private static AngleVector lUserExtent_uu=new AngleVector(0,0);
+	private static AngleObject lRenderTree=null;
 
-	public AngleRenderer(float width, float height)
+	public static AngleVector rViewportExtent_uu=new AngleVector(0,0);
+	public static float vViewportHeight_px=0;
+
+	public AngleRenderer(float width_uu, float height_uu)
 	{
-		lUserExtent=new AngleVector(width, height);
+		lUserExtent_uu.set(width_uu, height_uu);
+		rViewportExtent_uu.set(lUserExtent_uu);
 	}
 	
 	public static void setRenderTree(AngleObject newRenderTree)
@@ -28,22 +31,32 @@ public class AngleRenderer implements Renderer
 		return (object.getRoot()==lRenderTree);
 	}
 
-	public static AngleVector coordsUserToScreen(AngleVector coords)
+	public static AngleVector coordsUserToViewport(AngleVector coords_uu)
 	{
-		AngleVector result=new AngleVector(coords);
-		result.div(lUserExtent);
-		result.mul(lViewport.fSize);
-		result.add(lViewport.fPosition);
+		AngleVector result=new AngleVector(coords_uu);
+		result.div(lUserExtent_uu);
+		result.mul(lViewport_px.fSize);
+		//result.add(lViewport_px.fPosition);
 
 		return result;
 	}
 
-	public static AngleVector coordsScreenToUser(AngleVector coords)
+	public static AngleVector coordsViewportToUser(AngleVector coords_px)
 	{
-		AngleVector result=new AngleVector(coords);
-		result.sub(lViewport.fPosition);
-		result.div(lViewport.fSize);
-		result.mul(lUserExtent);
+		AngleVector result=new AngleVector(coords_px);
+		//result.sub(lViewport_px.fPosition);
+		result.div(lViewport_px.fSize);
+		result.mul(lUserExtent_uu);
+
+		return result;
+	}
+
+	public static AngleVector coordsScreenToUser(AngleVector coords_px)
+	{
+		AngleVector result=new AngleVector(coords_px);
+		result.sub(lViewport_px.fPosition);
+		result.div(lViewport_px.fSize);
+		result.mul(lUserExtent_uu);
 
 		return result;
 	}
@@ -61,7 +74,7 @@ public class AngleRenderer implements Renderer
 	@Override
 	public void onDrawFrame(GL10 gl)
 	{
-		vViewportHeight=lViewport.fPosition.fY;
+		vViewportHeight_px=lViewport_px.fSize.fY;
       gl.glMatrixMode(GL10.GL_MODELVIEW);
       gl.glLoadIdentity();
 		if (lRenderTree!=null)
@@ -76,23 +89,23 @@ public class AngleRenderer implements Renderer
 	@Override
 	public void onSurfaceChanged(GL10 gl, int surfaceWidth, int surfaceHeight)
 	{
-		lViewport=new AngleRect(0,0,surfaceWidth,surfaceHeight);
+		lViewport_px=new AngleRect(0,0,surfaceWidth,surfaceHeight);
 
-		if (!lUserExtent.isZero())
+		if (!lUserExtent_uu.isZero())
 		{
-			if ((lUserExtent.fX / lUserExtent.fY) > (surfaceWidth / surfaceHeight))
-				lViewport.fSize.fY = (int) (lViewport.fSize.fX * lUserExtent.fY / lUserExtent.fX);
+			if ((lUserExtent_uu.fX / lUserExtent_uu.fY) > (surfaceWidth / surfaceHeight))
+				lViewport_px.fSize.fY = (int) (lViewport_px.fSize.fX * lUserExtent_uu.fY / lUserExtent_uu.fX);
 			else
-				lViewport.fSize.fX = (int) (lViewport.fSize.fY * lUserExtent.fX / lUserExtent.fY);
+				lViewport_px.fSize.fX = (int) (lViewport_px.fSize.fY * lUserExtent_uu.fX / lUserExtent_uu.fY);
 
-			lViewport.fPosition.fX = surfaceWidth/2 - lViewport.fSize.fX/2;
-			lViewport.fPosition.fY = surfaceHeight/2 - lViewport.fSize.fY/2;
+			lViewport_px.fPosition.fX = surfaceWidth/2 - lViewport_px.fSize.fX/2;
+			lViewport_px.fPosition.fY = surfaceHeight/2 - lViewport_px.fSize.fY/2;
 		}
-		gl.glViewport((int)lViewport.fPosition.fX, (int)lViewport.fPosition.fY, (int)lViewport.fSize.fX, (int)lViewport.fSize.fY);
+		gl.glViewport((int)lViewport_px.fPosition.fX, (int)lViewport_px.fPosition.fY, (int)lViewport_px.fSize.fX, (int)lViewport_px.fSize.fY);
 
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrthof(0.0f, lViewport.fSize.fX, lViewport.fSize.fY, 0.0f, 0.0f, 1.0f);
+		gl.glOrthof(0.0f, lViewport_px.fSize.fX, lViewport_px.fSize.fY, 0.0f, 0.0f, 1.0f);
 		
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glDisable(GL10.GL_DITHER);
