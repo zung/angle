@@ -14,6 +14,10 @@ public class AngleRenderer implements Renderer
 
 	public static AngleVector rViewportExtent_uu=new AngleVector(0,0);
 	public static float vViewportHeight_px=0;
+	public static float vHorizontalFactor_uu=0;
+	public static float vVerticalFactor_uu=0;
+	public static float vHorizontalFactor_px=0;
+	public static float vVerticalFactor_px=0;
 
 	public AngleRenderer(float width_uu, float height_uu)
 	{
@@ -36,7 +40,6 @@ public class AngleRenderer implements Renderer
 		AngleVector result=new AngleVector(coords_uu);
 		result.div(lUserExtent_uu);
 		result.mul(lViewport_px.fSize);
-		//result.add(lViewport_px.fPosition);
 
 		return result;
 	}
@@ -44,7 +47,6 @@ public class AngleRenderer implements Renderer
 	public static AngleVector coordsViewportToUser(AngleVector coords_px)
 	{
 		AngleVector result=new AngleVector(coords_px);
-		//result.sub(lViewport_px.fPosition);
 		result.div(lViewport_px.fSize);
 		result.mul(lUserExtent_uu);
 
@@ -74,7 +76,6 @@ public class AngleRenderer implements Renderer
 	@Override
 	public void onDrawFrame(GL10 gl)
 	{
-		vViewportHeight_px=lViewport_px.fSize.fY;
       gl.glMatrixMode(GL10.GL_MODELVIEW);
       gl.glLoadIdentity();
 		if (lRenderTree!=null)
@@ -102,6 +103,12 @@ public class AngleRenderer implements Renderer
 			lViewport_px.fPosition.fY = surfaceHeight/2 - lViewport_px.fSize.fY/2;
 		}
 		gl.glViewport((int)lViewport_px.fPosition.fX, (int)lViewport_px.fPosition.fY, (int)lViewport_px.fSize.fX, (int)lViewport_px.fSize.fY);
+		
+		vViewportHeight_px=lViewport_px.fSize.fY;
+		vHorizontalFactor_uu=lUserExtent_uu.fX/lViewport_px.fSize.fX;
+		vVerticalFactor_uu=lUserExtent_uu.fY/lViewport_px.fSize.fY;
+		vHorizontalFactor_px=lViewport_px.fSize.fX/lUserExtent_uu.fX;
+		vVerticalFactor_px=lViewport_px.fSize.fY/lUserExtent_uu.fY;
 
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();

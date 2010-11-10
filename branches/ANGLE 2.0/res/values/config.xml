@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<dimen name="Width">480px</dimen>
-<dimen name="Height">320px</dimen>
+<dimen name="Width">800px</dimen>
+<dimen name="Height">800px</dimen>
 </resources>

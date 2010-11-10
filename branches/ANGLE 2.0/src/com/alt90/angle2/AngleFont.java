@@ -21,22 +21,26 @@ public class AngleFont
 	protected AngleTexture lTexture;
 	protected float lFontSize;
 	protected Typeface lTypeface;
-	protected int lBorder;
 	protected int lAlpha;
 	protected int lRed;
 	protected int lGreen;
 	protected int lBlue;
 
 	protected int[] lCodePoints; // Unicode 'chars'
-	protected short[] lCharX;
-	protected short[] lCharLeft;
-	protected short[] lCharTop;
-	protected short[] lCharRight;
-	protected short lCharCount;
-	protected short lHeight;
-	protected short lSpace;
-	protected short lSpaceWidth;
-	protected short lLineat;
+	protected short lCharCount_ch; //Characters in font
+
+	// --- Texture creation parameters ---
+	protected int lBorder_tx;
+	protected short lHeight_tx;
+	protected short lSpaceWidth_tx;
+	protected short lLineat_tx;
+	protected short[] lCharX_tx;
+	protected short[] lCharY_tx;
+	protected short[] lCharLeft_tx;
+	protected short[] lCharRight_tx;
+	// -----------------------------------
+
+	protected float lSpace_uu; //Space between printed characters
 
 	/**
 	 * 
@@ -52,9 +56,9 @@ public class AngleFont
 	public AngleFont(float fontSize, Typeface typeface, int space, int red, int green, int blue, int alpha)
 	{
 		doInit(fontSize, typeface, DEFAULT_FONT_CHARS, (short) space, red, green, blue, alpha);
-		for (int c = 0; c < lCharCount; c++)
+		for (int c = 0; c < lCharCount_ch; c++)
 			lCodePoints[c] = 33 + c;
-		lBorder=1;
+		lBorder_tx=1;
 		lTexture=AngleTextureEngine.createTextureFromFont(this);
 	}
 
@@ -75,9 +79,9 @@ public class AngleFont
 			int blue, int alpha)
 	{
 		doInit(fontSize, typeface, (short) charCount, (short) space, red, green, blue, alpha);
-		for (int c = 0; c < lCharCount; c++)
+		for (int c = 0; c < lCharCount_ch; c++)
 			lCodePoints[c] = 33 + c;
-		lBorder=border;
+		lBorder_tx=border;
 		lTexture=AngleTextureEngine.createTextureFromFont(this);
 	}
 
@@ -100,7 +104,7 @@ public class AngleFont
 		doInit(fontSize, typeface, (short) chars.length, (short) space, red, green, blue, alpha);
 		for (int c = 0; c < chars.length; c++)
 			lCodePoints[c] = (int) chars[c];
-		lBorder=border;
+		lBorder_tx=border;
 		lTexture=AngleTextureEngine.createTextureFromFont(this);
 	}
 
@@ -111,29 +115,29 @@ public class AngleFont
 	 * @param resourceId PNG file (to load font from)
 	 * @param space		Space between characters
 	 */
-	public AngleFont(String asset, int resourceId, int space)
+	public AngleFont(String asset, int resourceId, int space_uu)
 	{
 		loadFrom(asset);
 		lTexture=AngleTextureEngine.createTextureFromResourceId(resourceId);
-		lSpace = (short) space;
+		lSpace_uu = (short) space_uu;
 	}
 
 	private void doInit(short charCount)
 	{
-		lCharCount = charCount;
+		lCharCount_ch = charCount;
 		lTexture=null;
-		lCodePoints = new int[lCharCount];
-		lCharX = new short[lCharCount];
-		lCharLeft = new short[lCharCount];
-		lCharTop = new short[lCharCount];
-		lCharRight = new short[lCharCount];
-		lHeight = 0;
+		lCodePoints = new int[lCharCount_ch];
+		lCharX_tx = new short[lCharCount_ch];
+		lCharLeft_tx = new short[lCharCount_ch];
+		lCharY_tx = new short[lCharCount_ch];
+		lCharRight_tx = new short[lCharCount_ch];
+		lHeight_tx = 0;
 	}
 
-	private void doInit(float fontSize, Typeface typeface, short charCount, short space, int red, int green, int blue, int alpha)
+	private void doInit(float fontSize, Typeface typeface, short charCount, short space_uu, int red, int green, int blue, int alpha)
 	{
 		doInit(charCount);
-		lSpace = space;
+		lSpace_uu = space_uu;
 		lFontSize = fontSize;
 		lTypeface = typeface;
 		lAlpha = alpha;
@@ -158,19 +162,19 @@ public class AngleFont
 				bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 				stream.flush();
 				stream.close();
-				ByteBuffer out = ByteBuffer.allocate(10 + lCharCount * 12);
-				out.putShort(lCharCount);
-				out.putShort(lHeight);
-				out.putShort(lSpace);
-				out.putShort(lSpaceWidth);
-				out.putShort(lLineat);
-				for (int c = 0; c < lCharCount; c++)
+				ByteBuffer out = ByteBuffer.allocate(10 + lCharCount_ch * 12);
+				out.putShort(lCharCount_ch);
+				out.putShort(lHeight_tx);
+				out.putShort((short)lSpace_uu); //TODO update fnt format
+				out.putShort(lSpaceWidth_tx);
+				out.putShort(lLineat_tx);
+				for (int c = 0; c < lCharCount_ch; c++)
 				{
 					out.putInt(lCodePoints[c]);
-					out.putShort(lCharX[c]);
-					out.putShort(lCharLeft[c]);
-					out.putShort(lCharTop[c]);
-					out.putShort(lCharRight[c]);
+					out.putShort(lCharX_tx[c]);
+					out.putShort(lCharLeft_tx[c]);
+					out.putShort(lCharY_tx[c]);
+					out.putShort(lCharRight_tx[c]);
 				}
 				stream = new FileOutputStream("/sdcard/" + fileName + ".fnt");
 				stream.write(out.array());
@@ -195,19 +199,19 @@ public class AngleFont
 			ByteBuffer in = ByteBuffer.allocate(10);
 			is.read(in.array());
 			doInit(in.getShort(0));
-			lHeight = in.getShort(2);
-			lSpace = in.getShort(4);
-			lSpaceWidth = in.getShort(6);
-			lLineat = in.getShort(8);
-			in = ByteBuffer.allocate(lCharCount * 12);
+			lHeight_tx = in.getShort(2);
+			lSpace_uu = in.getShort(4);
+			lSpaceWidth_tx = in.getShort(6);
+			lLineat_tx = in.getShort(8);
+			in = ByteBuffer.allocate(lCharCount_ch * 12);
 			is.read(in.array());
-			for (int c = 0; c < lCharCount; c++)
+			for (int c = 0; c < lCharCount_ch; c++)
 			{
 				lCodePoints[c] = in.getInt(c * 12);
-				lCharX[c] = in.getShort(c * 12 + 4);
-				lCharLeft[c] = in.getShort(c * 12 + 6);
-				lCharTop[c] = in.getShort(c * 12 + 8);
-				lCharRight[c] = in.getShort(c * 12 + 10);
+				lCharX_tx[c] = in.getShort(c * 12 + 4);
+				lCharLeft_tx[c] = in.getShort(c * 12 + 6);
+				lCharY_tx[c] = in.getShort(c * 12 + 8);
+				lCharRight_tx[c] = in.getShort(c * 12 + 10);
 			}
 		}
 		catch (IOException e)
@@ -229,7 +233,7 @@ public class AngleFont
 
 	protected int getChar(char chr)
 	{
-		for (int c = 0; c < lCharCount; c++)
+		for (int c = 0; c < lCharCount_ch; c++)
 		{
 			if (lCodePoints[c] == chr)
 				return c;
@@ -242,12 +246,12 @@ public class AngleFont
 	 * @param c Index of the character in font character array
 	 * @return The character width in pixels
 	 */
-	public int charWidth(char c)
+	public float charWidth_uu(char c)
 	{
 		int chr = getChar(c);
 		if (chr == -1)
-			return lSpaceWidth;
+			return lSpaceWidth_tx*AngleRenderer.vHorizontalFactor_uu;
 		else
-			return lCharRight[chr] + lSpace;
+			return lCharRight_tx[chr]*AngleRenderer.vHorizontalFactor_uu + lSpace_uu;
 	}
 }
