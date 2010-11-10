@@ -5,7 +5,8 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 /**
- * Have the string and its position. Length is automatically set when string content is changed. But can be altered to create typing effect.
+ * Have the string and its position. Length is automatically set when string
+ * content is changed. But can be altered to create typing effect.
  * 
  * @author Ivan Pajuelo
  * 
@@ -15,31 +16,31 @@ public class AngleString extends AngleObject
 	public static final int aLeft = 0;
 	public static final int aCenter = 1;
 	public static final int aRight = 2;
-	protected String mString;
-	protected String mWantString;
-	public int mLength; // Length to display
-	protected AngleFont mFont; // Font
-	protected int[] mTextureIV = new int[4]; // Texture coordinates
-	public AngleVector mPosition; // Position
-	public float mZ; // Z position (0=Near, 1=Far)
-	public int mAlignment; // Text alignment
-	public float mRed; // Red tint (0 - 1)
-	public float mGreen; // Green tint (0 - 1)
-	public float mBlue; // Blue tint (0 - 1)
-	public float mAlpha; // Alpha channel (0 - 1)
-	public int mDisplayWidth;
-	public int mDisplayLines;
-	protected boolean mIgnoreNL;
-	protected int mTabLength;
-	private int mLinesCount;
-	private int[] mLineStart;
-	private int[] mLineEnd;
-	private int mWidth;
-	private boolean mNewString;
+	protected String lString;
+	protected String lWantString;
+	public int fLength_ch; // Length to display
+	protected AngleFont lFont; // Font
+	protected int[] lTextureIV_tx = new int[4]; // Texture coordinates
+	public AngleVector fPosition_uu; // Position
+	public int fAlignment; // Text alignment
+	public float fRed; // Red tint (0 - 1)
+	public float fGreen; // Green tint (0 - 1)
+	public float fBlue; // Blue tint (0 - 1)
+	public float fAlpha; // Alpha channel (0 - 1)
+	public float fDisplayWidth_uu;
+	public int fDisplayLines_ln;
+	protected boolean lIgnoreNL;
+	protected int lTabLength_ch;
+	private int lLinesCount_ln;
+	private int[] lLineStart_ch;
+	private int[] lLineEnd_ch;
+	private float lWidth_uu;
+	private boolean lNewString;
 
 	/**
 	 * 
-	 * @param font AngleFont
+	 * @param font
+	 *           AngleFont
 	 */
 	public AngleString(AngleFont font)
 	{
@@ -48,47 +49,55 @@ public class AngleString extends AngleObject
 
 	/**
 	 * 
-	 * @param font AngleFont
-	 * @param tabLength Length in spaces of \t 
-	 * @param ignoreNL Ignore \n
+	 * @param font
+	 *           AngleFont
+	 * @param tabLength_ch
+	 *           Length in spaces of \t
+	 * @param ignoreNL
+	 *           Ignore \n
 	 */
-	public AngleString(AngleFont font, int tabLength, boolean ignoreNL)
+	public AngleString(AngleFont font, int tabLength_ch, boolean ignoreNL)
 	{
-		init(font, tabLength, ignoreNL);
+		init(font, tabLength_ch, ignoreNL);
 	}
 
 	/**
 	 * 
-	 * @param font AngleFont
-	 * @param string The text
-	 * @param x Position
-	 * @param y Position
-	 * @param alignment aLeft, aCenter or aRight
+	 * @param font
+	 *           AngleFont
+	 * @param string
+	 *           The text
+	 * @param x_uu
+	 *           Position
+	 * @param y_uu
+	 *           Position
+	 * @param alignment
+	 *           aLeft, aCenter or aRight
 	 */
-	public AngleString(AngleFont font, String string, int x, int y, int alignment)
+	public AngleString(AngleFont font, String string, int x_uu, int y_uu, int alignment)
 	{
 		init(font, 3, false);
 		set(string);
-		mPosition.set(x,y); 
-		mAlignment = alignment;
+		fPosition_uu.set(x_uu, y_uu);
+		fAlignment = alignment;
 	}
 
-	private void init(AngleFont font, int tabLength, boolean ignoreNL)
+	private void init(AngleFont font, int tabLength_ch, boolean ignoreNL)
 	{
-		mPosition = new AngleVector();
-		mFont = font;
-		mLength = 0;
-		mLinesCount = 0;
-		mAlignment = aLeft;
-		mRed = 1;
-		mGreen = 1;
-		mBlue = 1;
-		mAlpha = 1;
-		mDisplayWidth = 0;
-		mDisplayLines = 1;
-		mTabLength = tabLength;
-		mIgnoreNL = ignoreNL;
-		mNewString=false;
+		fPosition_uu = new AngleVector();
+		lFont = font;
+		fLength_ch = 0;
+		lLinesCount_ln = 0;
+		fAlignment = aLeft;
+		fRed = 1;
+		fGreen = 1;
+		fBlue = 1;
+		fAlpha = 1;
+		fDisplayWidth_uu = 0;
+		fDisplayLines_ln = 1;
+		lTabLength_ch = tabLength_ch;
+		lIgnoreNL = ignoreNL;
+		lNewString = false;
 	}
 
 	/**
@@ -109,274 +118,296 @@ public class AngleString extends AngleObject
 	public void set(String src)
 	{
 		prepareString(src);
-		mLength=mWantString.length();
+		fLength_ch = lWantString.length();
 	}
-	
+
 	private void prepareString(String src)
 	{
-		mLength = 0;
-		mWantString="";
+		fLength_ch = 0;
+		lWantString = "";
 		if (src == null)
 			return;
 
-		String mStep1 = "";
-		int lineLength=0;
-		for (int c = 0; c < src.length(); c++)
+		String strStep1 = "";
+		int lineLength_ch = 0;
+		for (int ch = 0; ch < src.length(); ch++)
 		{
-			if ((src.charAt(c) == '\n') && mIgnoreNL)
+			if ((src.charAt(ch) == '\n') && lIgnoreNL)
 			{
-				mStep1=mStep1.concat(" ");
+				strStep1 = strStep1.concat(" ");
 				continue;
 			}
-			if (src.charAt(c) == '\n')
+			if (src.charAt(ch) == '\n')
 			{
-				mStep1=mStep1.concat(src.substring(c, c + 1));
-				lineLength = 0;
+				strStep1 = strStep1.concat(src.substring(ch, ch + 1));
+				lineLength_ch = 0;
 			}
-			else if (src.charAt(c) == '\t')
+			else if (src.charAt(ch) == '\t')
 			{
-				if (mTabLength>0)
+				if (lTabLength_ch > 0)
 				{
-					int tab=mTabLength-(lineLength%mTabLength);
-					if (tab==0)
-						tab=mTabLength;
+					int tab = lTabLength_ch - (lineLength_ch % lTabLength_ch);
+					if (tab == 0)
+						tab = lTabLength_ch;
 					for (int t = 0; t < tab; t++)
 					{
-						mStep1=mStep1.concat(" ");
-						lineLength++;
+						strStep1 = strStep1.concat(" ");
+						lineLength_ch++;
 					}
 				}
 			}
-			else if (src.charAt(c) >= ' ')
+			else if (src.charAt(ch) >= ' ')
 			{
-				mStep1=mStep1.concat(src.substring(c, c + 1));
-				lineLength++;
+				strStep1 = strStep1.concat(src.substring(ch, ch + 1));
+				lineLength_ch++;
 			}
 		}
-		if (mDisplayWidth > 0)
+		if (fDisplayWidth_uu > 0)
 		{
-			int lineWidth = 0;
-			int flc = 0; // FirstLineChar
-			for (int c = 0; c < mStep1.length(); c++)
+			int lineWidth_uu = 0;
+			int flc_ch = 0; // FirstLineChar
+			for (int ch = 0; ch < strStep1.length(); ch++)
 			{
-				if (mStep1.charAt(c) == '\n')
+				if (strStep1.charAt(ch) == '\n')
 				{
-					lineWidth = 0;
-					flc = c + 1;
+					lineWidth_uu = 0;
+					flc_ch = ch + 1;
 				}
 				else
-					lineWidth += mFont.charWidth(mStep1.charAt(c));
-				
-				boolean copy=false;
-				int llc = c; // Last Line Char
-				if (lineWidth > mDisplayWidth)
+					lineWidth_uu += lFont.charWidth_uu(strStep1.charAt(ch));
+
+				boolean copy = false;
+				int llc_ch = ch; // Last Line Char
+				if (lineWidth_uu > fDisplayWidth_uu)
 				{
-					while ((lineWidth > mDisplayWidth) && (llc > flc))
+					while ((lineWidth_uu > fDisplayWidth_uu) && (llc_ch > flc_ch))
 					{
-						while ((mStep1.charAt(llc) == ' ') && (llc > flc)) // Quita los espacios del final
+						while ((strStep1.charAt(llc_ch) == ' ') && (llc_ch > flc_ch)) // Quita
+																											// los
+																											// espacios
+																											// del
+																											// final
 						{
-							lineWidth -= mFont.charWidth(mStep1.charAt(llc));
-							llc--;
+							lineWidth_uu -= lFont.charWidth_uu(strStep1.charAt(llc_ch));
+							llc_ch--;
 						}
-						if (lineWidth <= mDisplayWidth)
+						if (lineWidth_uu <= fDisplayWidth_uu)
 							break;
-						while ((mStep1.charAt(llc) != ' ') && (llc > flc)) // Quita la última palabra
+						while ((strStep1.charAt(llc_ch) != ' ') && (llc_ch > flc_ch)) // Quita
+																											// la
+																											// última
+																											// palabra
 						{
-							lineWidth -= mFont.charWidth(mStep1.charAt(llc));
-							llc--;
+							lineWidth_uu -= lFont.charWidth_uu(strStep1.charAt(llc_ch));
+							llc_ch--;
 						}
 					}
-					if (llc == flc) //Hay una palabra + larga que la linea
+					if (llc_ch == flc_ch) // Hay una palabra + larga que la linea
 					{
-						mWantString = mStep1;
+						lWantString = strStep1;
 						break;
 					}
-					copy=true;
+					copy = true;
 				}
-				if (copy||(c == mStep1.length()-1))
+				if (copy || (ch == strStep1.length() - 1))
 				{
-					mWantString=mWantString.concat(mStep1.substring(flc,llc+1));
-					if (llc+1==mStep1.length())
+					lWantString = lWantString.concat(strStep1.substring(flc_ch, llc_ch + 1));
+					if (llc_ch + 1 == strStep1.length())
 						break;
-					mWantString=mWantString.concat("\n");
-					flc=llc+1;
-					while ((mStep1.charAt(flc) == ' ') && (flc < mStep1.length())) // Quita los espacios del final
-						flc++;
-					c=flc;
-					lineWidth=0;
+					lWantString = lWantString.concat("\n");
+					flc_ch = llc_ch + 1;
+					while ((strStep1.charAt(flc_ch) == ' ') && (flc_ch < strStep1.length()))
+						// Quita los espacios del final
+						flc_ch++;
+					ch = flc_ch;
+					lineWidth_uu = 0;
 				}
 			}
 		}
 		else
-			mWantString = mStep1;
-		mDisplayLines=1;
-		for (int c=0;c<mWantString.length();c++)
+			lWantString = strStep1;
+		fDisplayLines_ln = 1;
+		for (int c = 0; c < lWantString.length(); c++)
 		{
-			if (mWantString.charAt(c) == '\n')
-				mDisplayLines++;
+			if (lWantString.charAt(c) == '\n')
+				fDisplayLines_ln++;
 		}
-		mNewString=true;
+		lNewString = true;
 	}
-	
+
 	private void tsSetString()
 	{
-		mString=mWantString;
-		mNewString=false;
-		mLinesCount=1;
-		for (int c=0;c<mString.length();c++)
+		lString = lWantString;
+		lNewString = false;
+		lLinesCount_ln = 1;
+		for (int c = 0; c < lString.length(); c++)
 		{
-			if (mString.charAt(c) == '\n')
-				mLinesCount++;
+			if (lString.charAt(c) == '\n')
+				lLinesCount_ln++;
 		}
-		mLineStart=new int[mLinesCount];
-		mLineEnd=new int[mLinesCount];
-		int l=0;
-		mLineStart[l]=0;
-		mLineEnd[mLinesCount-1]=mString.length();
-		for (int c=0;c<mString.length();c++)
+		lLineStart_ch = new int[lLinesCount_ln];
+		lLineEnd_ch = new int[lLinesCount_ln];
+		int l = 0;
+		lLineStart_ch[l] = 0;
+		lLineEnd_ch[lLinesCount_ln - 1] = lString.length();
+		for (int c = 0; c < lString.length(); c++)
 		{
-			if (mString.charAt(c) == '\n')
+			if (lString.charAt(c) == '\n')
 			{
-				mLineEnd[l++]=c;
-				if (l<mLinesCount)
-					mLineStart[l]=c+1;
+				lLineEnd_ch[l++] = c;
+				if (l < lLinesCount_ln)
+					lLineStart_ch[l] = c + 1;
 			}
 		}
-		mWidth=0;
-		for (l=0;l<mLinesCount;l++)
+		lWidth_uu = 0;
+		for (l = 0; l < lLinesCount_ln; l++)
 		{
-			int lw=getWidth(mLineStart[l], mLineEnd[l]);
-			if (mWidth<lw)
-				mWidth=lw;
+			float lineWidth_uu = getWidth_uu(lLineStart_ch[l], lLineEnd_ch[l]);
+			if (lWidth_uu < lineWidth_uu)
+				lWidth_uu = lineWidth_uu;
 		}
 	}
 
 	/**
 	 * Test if a point is within extent of the string
 	 * 
-	 * @param x Point
-	 * @param y Point
+	 * @param x_uu
+	 *           Point
+	 * @param y_uu
+	 *           Point
 	 * @return Returns true if point(x,y) is within string
 	 */
-	public boolean test(float x, float y)
+	public boolean test(float x_uu, float y_uu)
 	{
-		float left=mPosition.fX;
-		if (mAlignment == aRight)
-			left=mPosition.fX - mWidth;
-		else if (mAlignment == aCenter)
-			left=mPosition.fX - mWidth / 2;
+		float left_uu = fPosition_uu.fX;
+		if (fAlignment == aRight)
+			left_uu = fPosition_uu.fX - lWidth_uu;
+		else if (fAlignment == aCenter)
+			left_uu = fPosition_uu.fX - lWidth_uu / 2;
 
-		if (x >= left)
-			if (y >= mPosition.fY + mFont.lLineat)
-				if (x < left + mWidth)
-					if (y < mPosition.fY + mFont.lLineat + getHeight())
+		float top_uu = fPosition_uu.fY + lFont.lLineat_tx * AngleRenderer.vVerticalFactor_uu;
+
+		if (x_uu >= left_uu)
+			if (y_uu >= top_uu)
+				if (x_uu < left_uu + lWidth_uu)
+					if (y_uu < top_uu + getHeight_uu())
 						return true;
 		return false;
 	}
-	
-	
-	private int drawLine(GL10 gl, float y, int line)
+
+	private int drawLine(GL10 gl, float y_uu, int line_ln)
 	{
-		if ((line>=0)&&(line<mLinesCount))
+		if ((line_ln >= 0) && (line_ln < lLinesCount_ln))
 		{
-			float x=mPosition.fX;
-			if (mAlignment == aRight)
-				x-= getWidth(mLineStart[line], mLineEnd[line]);
-			else if (mAlignment == aCenter)
-				x-= getWidth(mLineStart[line], mLineEnd[line]) / 2;
-			for (int c=mLineStart[line];(c<mLineEnd[line])&&(c<mLength);c++)
+			float x_uu = fPosition_uu.fX;
+			if (fAlignment == aRight)
+				x_uu -= getWidth_uu(lLineStart_ch[line_ln], lLineEnd_ch[line_ln]);
+			else if (fAlignment == aCenter)
+				x_uu -= getWidth_uu(lLineStart_ch[line_ln], lLineEnd_ch[line_ln]) / 2;
+			for (int c = lLineStart_ch[line_ln]; (c < lLineEnd_ch[line_ln]) && (c < fLength_ch); c++)
 			{
-				int chr = mFont.getChar(mString.charAt(c));
+				int chr = lFont.getChar(lString.charAt(c));
 				if (chr == -1)
 				{
-					x += mFont.lSpaceWidth;
+					x_uu += lFont.lSpaceWidth_tx * AngleRenderer.vHorizontalFactor_uu;
 					continue;
 				}
-				int chrWidth = mFont.lCharRight[chr] - mFont.lCharLeft[chr];
-				mTextureIV[0] = mFont.lCharX[chr];
-				mTextureIV[1] = mFont.lCharTop[chr] + mFont.lHeight;
-				mTextureIV[2] = chrWidth;
-				mTextureIV[3] = -mFont.lHeight;
-				((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, mTextureIV, 0);
+				int chrWidth = lFont.lCharRight_tx[chr] - lFont.lCharLeft_tx[chr];
+				lTextureIV_tx[0] = lFont.lCharX_tx[chr];
+				lTextureIV_tx[1] = lFont.lCharY_tx[chr] + lFont.lHeight_tx;
+				lTextureIV_tx[2] = chrWidth;
+				lTextureIV_tx[3] = -lFont.lHeight_tx;
+				((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 
-				((GL11Ext) gl).glDrawTexfOES(x + mFont.lCharLeft[chr], AngleRenderer.vViewportHeight_px - (y + mFont.lHeight + mFont.lLineat),
-						mZ, chrWidth, mFont.lHeight);
-				x += mFont.lCharRight[chr] + mFont.lSpace;
+				((GL11Ext) gl).glDrawTexfOES((x_uu + lFont.lCharLeft_tx[chr])* AngleRenderer.vHorizontalFactor_px,
+						AngleRenderer.vViewportHeight_px - (y_uu + lFont.lHeight_tx + lFont.lLineat_tx)* AngleRenderer.vVerticalFactor_px, 0,
+						chrWidth * AngleRenderer.vHorizontalFactor_px, lFont.lHeight_tx * AngleRenderer.vVerticalFactor_px);
+				x_uu += (lFont.lCharRight_tx[chr] + lFont.lSpace_uu) * AngleRenderer.vHorizontalFactor_uu;
 			}
-			return mFont.lHeight;
+			return lFont.lHeight_tx;
 		}
 		return 0;
-	}
-
-	private int getWidth(int flc, int llc)
-	{
-		int result=0;
-		for (int c=flc;c<llc;c++)
-			result += mFont.charWidth(mString.charAt(c));
-		return result;
 	}
 
 	@Override
 	public void draw(GL10 gl)
 	{
-		if (mFont != null)
+		if (lFont != null)
 		{
-			if (mFont.lTexture != null)
+			if (lFont.lTexture != null)
 			{
-				if (mFont.lTexture.lHWTextureID > -1)
+				if (lFont.lTexture.lHWTextureID > -1)
 				{
-					if (mNewString)
+					if (lNewString)
 						tsSetString();
 					else
 					{
-						if (mLength>0)
+						if (fLength_ch > 0)
 						{
-						gl.glBindTexture(GL10.GL_TEXTURE_2D, mFont.lTexture.lHWTextureID);
-						gl.glColor4f(mRed, mGreen, mBlue, mAlpha);
-	
-						int LC=linesCount();
-						float y = mPosition.fY;
-						for (int l = LC-mDisplayLines; l < LC; l++)
-							y += drawLine(gl,y,l);
+							gl.glBindTexture(GL10.GL_TEXTURE_2D, lFont.lTexture.lHWTextureID);
+							gl.glColor4f(fRed, fGreen, fBlue, fAlpha);
+
+							int LC_ln = linesCount_ln();
+							float y_uu = fPosition_uu.fY;
+							for (int ln = LC_ln - fDisplayLines_ln; ln < LC_ln; ln++)
+								y_uu += drawLine(gl, y_uu, ln);
 						}
 					}
 				}
 				else
-					mFont.lTexture.linkToGL(gl);
+					lFont.lTexture.linkToGL(gl);
 			}
 		}
 		super.draw(gl);
 	}
 
-	private int linesCount()
+	private int linesCount_ln()
 	{
-		int result=1;
-		if (mLength>mString.length())
-			mLength=mString.length();
-		for (int c=0;c<mLength;c++)
+		int result_ln = 1;
+		if (fLength_ch > lString.length())
+			fLength_ch = lString.length();
+		for (int c = 0; c < fLength_ch; c++)
 		{
-			if (mString.charAt(c)=='\n')
-				result++;
+			if (lString.charAt(c) == '\n')
+				result_ln++;
 		}
-		return result;
+		return result_ln;
 	}
+
+	private float getWidth_uu(int flc_ch, int llc_ch)
+	{
+		float result_uu = 0;
+		for (int c = flc_ch; (c < llc_ch) && (c < fLength_ch); c++)
+		{
+			int chr = lFont.getChar(lString.charAt(c));
+			if (chr == -1)
+			{
+				result_uu += lFont.lSpaceWidth_tx * AngleRenderer.vHorizontalFactor_uu;
+				continue;
+			}
+			result_uu += (lFont.lCharRight_tx[chr] + lFont.lSpace_uu) * AngleRenderer.vHorizontalFactor_uu;
+		}
+		return result_uu;
+	}
+
 	/**
 	 * 
 	 * @return String height in pixels
 	 */
-	public int getHeight()
+
+	public float getHeight_uu()
 	{
-		return mFont.lHeight*linesCount();
+		return lFont.lHeight_tx * AngleRenderer.vVerticalFactor_uu * linesCount_ln();
 	}
 
 	/**
 	 * 
 	 * @return String length
 	 */
-	public int getLength()
+	public int getLength_ch()
 	{
-		if (mString != null)
-			return mString.length();
+		if (lString != null)
+			return lString.length();
 		return 0;
 	}
 }

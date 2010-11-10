@@ -12,7 +12,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
  */
 public class AngleSprite extends AngleAbstractSprite
 {
-	protected int[] lTextureIV; // Texture coordinates
+	protected int[] lTextureIV_tx; // Texture coordinates
 
 	/**
 	 * 
@@ -51,7 +51,7 @@ public class AngleSprite extends AngleAbstractSprite
 
 	private void doInit(float x_uu, float y_uu, float alpha)
 	{
-		lTextureIV = new int[4];
+		lTextureIV_tx = new int[4];
 		setLayout(lLayout);
 		fPosition_uu.set(x_uu,y_uu);
 		fAlpha=alpha;
@@ -70,7 +70,7 @@ public class AngleSprite extends AngleAbstractSprite
 	@Override
 	public void setFrame(int frame)
 	{
-		if (lLayout.fillTextureValues(frame, lTextureIV,fFlipHorizontal,fFlipVertical))
+		if (lLayout.fillTextureValues(frame, lTextureIV_tx,fFlipHorizontal,fFlipVertical))
 			lFrame = frame;
 	}
 
@@ -83,7 +83,7 @@ public class AngleSprite extends AngleAbstractSprite
 			{
 				gl.glColor4f(fRed, fGreen, fBlue, fAlpha);
 
-				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV, 0);
+				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 				
 				AngleVector pos_px=lLayout.getPivot_px(lFrame);
 				pos_px.mul(fScale);

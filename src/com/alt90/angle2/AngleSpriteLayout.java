@@ -163,30 +163,30 @@ public class AngleSpriteLayout
 		return null;
 	}
 
-	public boolean fillTextureValues(int frame, int[] lTextureIV, boolean flipHorizontal, boolean flipVertical)
+	public boolean fillTextureValues(int frame, int[] lTextureIV_tx, boolean flipHorizontal, boolean flipVertical)
 	{
 		if (frame<lFrameCount)
 		{
 			if (flipHorizontal)
 			{
-				lTextureIV[0] = (int) ((lCrop_tx.fPosition.fX + lCrop_tx.fSize.fX) + ((lFrame % lFrameColumns) * lCrop_tx.fSize.fX));// Ucr
-				lTextureIV[2] = (int) -lCrop_tx.fSize.fX; // Wcr
+				lTextureIV_tx[0] = (int) ((lCrop_tx.fPosition.fX + lCrop_tx.fSize.fX) + ((lFrame % lFrameColumns) * lCrop_tx.fSize.fX));// Ucr
+				lTextureIV_tx[2] = (int) -lCrop_tx.fSize.fX; // Wcr
 			}
 			else
 			{
-				lTextureIV[0] = (int) (lCrop_tx.fPosition.fX + ((lFrame % lFrameColumns) * lCrop_tx.fSize.fX));// Ucr
-				lTextureIV[2] = (int) lCrop_tx.fSize.fX; // Wcr
+				lTextureIV_tx[0] = (int) (lCrop_tx.fPosition.fX + ((lFrame % lFrameColumns) * lCrop_tx.fSize.fX));// Ucr
+				lTextureIV_tx[2] = (int) lCrop_tx.fSize.fX; // Wcr
 			}
 
 			if (flipVertical)
 			{
-				lTextureIV[1] = (int) (lCrop_tx.fPosition.fY + ((lFrame / lFrameColumns) * lCrop_tx.fSize.fY));// Vcr
-				lTextureIV[3] = (int) lCrop_tx.fSize.fY; // Hcr
+				lTextureIV_tx[1] = (int) (lCrop_tx.fPosition.fY + ((lFrame / lFrameColumns) * lCrop_tx.fSize.fY));// Vcr
+				lTextureIV_tx[3] = (int) lCrop_tx.fSize.fY; // Hcr
 			}
 			else
 			{
-				lTextureIV[1] = (int) ((lCrop_tx.fPosition.fY + lCrop_tx.fSize.fY) + ((lFrame / lFrameColumns) * lCrop_tx.fSize.fY));// Vcr
-				lTextureIV[3] = (int) -lCrop_tx.fSize.fY; // Hcr
+				lTextureIV_tx[1] = (int) ((lCrop_tx.fPosition.fY + lCrop_tx.fSize.fY) + ((lFrame / lFrameColumns) * lCrop_tx.fSize.fY));// Vcr
+				lTextureIV_tx[3] = (int) -lCrop_tx.fSize.fY; // Hcr
 			}
 			return true;
 		}

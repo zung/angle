@@ -30,77 +30,77 @@ public class AngleFontTexture extends AngleTexture
 		paint.setARGB(lFont.lAlpha, lFont.lRed, lFont.lGreen, lFont.lBlue);
 		paint.setAntiAlias(true);
 
-		Rect rect = new Rect();
-		int totalWidth = 0;
-		lFont.lHeight = 0;
-		int minTop = 1000;
-		int maxBottom = -1000;
-		for (int c = 0; c < lFont.lCharCount; c++)
+		Rect rect_tx = new Rect();
+		int totalWidth_tx = 0;
+		lFont.lHeight_tx = 0;
+		int minTop_tx = 1000;
+		int maxBottom_tx = -1000;
+		for (int ch = 0; ch < lFont.lCharCount_ch; ch++)
 		{
-			paint.getTextBounds(new String(lFont.lCodePoints, c, 1), 0, 1, rect);
-			lFont.lCharLeft[c] = (short) rect.left;
-			lFont.lCharRight[c] = (short) (rect.right + lFont.lBorder);
-			totalWidth += lFont.lCharRight[c] - lFont.lCharLeft[c];
-			if (rect.top < minTop)
-				minTop = rect.top;
-			if (rect.bottom > maxBottom)
-				maxBottom = rect.bottom;
+			paint.getTextBounds(new String(lFont.lCodePoints, ch, 1), 0, 1, rect_tx);
+			lFont.lCharLeft_tx[ch] = (short) rect_tx.left;
+			lFont.lCharRight_tx[ch] = (short) (rect_tx.right + lFont.lBorder_tx);
+			totalWidth_tx += lFont.lCharRight_tx[ch] - lFont.lCharLeft_tx[ch];
+			if (rect_tx.top < minTop_tx)
+				minTop_tx = rect_tx.top;
+			if (rect_tx.bottom > maxBottom_tx)
+				maxBottom_tx = rect_tx.bottom;
 		}
-		lFont.lHeight = (short) ((maxBottom - minTop) + lFont.lBorder);
-		lFont.lLineat = (short) (minTop - lFont.lBorder/2);
-		int area = lFont.lHeight * totalWidth;
-		int mTextSizeX = 0;
-		while ((area > ((1 << mTextSizeX) * (1 << mTextSizeX))) && (mTextSizeX < 11))
-			mTextSizeX++;
-		if (mTextSizeX < 11)
+		lFont.lHeight_tx = (short) ((maxBottom_tx - minTop_tx) + lFont.lBorder_tx);
+		lFont.lLineat_tx = (short) (minTop_tx - lFont.lBorder_tx/2);
+		int area = lFont.lHeight_tx * totalWidth_tx;
+		int textWidth_pw = 0;
+		while ((area > ((1 << textWidth_pw) * (1 << textWidth_pw))) && (textWidth_pw < 11))
+			textWidth_pw++;
+		if (textWidth_pw < 11)
 		{
-			short x = 0;
-			short y = 0;
-			for (int c = 0; c < lFont.lCharCount; c++)
+			short x_tx = 0;
+			short y_tx = 0;
+			for (int ch = 0; ch < lFont.lCharCount_ch; ch++)
 			{
-				if (x + (lFont.lCharRight[c] - lFont.lCharLeft[c]) > (1 << mTextSizeX))
+				if (x_tx + (lFont.lCharRight_tx[ch] - lFont.lCharLeft_tx[ch]) > (1 << textWidth_pw))
 				{
-					x = 0;
-					y += lFont.lHeight;
+					x_tx = 0;
+					y_tx += lFont.lHeight_tx;
 				}
-				if (y + lFont.lHeight > (1 << mTextSizeX))
+				if (y_tx + lFont.lHeight_tx > (1 << textWidth_pw))
 				{
-					if (mTextSizeX < 11)
+					if (textWidth_pw < 11)
 					{
-						mTextSizeX++;
-						x = 0;
-						y = 0;
-						c = -1;
+						textWidth_pw++;
+						x_tx = 0;
+						y_tx = 0;
+						ch = -1;
 						continue;
 					}
 					else
 						break;
 				}
-				lFont.lCharX[c] = x;
-				lFont.lCharTop[c] = y;
-				x += (lFont.lCharRight[c] - lFont.lCharLeft[c]);
+				lFont.lCharX_tx[ch] = x_tx;
+				lFont.lCharY_tx[ch] = y_tx;
+				x_tx += (lFont.lCharRight_tx[ch] - lFont.lCharLeft_tx[ch]);
 			}
-			paint.getTextBounds(" ", 0, 1, rect);
-			lFont.lSpaceWidth = (short) (rect.right - rect.left + lFont.lBorder);
-			if (lFont.lSpaceWidth==0)
+			paint.getTextBounds(" ", 0, 1, rect_tx);
+			lFont.lSpaceWidth_tx = (short) (rect_tx.right - rect_tx.left + lFont.lBorder_tx);
+			if (lFont.lSpaceWidth_tx==0)
 			{
-				paint.getTextBounds("x", 0, 1, rect);
-				lFont.lSpaceWidth = (short) (rect.right - rect.left + lFont.lBorder);
+				paint.getTextBounds("x", 0, 1, rect_tx);
+				lFont.lSpaceWidth_tx = (short) (rect_tx.right - rect_tx.left + lFont.lBorder_tx);
 			}
 		}
-		if (mTextSizeX < 11)
+		if (textWidth_pw < 11)
 		{
-			int mTextSizeY = 0;
-			while ((lFont.lCharTop[lFont.lCharCount - 1] + lFont.lHeight) > (1 << mTextSizeY))
-				mTextSizeY++;
-			Bitmap paintBitmap = Bitmap.createBitmap((1 << mTextSizeX), (1 << mTextSizeY), Config.ARGB_8888);
+			int textHeight_pw = 0;
+			while ((lFont.lCharY_tx[lFont.lCharCount_ch - 1] + lFont.lHeight_tx) > (1 << textHeight_pw))
+				textHeight_pw++;
+			Bitmap paintBitmap = Bitmap.createBitmap((1 << textWidth_pw), (1 << textHeight_pw), Config.ARGB_8888);
 
 			Canvas canvas = new Canvas(paintBitmap);
 
-			for (int c = 0; c < lFont.lCharCount; c++)
+			for (int c = 0; c < lFont.lCharCount_ch; c++)
 			{
-				canvas.drawText(new String(lFont.lCodePoints, c, 1), 0, 1, lFont.lCharX[c] - lFont.lCharLeft[c] + (lFont.lBorder / 2), lFont.lCharTop[c] - minTop
-						+ (lFont.lBorder / 2), paint);
+				canvas.drawText(new String(lFont.lCodePoints, c, 1), 0, 1, lFont.lCharX_tx[c] - lFont.lCharLeft_tx[c] + (lFont.lBorder_tx / 2), lFont.lCharY_tx[c] - minTop_tx
+						+ (lFont.lBorder_tx / 2), paint);
 			}
 			mBitmap=Bitmap.createBitmap(paintBitmap, 0, 0, paintBitmap.getWidth(), paintBitmap.getHeight());
 			paintBitmap.recycle();
