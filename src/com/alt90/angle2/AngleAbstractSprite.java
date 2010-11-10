@@ -9,7 +9,7 @@ public abstract class AngleAbstractSprite extends AngleObject
 {
 	protected AngleSpriteLayout lLayout; //Sprite Layout with information about how to draw the sprite
 	protected int lFrame; //Frame number. (ReadOnly)
-	public AngleVector fPosition; //Set to change the position of the sprite
+	public AngleVector fPosition_uu; //Set to change the position of the sprite
 	public AngleVector fScale; //Set to change the scale of the sprite
 	public boolean fFlipHorizontal;
 	public boolean fFlipVertical;
@@ -25,7 +25,7 @@ public abstract class AngleAbstractSprite extends AngleObject
 	public AngleAbstractSprite(AngleSpriteLayout layout)
 	{
 		fScale = new AngleVector(1, 1);
-		fPosition = new AngleVector(0, 0);
+		fPosition_uu = new AngleVector(0, 0);
 		lLayout=layout;
 		fRed=1;
 		fGreen=1;

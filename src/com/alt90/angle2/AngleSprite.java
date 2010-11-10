@@ -26,34 +26,34 @@ public class AngleSprite extends AngleAbstractSprite
 
 	/**
 	 * 
-	 * @param x Position
-	 * @param y Position
+	 * @param x_uu Position
+	 * @param y_uu Position
 	 * @param layout AngleSpriteLayout
 	 */
-	public AngleSprite(int x, int y, AngleSpriteLayout layout)
+	public AngleSprite(float x_uu, float y_uu, AngleSpriteLayout layout)
 	{
 		super(layout);
-		doInit(x, y, 1);
+		doInit(x_uu, y_uu, 1);
 	}
 	
 	/**
 	 * 
-	 * @param x Position
-	 * @param y Position
+	 * @param x_uu Position
+	 * @param y_uu Position
 	 * @param alpha Normalized alpha channel value
 	 * @param layout AngleSpriteLayout
 	 */
-	public AngleSprite(int x, int y, float alpha, AngleSpriteLayout layout)
+	public AngleSprite(float x_uu, float y_uu, float alpha, AngleSpriteLayout layout)
 	{
 		super(layout);
-		doInit(x, y, alpha);
+		doInit(x_uu, y_uu, alpha);
 	}
 
-	private void doInit(int x, int y, float alpha)
+	private void doInit(float x_uu, float y_uu, float alpha)
 	{
 		lTextureIV = new int[4];
 		setLayout(lLayout);
-		fPosition.set(x,y);
+		fPosition_uu.set(x_uu,y_uu);
 		fAlpha=alpha;
 	}
 
@@ -85,13 +85,13 @@ public class AngleSprite extends AngleAbstractSprite
 
 				((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV, 0);
 				
-				AngleVector pos=lLayout.getPivot(lFrame);
-				pos.mul(fScale);
-				pos.subAt(AngleRenderer.coordsUserToScreen(fPosition));
-				AngleVector size=lLayout.lDimensions;
-				size.mul(fScale);
+				AngleVector pos_px=lLayout.getPivot_px(lFrame);
+				pos_px.mul(fScale);
+				pos_px.subAt(AngleRenderer.coordsUserToViewport(fPosition_uu));
+				AngleVector size_px=AngleRenderer.coordsUserToViewport(lLayout.lDimensions_uu);
+				size_px.mul(fScale);
 
-				((GL11Ext) gl).glDrawTexfOES(pos.fX, AngleRenderer.vViewportHeight - pos.fY, 0, size.fX, size.fY);
+				((GL11Ext) gl).glDrawTexfOES(pos_px.fX, AngleRenderer.vViewportHeight_px - pos_px.fY - size_px.fY, 0, size_px.fX, size_px.fY);
 
 			}
 		}

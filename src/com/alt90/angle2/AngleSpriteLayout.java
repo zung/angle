@@ -17,83 +17,88 @@ import android.util.Log;
 public class AngleSpriteLayout
 {
 	protected AngleTexture lTexture;
-	protected AngleRect lCrop;	//Texels
+	protected AngleRect lCrop_tx;	//Texels
 	protected int lFrameCount;		
 	protected int lFrameColumns;
 	protected int lFrame;
 
-	protected AngleVector lDimensions; 	//User units
-	protected AngleVector[] lPivot;		//User units
+	protected AngleVector lDimensions_uu; 	//User units
+	protected AngleVector[] lPivot_uu;		//User units
 
 	/**
 	 * 
-	 * @param width
+	 * @param width_uu
 	 *           Width in pixels
-	 * @param height
+	 * @param height_uu
 	 *           Height in pixels
 	 * @param resourceId
 	 *           Resource bitmap
-	 * @param cropLeft
+	 * @param cropLeft_tx
 	 *           Most left pixel in texture
-	 * @param cropTop
+	 * @param cropTop_tx
 	 *           Most top pixel in texture
-	 * @param cropWidth
+	 * @param cropWidth_tx
 	 *           Width of the cropping rectangle in texture
-	 * @param cropHeight
+	 * @param cropHeight_tx
 	 *           Height of the cropping rectangle in texture
 	 */
-	public AngleSpriteLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth,
-			int cropHeight)
+	public AngleSpriteLayout(int width_uu, int height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx,
+			int cropHeight_tx)
 	{
-		doInit(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight, 1, 1);
+		doInit(width_uu, height_uu, resourceId, cropLeft_tx, cropTop_tx, cropWidth_tx, cropHeight_tx, 1, 1);
 	}
 
 	/**
 	 * 
-	 * @param width
+	 * @param width_uu
 	 *           Width in pixels
-	 * @param height
+	 * @param height_uu
 	 *           Height in pixels
 	 * @param resourceId
 	 *           Resource bitmap
-	 * @param cropLeft
+	 * @param cropLeft_tx
 	 *           Most left pixel in texture
-	 * @param cropTop
+	 * @param cropTop_tx
 	 *           Most top pixel in texture
-	 * @param cropWidth
+	 * @param cropWidth_tx
 	 *           Width of the cropping rectangle in texture
-	 * @param cropHeight
+	 * @param cropHeight_tx
 	 *           Height of the cropping rectangle in texture
 	 * @param frameCount
 	 *           Number of frames in animation
 	 * @param frameColumns
 	 *           Number of frames horizontally in texture
 	 */
-	public AngleSpriteLayout(int width, int height, int resourceId, int cropLeft, int cropTop, int cropWidth,
-			int cropHeight, int frameCount, int frameColumns)
+	public AngleSpriteLayout(int width_uu, int height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx,
+			int cropHeight_tx, int frameCount, int frameColumns)
 	{
-		doInit(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight, frameCount, frameColumns);
+		doInit(width_uu, height_uu, resourceId, cropLeft_tx, cropTop_tx, cropWidth_tx, cropHeight_tx, frameCount, frameColumns);
 	}
 
-	public AngleSpriteLayout(int width, int height, int resourceId)
+	public AngleSpriteLayout(int width_uu, int height_uu, int resourceId)
 	{
-		doInit(width, height, resourceId, 0, 0, 0, 0, 1, 1);
+		doInit(width_uu, height_uu, resourceId, 0, 0, 0, 0, 1, 1);
 	}
 
-	private void doInit(float width, float height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight, int frameCount,
+	public AngleSpriteLayout(int resourceId)
+	{
+		doInit(0, 0, resourceId, 0, 0, 0, 0, 1, 1);
+	}
+
+	private void doInit(float width_uu, float height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx, int cropHeight_tx, int frameCount,
 			int frameColumns)
 	{
 		lTexture = AngleTextureEngine.createTextureFromResourceId(resourceId);
-		lCrop=new AngleRect(cropLeft,cropTop,cropWidth,cropHeight);
-		lDimensions=new AngleVector(width,height);
-		if ((lCrop.fSize.fX==0)||(lCrop.fSize.fY==0))
+		lCrop_tx=new AngleRect(cropLeft_tx,cropTop_tx,cropWidth_tx,cropHeight_tx);
+		lDimensions_uu=new AngleVector(width_uu,height_uu);
+		if ((lCrop_tx.fSize.fX==0)||(lCrop_tx.fSize.fY==0))
 		{
 			InputStream is = AngleActivity.uInstance.getResources().openRawResource(resourceId);			
 			try
 			{
 				Bitmap bitmap = BitmapFactory.decodeStream(is, null, new BitmapFactory.Options());
-				lCrop.fSize.fX = bitmap.getWidth();
-				lCrop.fSize.fY = bitmap.getHeight();
+				lCrop_tx.fSize.fX = bitmap.getWidth();
+				lCrop_tx.fSize.fY = bitmap.getHeight();
 				bitmap.recycle();
 			}
 			finally
@@ -108,17 +113,17 @@ public class AngleSpriteLayout
 				}
 			}
 		}
-		if (lDimensions.fX==0)
-			lDimensions.fX = lCrop.fSize.fX;
-		if (lDimensions.fY==0)
-			lDimensions.fY = lCrop.fSize.fY;
+		if (lDimensions_uu.fX==0)
+			lDimensions_uu.fX = lCrop_tx.fSize.fX;
+		if (lDimensions_uu.fY==0)
+			lDimensions_uu.fY = lCrop_tx.fSize.fY;
 		lFrameCount = frameCount;
 		lFrameColumns = frameColumns;
 
-		lPivot=new AngleVector[lFrameCount];
+		lPivot_uu=new AngleVector[lFrameCount];
 		//Set all frame pivots at center point by default
 		for (int f=0;f<lFrameCount;f++)
-			lPivot[f]=new AngleVector(lDimensions.fX / 2, lDimensions.fY / 2);
+			lPivot_uu[f]=new AngleVector(lDimensions_uu.fX / 2, lDimensions_uu.fY / 2);
 
 	}
 
@@ -128,10 +133,10 @@ public class AngleSpriteLayout
 	 * @param x
 	 * @param y
 	 */
-	public void setPivot(int frame, float x, float y)
+	public void setPivot_uu(int frame, float x, float y)
 	{
 		if (frame<lFrameCount)
-			lPivot[frame].set(x,y);
+			lPivot_uu[frame].set(x,y);
 	}
 
 	/**
@@ -139,10 +144,10 @@ public class AngleSpriteLayout
 	 * @param x
 	 * @param y
 	 */
-	public void setPivot(float x, float y) //Texels
+	public void setPivot_uu(float x, float y) //Texels
 	{
 		for (int f=0;f<lFrameCount;f++)
-			lPivot[f].set(x,y);
+			lPivot_uu[f].set(x,y);
 	}
 
 	/**
@@ -151,10 +156,10 @@ public class AngleSpriteLayout
 	 * @param frame
 	 * @return pivot point 
 	 */
-	public AngleVector getPivot(int frame) //User units
+	public AngleVector getPivot_px(int frame) //User units
 	{
 		if (frame<lFrameCount)
-			return AngleRenderer.coordsUserToScreen(lPivot[frame]);
+			return AngleRenderer.coordsUserToViewport(lPivot_uu[frame]);
 		return null;
 	}
 
@@ -164,24 +169,24 @@ public class AngleSpriteLayout
 		{
 			if (flipHorizontal)
 			{
-				lTextureIV[0] = (int) ((lCrop.fPosition.fX + lCrop.fSize.fX) + ((lFrame % lFrameColumns) * lCrop.fSize.fX));// Ucr
-				lTextureIV[2] = (int) -lCrop.fSize.fX; // Wcr
+				lTextureIV[0] = (int) ((lCrop_tx.fPosition.fX + lCrop_tx.fSize.fX) + ((lFrame % lFrameColumns) * lCrop_tx.fSize.fX));// Ucr
+				lTextureIV[2] = (int) -lCrop_tx.fSize.fX; // Wcr
 			}
 			else
 			{
-				lTextureIV[0] = (int) (lCrop.fPosition.fX + ((lFrame % lFrameColumns) * lCrop.fSize.fX));// Ucr
-				lTextureIV[2] = (int) lCrop.fSize.fX; // Wcr
+				lTextureIV[0] = (int) (lCrop_tx.fPosition.fX + ((lFrame % lFrameColumns) * lCrop_tx.fSize.fX));// Ucr
+				lTextureIV[2] = (int) lCrop_tx.fSize.fX; // Wcr
 			}
 
 			if (flipVertical)
 			{
-				lTextureIV[1] = (int) (lCrop.fPosition.fY + ((lFrame / lFrameColumns) * lCrop.fSize.fY));// Vcr
-				lTextureIV[3] = (int) lCrop.fSize.fY; // Hcr
+				lTextureIV[1] = (int) (lCrop_tx.fPosition.fY + ((lFrame / lFrameColumns) * lCrop_tx.fSize.fY));// Vcr
+				lTextureIV[3] = (int) lCrop_tx.fSize.fY; // Hcr
 			}
 			else
 			{
-				lTextureIV[1] = (int) ((lCrop.fPosition.fY + lCrop.fSize.fY) + ((lFrame / lFrameColumns) * lCrop.fSize.fY));// Vcr
-				lTextureIV[3] = (int) -lCrop.fSize.fY; // Hcr
+				lTextureIV[1] = (int) ((lCrop_tx.fPosition.fY + lCrop_tx.fSize.fY) + ((lFrame / lFrameColumns) * lCrop_tx.fSize.fY));// Vcr
+				lTextureIV[3] = (int) -lCrop_tx.fSize.fY; // Hcr
 			}
 			return true;
 		}
@@ -191,16 +196,16 @@ public class AngleSpriteLayout
 	{
 		if (frame<lFrameCount)
 		{
-			AngleVector size=AngleRenderer.coordsUserToScreen(lDimensions);
-			AngleVector pivot=AngleRenderer.coordsUserToScreen(lPivot[frame]);
-			vertexValues[0] = -pivot.fX;
-			vertexValues[1] = size.fY - pivot.fY;
-			vertexValues[2] = size.fX - pivot.fX;
-			vertexValues[3] = size.fY - pivot.fY;
-			vertexValues[4] = -pivot.fX;
-			vertexValues[5] = -pivot.fY;
-			vertexValues[6] = size.fX - pivot.fX;
-			vertexValues[7] = -pivot.fY;
+			AngleVector size_px=AngleRenderer.coordsUserToViewport(lDimensions_uu);
+			AngleVector pivot_px=AngleRenderer.coordsUserToViewport(lPivot_uu[frame]);
+			vertexValues[0] = -pivot_px.fX;
+			vertexValues[1] = size_px.fY - pivot_px.fY;
+			vertexValues[2] = size_px.fX - pivot_px.fX;
+			vertexValues[3] = size_px.fY - pivot_px.fY;
+			vertexValues[4] = -pivot_px.fX;
+			vertexValues[5] = -pivot_px.fY;
+			vertexValues[6] = size_px.fX - pivot_px.fX;
+			vertexValues[7] = -pivot_px.fY;
 			return true;
 		}
 		return false;
@@ -223,50 +228,50 @@ public class AngleSpriteLayout
 
 	/**
 	 * Change the entire layout
-	 * @param width in viewport units
-	 * @param height in viewport units
+	 * @param width_uu in viewport units
+	 * @param height_uu in viewport units
 	 * @param resourceId
 	 */
-	public void changeLayout(float width, float height, int resourceId)
+	public void changeLayout(float width_uu, float height_uu, int resourceId)
 	{
-		changeLayout(width, height, resourceId, 0, 0, (int)width, (int)height, 1, 1);
+		changeLayout(width_uu, height_uu, resourceId, 0, 0, 0, 0, 1, 1);
 	}
 	
 	/**
 	 * Change the entire layout
-	 * @param width in viewport units
-	 * @param height in viewport units
+	 * @param width_uu in viewport units
+	 * @param height_uu in viewport units
 	 * @param resourceId
-	 * @param cropLeft in texels
-	 * @param cropTop in texels
-	 * @param cropWidth in texels
-	 * @param cropHeight in texels
+	 * @param cropLeft_tx in texels
+	 * @param cropTop_tx in texels
+	 * @param cropWidth_tx in texels
+	 * @param cropHeight_tx in texels
 	 */
-	public void changeLayout(float width, float height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight)
+	public void changeLayout(float width_uu, float height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx, int cropHeight_tx)
 	{
-		changeLayout(width, height, resourceId, cropLeft, cropTop, cropWidth, cropHeight, 1, 1);
+		changeLayout(width_uu, height_uu, resourceId, cropLeft_tx, cropTop_tx, cropWidth_tx, cropHeight_tx, 1, 1);
 	}
 	
 	/**
 	 * Change the entire layout
-	 * @param width in viewport units
-	 * @param height in viewport units
+	 * @param width_uu in viewport units
+	 * @param height_uu in viewport units
 	 * @param resourceId
-	 * @param cropLeft in texels
-	 * @param cropTop in texels
-	 * @param cropWidth in texels
-	 * @param cropHeight in texels
+	 * @param cropLeft_tx in texels
+	 * @param cropTop_tx in texels
+	 * @param cropWidth_tx in texels
+	 * @param cropHeight_tx in texels
 	 * @param frameCount
 	 * @param frameColumns
 	 */
-	public void changeLayout(float width, float height, int resourceId, int cropLeft, int cropTop, int cropWidth, int cropHeight, int frameCount, int frameColumns)
+	public void changeLayout(float width_uu, float height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx, int cropHeight_tx, int frameCount, int frameColumns)
 	{
-		lDimensions.fX = width;
-		lDimensions.fY = height;
-		lCrop.fPosition.fX = cropLeft;
-		lCrop.fPosition.fY = cropTop;
-		lCrop.fSize.fX = cropWidth;
-		lCrop.fSize.fY = cropHeight;
+		lDimensions_uu.fX = width_uu;
+		lDimensions_uu.fY = height_uu;
+		lCrop_tx.fPosition.fX = cropLeft_tx;
+		lCrop_tx.fPosition.fY = cropTop_tx;
+		lCrop_tx.fSize.fX = cropWidth_tx;
+		lCrop_tx.fSize.fY = cropHeight_tx;
 		lFrameCount = frameCount;
 		lFrameColumns = frameColumns;
 		changeTexture (resourceId);
