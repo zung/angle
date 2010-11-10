@@ -1,18 +1,22 @@
 package com.alt90.angle2;
 
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Bitmap.Config;
 
+/**
+ * Texture created using font characters
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleFontTexture extends AngleTexture
 {
-	protected AngleFont lFont;
+	private AngleFont lFont;
 	
 	AngleFontTexture (AngleFont font)
 	{
-		super();
 		lFont=font;
 	}
 
@@ -28,7 +32,7 @@ public class AngleFontTexture extends AngleTexture
 
 		Rect rect = new Rect();
 		int totalWidth = 0;
-		lHeight = 0;
+		lFont.lHeight = 0;
 		int minTop = 1000;
 		int maxBottom = -1000;
 		for (int c = 0; c < lFont.lCharCount; c++)
@@ -42,8 +46,9 @@ public class AngleFontTexture extends AngleTexture
 			if (rect.bottom > maxBottom)
 				maxBottom = rect.bottom;
 		}
-		lHeight = (short) ((maxBottom - minTop) + lFont.lBorder);
-		int area = lHeight * totalWidth;
+		lFont.lHeight = (short) ((maxBottom - minTop) + lFont.lBorder);
+		lFont.lLineat = (short) (minTop - lFont.lBorder/2);
+		int area = lFont.lHeight * totalWidth;
 		int mTextSizeX = 0;
 		while ((area > ((1 << mTextSizeX) * (1 << mTextSizeX))) && (mTextSizeX < 11))
 			mTextSizeX++;
@@ -56,9 +61,9 @@ public class AngleFontTexture extends AngleTexture
 				if (x + (lFont.lCharRight[c] - lFont.lCharLeft[c]) > (1 << mTextSizeX))
 				{
 					x = 0;
-					y += lHeight;
+					y += lFont.lHeight;
 				}
-				if (y + lHeight > (1 << mTextSizeX))
+				if (y + lFont.lHeight > (1 << mTextSizeX))
 				{
 					if (mTextSizeX < 11)
 					{
@@ -77,11 +82,16 @@ public class AngleFontTexture extends AngleTexture
 			}
 			paint.getTextBounds(" ", 0, 1, rect);
 			lFont.lSpaceWidth = (short) (rect.right - rect.left + lFont.lBorder);
+			if (lFont.lSpaceWidth==0)
+			{
+				paint.getTextBounds("x", 0, 1, rect);
+				lFont.lSpaceWidth = (short) (rect.right - rect.left + lFont.lBorder);
+			}
 		}
 		if (mTextSizeX < 11)
 		{
 			int mTextSizeY = 0;
-			while ((lFont.lCharTop[lFont.lCharCount - 1] + lHeight) > (1 << mTextSizeY))
+			while ((lFont.lCharTop[lFont.lCharCount - 1] + lFont.lHeight) > (1 << mTextSizeY))
 				mTextSizeY++;
 			Bitmap paintBitmap = Bitmap.createBitmap((1 << mTextSizeX), (1 << mTextSizeY), Config.ARGB_8888);
 
@@ -96,6 +106,11 @@ public class AngleFontTexture extends AngleTexture
 			paintBitmap.recycle();
 		}
 		return mBitmap;
+	}
+
+	public boolean fontIs(AngleFont font)
+	{
+		return (font==lFont);
 	}
 
 }

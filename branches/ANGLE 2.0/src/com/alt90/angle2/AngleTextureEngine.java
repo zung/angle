@@ -70,7 +70,7 @@ public class AngleTextureEngine
 			if (tex instanceof AngleFontTexture)
 			{
 				// Texture already exists
-				if (((AngleFontTexture) tex).lFont == font)
+				if (((AngleFontTexture) tex).fontIs(font))
 				{
 					tex.lRefernces++;
 					return tex;
