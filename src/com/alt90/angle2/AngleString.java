@@ -313,10 +313,10 @@ public class AngleString extends AngleObject
 				lTextureIV_tx[3] = -lFont.lHeight_tx;
 				((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 
-				((GL11Ext) gl).glDrawTexfOES((x_uu + lFont.lCharLeft_tx[chr]* AngleRenderer.vHorizontalFactor_uu)* AngleRenderer.vHorizontalFactor_px,
-						AngleRenderer.vViewportHeight_px - (y_uu*AngleRenderer.vVerticalFactor_px + lFont.lHeight_tx + lFont.lLineat_tx), 0,
+				((GL11Ext) gl).glDrawTexfOES((x_uu + lFont.lCharLeft_tx[chr])* AngleRenderer.vHorizontalFactor_px,
+						AngleRenderer.vViewportHeight_px - (y_uu + lFont.lHeight_tx + lFont.lLineat_tx)*AngleRenderer.vVerticalFactor_px, 0,
 						chrWidth * AngleRenderer.vHorizontalFactor_px, lFont.lHeight_tx * AngleRenderer.vVerticalFactor_px);
-				x_uu += lFont.lCharRight_tx[chr]* AngleRenderer.vHorizontalFactor_uu + lFont.lSpace_uu ;
+				x_uu += lFont.lCharRight_tx[chr] + lFont.lSpace_uu ;
 			}
 			return lFont.lHeight_tx;
 		}
