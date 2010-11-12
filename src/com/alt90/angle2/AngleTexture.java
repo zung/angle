@@ -16,8 +16,8 @@ public abstract class AngleTexture
 {
 	protected int lRefernces = 0;
 	protected int lHWTextureID = -1;
-	protected int lWidth = 0;
-	protected int lHeight = 0;
+	protected int lWidth_tx = 0;
+	protected int lHeight_tx = 0;
 	
 	public void linkToGL (GL10 gl)
 	{
@@ -56,8 +56,8 @@ public abstract class AngleTexture
 			if (error != GL10.GL_NO_ERROR)
 				Log.e("AngleTexture", "load Image2D GLError: " + error);
 	
-			lWidth = bitmap.getWidth();
-			lHeight = bitmap.getHeight();
+			lWidth_tx = bitmap.getWidth();
+			lHeight_tx = bitmap.getHeight();
 	
 			bitmap.recycle();
 		}
