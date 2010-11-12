@@ -7,7 +7,7 @@ import android.os.Bundle;
 public class TestAngle2 extends AngleActivity
 {
 
-	private class Logo extends AngleSprite
+	private class Logo extends AngleSpriteRotable
 	{
 
 		public Logo(AngleSpriteLayout layout)
@@ -18,6 +18,7 @@ public class TestAngle2 extends AngleActivity
 		@Override
 		protected void step(float secondsElapsed)
 		{
+			fRotation+=90*secondsElapsed;
 			if (iPointer[0].isDown)
 			{
 				fPosition_uu.fX=iPointer[0].fPosition_uu.fX;

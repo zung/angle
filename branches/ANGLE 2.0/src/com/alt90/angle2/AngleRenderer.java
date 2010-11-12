@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView.Renderer;
 
 public class AngleRenderer implements Renderer
 {
+	public static final boolean sUseHWBuffers = true;
 	private static long lCTM;
 	private static AngleRect lViewport_px=null; 
 	private static AngleVector lUserExtent_uu=new AngleVector(0,0);
@@ -129,6 +130,9 @@ public class AngleRenderer implements Renderer
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glColor4f(1, 1, 1, 1);
 		gl.glClearColor(0, 0, 0, 1);
+		
+		if (lRenderTree!=null)
+			lRenderTree.invalidateHardwareBuffers(gl);
 	}
 
 	@Override

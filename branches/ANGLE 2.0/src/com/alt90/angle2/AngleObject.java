@@ -183,4 +183,16 @@ public class AngleObject
 		}
 	}
 
+	public void invalidateHardwareBuffers(GL10 gl)
+	{
+		for (int t=0;t<lChildrenCount;t++)
+			lChildren[t].invalidateHardwareBuffers(gl);
+	}
+
+	public void releaseHardwareBuffers(GL10 gl)
+	{
+		for (int t=0;t<lChildrenCount;t++)
+			lChildren[t].releaseHardwareBuffers(gl);
+	}
+
 }

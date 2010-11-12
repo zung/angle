@@ -1,5 +1,7 @@
 package com.alt90.angle2;
 
+import javax.microedition.khronos.opengles.GL10;
+
 /**
  * Sprite base class
  * @author Ivan Pajuelo
@@ -32,7 +34,13 @@ public abstract class AngleAbstractSprite extends AngleObject
 	 * @param frame frame number
 	 */
 	public abstract void setFrame(int frame);
-	
+
+	/**
+	 * Draw all children in block
+	 * @param gl
+	 */
+	public abstract void blockDraw(GL10 gl);
+
 	/**
 	 * Set if sprite is flipped horizontally or vertically  
 	 * @param flipHorizontal
@@ -52,5 +60,12 @@ public abstract class AngleAbstractSprite extends AngleObject
 	public void setLayout(AngleSpriteLayout layout)
 	{
 		lLayout=layout;
+	}
+
+	public void draw(GL10 gl)
+	{
+		if (lLayout != null)
+			if (lLayout.bindTexture(gl))
+				blockDraw (gl);
 	}
 }
