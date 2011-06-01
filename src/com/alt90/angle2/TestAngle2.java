@@ -2,14 +2,16 @@ package com.alt90.angle2;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 
 
 public class TestAngle2 extends AngleActivity
 {
-
+	private AngleString fDsp;
+	
 	private class Logo extends AngleSpriteRotable
 	{
-
 		public Logo(AngleSpriteLayout layout)
 		{
 			super(AngleRenderer.rViewportExtent_uu.fX/2,0,layout);
@@ -18,6 +20,15 @@ public class TestAngle2 extends AngleActivity
 		@Override
 		protected void step(float secondsElapsed)
 		{
+			if (iKeys[KeyEvent.KEYCODE_BACK])
+				finish();
+			if (iFling[0].newData)
+			{
+				iFling[0].newData=false;
+				String aa="T="+iFling[0].fTime+", X="+iFling[0].fDelta_uu.fX+", Y="+iFling[0].fDelta_uu.fY;
+				Log.d("AE2",aa);
+				fDsp.set(aa);
+			}
 			fRotation+=90*secondsElapsed;
 			if (iPointer[0].isDown)
 			{
@@ -51,7 +62,8 @@ public class TestAngle2 extends AngleActivity
 		myScene.addObject(new AngleLine(0,AngleRenderer.rViewportExtent_uu.fY/2,AngleRenderer.rViewportExtent_uu.fX,AngleRenderer.rViewportExtent_uu.fY/2,AngleColor.cBlue));
 		myScene.addObject(new AngleLine(100,100,300,100,AngleColor.cGreen));
 		myScene.addObject(new Logo(slLogo));
-		myScene.addObject(new AngleString(fntCafe,"Hola",100,100,AngleString.aLeft));
+		fDsp=new AngleString(fntCafe,"Hola",100,100,AngleString.aLeft);
+		myScene.addObject(fDsp);
 		myScene.addObject(new AngleFPSCounter());
 		AngleRenderer.setRenderTree(myScene);
 	}

@@ -334,7 +334,7 @@ public class AngleString extends AngleObject
 				{
 					if (lNewString)
 						tsSetString();
-					else
+					//else
 					{
 						if (fLength_ch > 0)
 						{
