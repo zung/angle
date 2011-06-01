@@ -12,12 +12,24 @@ public class AngleActivity extends Activity
 	public static AngleActivity uInstance = null;
 	public static boolean[] iKeys = new boolean[KeyEvent.MAX_KEYCODE];
 	public static Pointer[] iPointer = new Pointer[sPointerSize];
+	public static Fling[] iFling = new Fling[sPointerSize];
 	protected GLSurfaceView lGLSurfaceView;
 
 	public class Pointer
 	{
 		public AngleVector fPosition_uu = new AngleVector();
 		public boolean isDown;
+		public boolean newData;
+
+	}
+
+	public class Fling
+	{
+		public long lBegin;
+		public AngleVector lOrigin_uu = new AngleVector();
+		public AngleVector fDelta_uu = new AngleVector();
+		public float fTime;
+		public boolean newData;
 
 	}
 
@@ -26,7 +38,10 @@ public class AngleActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		for (int p = 0; p < sPointerSize; p++)
+		{
 			iPointer[p] = new Pointer();
+			iFling[p] = new Fling();
+		}
 		uInstance = this;
 		lGLSurfaceView = new GLSurfaceView(this);
 		lGLSurfaceView
@@ -75,9 +90,24 @@ public class AngleActivity extends Activity
 			{
 				case MotionEvent.ACTION_DOWN:
 					iPointer[pid].isDown = true;
+					iPointer[pid].newData = true;
+					if (iFling[pid].lBegin==0)
+					{
+						iFling[pid].lBegin=android.os.SystemClock.uptimeMillis();
+						iFling[pid].lOrigin_uu.set(iPointer[pid].fPosition_uu);
+					}
 					break;
 				case MotionEvent.ACTION_UP:
 					iPointer[pid].isDown = false;
+					iPointer[pid].newData = true;
+					if (iFling[pid].lBegin!=0)
+					{
+						iFling[pid].fTime=(android.os.SystemClock.uptimeMillis()-iFling[pid].lBegin)/1000.f;
+						iFling[pid].lBegin=0;
+						iFling[pid].fDelta_uu.set(iPointer[pid].fPosition_uu);
+						iFling[pid].fDelta_uu.sub(iFling[pid].lOrigin_uu);
+						iFling[pid].newData = true;
+					}
 					break;
 			}
 		}
