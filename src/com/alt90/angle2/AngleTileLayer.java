@@ -1,20 +1,13 @@
 package com.alt90.angle2;
 
 /**
- * TileSet for TileMap
+ * TileLayer for TileMap
  * @author Ivan Pajuelo
  *
  */
-public class AngleTileSet extends XMLUnmarshaller
+public class AngleTileLayer extends XMLUnmarshaller
 {
-	public int fFirstGid; //UBW Public field for speed. Beware of undefined behavior 
 
-	/**
-	 * support for unmarshal TMX files
-	 * You can found info about TMX format in http://mapeditor.org/
-	 * Property of Thorbjørn Lindeijer   
-	 * @throws Exception 
-	 */
 	@Override
 	protected void processAttribute(String param, String value) throws Exception
 	{

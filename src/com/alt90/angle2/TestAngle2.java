@@ -66,7 +66,7 @@ public class TestAngle2 extends AngleActivity
 		myScene.addObject(fDsp);
 		myScene.addObject(new AngleFPSCounter());
 		AngleRenderer.setRenderTree(myScene);
-		AngleTileMap tm=new AngleTileMap(0, 0);
+		AngleTileMap tm=new AngleTileMap();
 		tm.open(this, R.xml.desert);
 	}
 	
