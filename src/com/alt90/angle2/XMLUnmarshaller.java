@@ -22,7 +22,7 @@ public abstract class XMLUnmarshaller
 		{
 			xmlParser.next();
 			if (xmlParser.getEventType() == XmlPullParser.START_TAG)
-				if (xmlParser.getName()==tag)
+				if (xmlParser.getName().equals(tag))
 					return;
 		}while (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT);
 		
@@ -36,7 +36,7 @@ public abstract class XMLUnmarshaller
 			xmlParser.next();
 			if (xmlParser.getEventType() == XmlPullParser.END_TAG)
 			{
-				if (xmlParser.getName()==tag)
+				if (xmlParser.getName().equals(tag))
 					break;
 			}
 			else if (xmlParser.getEventType() == XmlPullParser.START_TAG)
