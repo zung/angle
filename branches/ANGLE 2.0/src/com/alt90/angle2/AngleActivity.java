@@ -1,11 +1,8 @@
 package com.alt90.angle2;
 
-import java.io.IOException;
-
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 

@@ -1,56 +1,63 @@
 package com.alt90.angle2;
 
-import java.io.IOException;
-
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
 import android.util.Log;
 
 public abstract class XMLUnmarshaller
 {
-	public XmlPullParser xmlParser;
+	protected XmlPullParser xmlParser;
 
-	void open (Context context, int resId)
+	void open (Context context, int resId, String tag) throws Exception
 	{
 		xmlParser = context.getResources().getXml(resId);
 		Log.d("XMLUnmarshaller", "open " + resId);
-		while (nextTag());
+		findTag(tag);
 	}
 
-	private boolean nextTag()
+	private void findTag(String tag) throws Exception
 	{
-		try
+		do
 		{
 			xmlParser.next();
-			while (!((xmlParser.getEventType() == XmlPullParser.START_TAG) || (xmlParser.getEventType() == XmlPullParser.END_DOCUMENT)))
+			if (xmlParser.getEventType() == XmlPullParser.START_TAG)
+				if (xmlParser.getName()==tag)
+					return;
+		}while (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT);
+		
+		throw new Exception ("Can't find tag "+tag);
+	}
+
+	protected boolean nextTag(String tag) throws Exception //coge todo los tags que haya dentro de 'tag' hasta que encuentre /tag
+	{
+		do
+		{
+			xmlParser.next();
+			if (xmlParser.getEventType() == XmlPullParser.END_TAG)
 			{
-				if (xmlParser.getName()!=null)
-					Log.d("XMLUnmarshaller", "skiping "+xmlParser.getName().toLowerCase());
-				xmlParser.next();// skip comments
+				if (xmlParser.getName()==tag)
+					break;
 			}
-			if (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT)
+			else if (xmlParser.getEventType() == XmlPullParser.START_TAG)
 			{
 				if (xmlParser.getName()!=null)
 				{
 					Log.d("XMLUnmarshaller", "processing "+xmlParser.getName().toLowerCase()+" Type="+xmlParser.getEventType());
 					processTag(xmlParser.getName().toLowerCase());
+					return true;
 				}
 			}
-			else
-				return false;
-		}
-		catch (XmlPullParserException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return true;
+		}while (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT);
+		return false;
 	}
 
-	protected abstract void processTag(String tag);
+	protected void readAttributes() throws Exception
+	{
+		for (int t = 0; t < xmlParser.getAttributeCount(); t++)
+			processAttribute(xmlParser.getAttributeName(t).toLowerCase(), xmlParser.getAttributeValue(t).toLowerCase());
+	}
+
+	protected abstract void processAttribute(String param, String value) throws Exception;
+	protected abstract void processTag(String tag) throws Exception;
 }
