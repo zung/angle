@@ -54,7 +54,7 @@ public class AngleSprite extends AngleAbstractSprite
 		lTextureIV_tx = new int[4];
 		setLayout(lLayout);
 		fPosition_uu.set(x_uu,y_uu);
-		lColor.fAlpha=alpha;
+		fColor.fAlpha=alpha;
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class AngleSprite extends AngleAbstractSprite
 	@Override
 	public void blockDraw(GL10 gl)
 	{
-		gl.glColor4f(lColor.fRed, lColor.fGreen, lColor.fBlue, lColor.fAlpha);
+		gl.glColor4f(fColor.fRed, fColor.fGreen, fColor.fBlue, fColor.fAlpha);
 
 		((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 				

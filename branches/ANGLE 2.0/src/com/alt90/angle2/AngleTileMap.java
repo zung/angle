@@ -1,6 +1,6 @@
 package com.alt90.angle2;
 
-public class AngleTileMap
+public class AngleTileMap extends XMLUnmarshaller
 {
    /** Orthogonal. */
    public static final int MDO_ORTHO   = 1;
@@ -12,6 +12,8 @@ public class AngleTileMap
    public static final int MDO_SHIFTED = 5;
 	
    private int lOrientation=MDO_ORTHO;
+	public int fTileWidth;
+	public int fTileHeight;
 	
 	
 	public AngleTileMap(int mapWidth, int mapHeight)
@@ -23,5 +25,14 @@ public class AngleTileMap
 	public void setOrientation(int orientation)
 	{
 		lOrientation=orientation;
+	}
+
+	@Override
+	protected void processTag(String tag)
+	{
+		if (tag.equals("map"))
+		{
+			
+		}
 	} 
 }

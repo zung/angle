@@ -21,10 +21,7 @@ public class AngleFont
 	protected AngleTexture lTexture;
 	protected float lFontSize;
 	protected Typeface lTypeface;
-	protected int lAlpha;
-	protected int lRed;
-	protected int lGreen;
-	protected int lBlue;
+	protected AngleColor lColor; //Font tint color and alpha
 
 	protected int[] lCodePoints; // Unicode 'chars'
 	protected short lCharCount_ch; //Characters in font
@@ -132,6 +129,7 @@ public class AngleFont
 		lCharY_tx = new short[lCharCount_ch];
 		lCharRight_tx = new short[lCharCount_ch];
 		lHeight_tx = 0;
+		lColor=new AngleColor(1, 1, 1, 1);
 	}
 
 	private void doInit(float fontSize, Typeface typeface, short charCount, short space_uu, int red, int green, int blue, int alpha)
@@ -140,10 +138,7 @@ public class AngleFont
 		lSpace_uu = space_uu;
 		lFontSize = fontSize;
 		lTypeface = typeface;
-		lAlpha = alpha;
-		lRed = red;
-		lGreen = green;
-		lBlue = blue;
+		lColor.set(red,green,blue,alpha);
 	}
 
 	/**

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map
+	version="The TMX format version, generally 1.0"
+	orientation="Map orientation. Tiled supports 'orthogonal' and 'isometric' at the moment"
+	width="The map width in tiles"
+	height="The map height in tiles"
+	tilewidth="The width of a tile"
+	tileheight="The height of a tile"
+>
+	<tileset
+		firstgid="The first global tile ID of this tileset (this global ID maps to the first tile in this tileset)"
+		source="If this tileset is stored in an external TSX (Tile Set XML) file, this attribute refers to that file"
+		name="The name of this tileset"
+		tilewidth="The (maximum) width of the tiles in this tileset"
+		tileheight="The (maximum) height of the tiles in this tileset"
+		spacing="The spacing in pixels between the tiles in this tileset (applies to the tileset image)"
+		margin=" The margin around the tiles in this tileset (applies to the tileset image)"
+	>
+		<image
+			format="To be used when embedding images. Deprecated and unsupported in Tiled Qt"
+			id="Used by some versions of Tiled Java. Deprecated and unsupported by Tiled Qt"
+			source="The reference to the tileset image file (Tiled supports most common image formats)"
+			trans="Defines a specific color that is treated as transparent (example value: 'FF00FF' for magenta)" />
+		<tile
+			id="The local tile ID within its tileset" /><!-- Can contain: properties, 
+			image -->
+	</tileset>
+	<layer
+		name="The name of the layer"
+		x="The x coordinate of the layer in tiles. Defaults to 0 and can no longer be changed in Tiled Qt"
+		y="The y coordinate of the layer in tiles. Defaults to 0 and can no longer be changed in Tiled Qt"
+		width="The width of the layer in tiles. Traditionally required, but as of Tiled Qt always the same as the map width"
+		height="The height of the layer in tiles. Traditionally required, but as of Tiled Qt always the same as the map height"
+		opacity="The opacity of the layer as a value from 0 to 1. Defaults to 1"
+		visible="Whether the layer is shown (1) or hidden (0). Defaults to 1"
+	>
+		<data
+			encoding="The encoding used to encode the tile layer data. When used, it can be 'base64' and 'csv' at the moment"
+			compression="The compression used to compress the tile layer data. Tiled Qt supports 'gzip' and 'zlib'"
+		><!-- When no encoding or compression is given, the tiles are stored as 
+				individual XML tile elements. Next to that, the easiest format to parse is 
+				the "csv" (comma separated values) format. The base64-encoded compressed 
+				layer data is somewhat explained in Examining the map format. -->
+			CODED DATA
+			<tile
+				id="The local tile ID within its tileset" /><!-- Can contain: properties, 
+				image. Not to be confused with the tile element inside a tileset, this element 
+				defines the value of a single tile on a tile layer. This is however the most 
+				inefficient way of storing the tile layer data, and should generally be avoided. -->
+		</data>
+	</layer>
+	<objectgroup
+		name="The name of the object group"
+		x="The x coordinate of the object group in tiles. Defaults to 0 and can no longer be changed in Tiled Qt"
+		y="The y coordinate of the object group in tiles. Defaults to 0 and can no longer be changed in Tiled Qt"
+		width="The width of the object group in tiles. Meaningless"
+		height="The height of the object group in tiles. Meaningless"
+	><!-- The object group is in fact a map layer, and is hence called "object 
+			layer" in Tiled Qt. -->
+		<object
+			name="The name of the object. An arbitrary string"
+			type="The type of the object. An arbitrary string"
+			x="The x coordinate of the object in pixels"
+			y="The y coordinate of the object in pixels"
+			width="The width of the object in pixels"
+			height="The height of the object in pixels"
+			gid="An reference to a tile (optional)" " /><!-- Can contain: properties, 
+			image. While tile layers are very suitable for anything repetitive aligned 
+			to the tile grid, sometimes you want to annotate your map with other information, 
+			not necessarily aligned to the grid. Hence the objects have their coordinates 
+			and size in pixels, but you can still easily align that to the grid when 
+			you want to. You generally use objects to add custom information to your 
+			tile map, such as spawn points, warps, exits, etc. In the future, it is also 
+			planned that the objects allow placing tile images in arbitrary places. When 
+			the object has a gid set, then it is represented by the image of the tile 
+			with that global ID. Currently that means width and height are ignored for 
+			such objects. The image alignment currently depends on the map orientation. 
+			In orthogonal orientation it's aligned to the bottom-left while in isometric 
+			it's aligned to the bottom-center. -->
+	</objectgroup>
+	<properties><!-- Wraps any number of custom properties. Can be used as a 
+			child of the map, tile (when part of a tileset), layer, objectgroup and object 
+			elements. -->
+		<property
+			name="The name of the property"
+			value="The value of the property" " /><!-- When the property spans contains 
+			newlines, the current versions of Tiled Java and Tiled Qt will write out 
+			the value as characters contained inside the property element rather than 
+			as the value attribute. However, it is at the moment not really possible 
+			to edit properties consisting of multiple lines with Tiled. It is possible 
+			that a future version of the TMX format will switch to always saving property 
+			values inside the element rather than as an attribute. -->
+	</properties>
+</map>

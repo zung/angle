@@ -5,37 +5,63 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView.Renderer;
 
+/**
+ * Main renderer
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleRenderer implements Renderer
 {
-	public static final boolean sUseHWBuffers = true;
+	public static final boolean sUseHWBuffers = true; //UBW Determines if hardware buffers are used
 	private static long lCTM;
 	private static AngleRect lViewport_px=null; 
 	private static AngleVector lUserExtent_uu=new AngleVector(0,0);
 	private static AngleObject lRenderTree=null;
 
-	public static AngleVector rViewportExtent_uu=new AngleVector(0,0);
-	public static float vViewportHeight_px=0;
-	public static float vHorizontalFactor_uu=0;
-	public static float vVerticalFactor_uu=0;
-	public static float vHorizontalFactor_px=0;
-	public static float vVerticalFactor_px=0;
+	//Only for reading. DO NOT change this filed. It's never updated
+	public static AngleVector rViewportExtent_uu=new AngleVector(0,0); //Dimensions of viewport in user units 
+	//Virtual fields for scaled rendering. Updated on surface changed
+	public static float vViewportHeight_px=0;		//Viewport height in pixels
+	public static float vHorizontalFactor_uu=0;  //Relation factor between viewport horizontal uu and px (uu/px)
+	public static float vVerticalFactor_uu=0;    //Relation factor between viewport vertical uu and px (uu/px)
+	public static float vHorizontalFactor_px=0;  //Inverted relation factors (px/uu)
+	public static float vVerticalFactor_px=0;    //      "           "
 
+	/**
+	 * Create new renderer 
+	 * @param width_uu Width in user units
+	 * @param height_uu Height in user units
+	 */
 	public AngleRenderer(float width_uu, float height_uu)
 	{
 		lUserExtent_uu.set(width_uu, height_uu);
 		rViewportExtent_uu.set(lUserExtent_uu);
 	}
 	
+	/**
+	 * Set the current tree for render
+	 * @param newRenderTree Root object of the current render tree
+	 */
 	public static void setRenderTree(AngleObject newRenderTree)
 	{
 		lRenderTree=newRenderTree;
 	}
 	
+	/**
+	 * Check if object in in the current render tree
+	 * @param object Object to check
+	 * @return True if the object is rendering in current tree
+	 */
 	public static boolean isRendering(AngleObject object)
 	{
 		return (object.getRoot()==lRenderTree);
 	}
 
+	/**
+	 * Converts user units to pixels within viewport
+	 * @param coords_uu coordinates in user units
+	 * @return coordinates in pixels (viewport pixels)
+	 */
 	public static AngleVector coordsUserToViewport(AngleVector coords_uu)
 	{
 		AngleVector result=new AngleVector(coords_uu);
@@ -45,6 +71,11 @@ public class AngleRenderer implements Renderer
 		return result;
 	}
 
+	/**
+	 * Converts pixels to user units within viewport
+	 * @param coords_uu coordinates in pixels (viewport pixels)
+	 * @return coordinates in user units
+	 */
 	public static AngleVector coordsViewportToUser(AngleVector coords_px)
 	{
 		AngleVector result=new AngleVector(coords_px);
@@ -54,6 +85,11 @@ public class AngleRenderer implements Renderer
 		return result;
 	}
 
+	/**
+	 * Converts global (screen) pixels to user units
+	 * @param coords_uu coordinates in pixels (screen pixels)
+	 * @return coordinates in user units
+	 */
 	public static AngleVector coordsScreenToUser(AngleVector coords_px)
 	{
 		AngleVector result=new AngleVector(coords_px);
@@ -64,16 +100,6 @@ public class AngleRenderer implements Renderer
 		return result;
 	}
 
-	private static float secondsElapsed()
-	{
-		float secondsElapsed = 0;
-		long CTM = android.os.SystemClock.uptimeMillis();
-		if (lCTM > 0)
-			secondsElapsed = (CTM - lCTM) / 1000.f;
-		lCTM = CTM;
-		return secondsElapsed;
-	}
-
 	@Override
 	public void onDrawFrame(GL10 gl)
 	{
@@ -81,8 +107,14 @@ public class AngleRenderer implements Renderer
       gl.glLoadIdentity();
 		if (lRenderTree!=null)
 		{
+			float secondsElapsed = 0; //Seconds elapsed since last frame
+			long CTM = android.os.SystemClock.uptimeMillis();
+			if (lCTM > 0)
+				secondsElapsed = (CTM - lCTM) / 1000.f;
+			lCTM = CTM;
+
 			AngleObject.processInQueue();
-			lRenderTree.step(secondsElapsed());
+			lRenderTree.step(secondsElapsed);
 			lRenderTree.draw(gl);
 			AngleObject.processOutQueue();
 		}
