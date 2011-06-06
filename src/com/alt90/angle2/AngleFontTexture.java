@@ -27,7 +27,7 @@ public class AngleFontTexture extends AngleTexture
 		Paint paint = new Paint();
 		paint.setTypeface(lFont.lTypeface);
 		paint.setTextSize(lFont.lFontSize);
-		paint.setARGB(lFont.lAlpha, lFont.lRed, lFont.lGreen, lFont.lBlue);
+		paint.setARGB((int)(lFont.lColor.fAlpha*255), (int)(lFont.lColor.fRed*255), (int)(lFont.lColor.fGreen*255), (int)(lFont.lColor.fBlue*255));
 		paint.setAntiAlias(true);
 
 		Rect rect_tx = new Rect();
@@ -108,7 +108,7 @@ public class AngleFontTexture extends AngleTexture
 		return mBitmap;
 	}
 
-	public boolean fontIs(AngleFont font)
+	public boolean fontEquals(AngleFont font)
 	{
 		return (font==lFont);
 	}

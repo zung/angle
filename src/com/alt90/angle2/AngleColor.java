@@ -1,5 +1,10 @@
 package com.alt90.angle2;
 
+/**
+ * RGBA color
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleColor
 {
 	public static final AngleColor cBlack=new AngleColor(0,0,0,1);
@@ -16,6 +21,11 @@ public class AngleColor
 	public float fAlpha; // Alpha channel (0 - 1)
 	
 	AngleColor (float r, float g, float b, float a)
+	{
+		set (r,g,b,a);
+	}
+	
+	void set (float r, float g, float b, float a)
 	{
 		fRed=r;
 		fGreen=g;

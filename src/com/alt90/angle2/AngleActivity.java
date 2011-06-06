@@ -1,35 +1,45 @@
 package com.alt90.angle2;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+//UBW Public field for speed. Beware of undefined behavior
+
+/**
+ * Use this activity to utilize Angle engine
+ * @author Ivan Pajuelo
+ *
+ */
 public class AngleActivity extends Activity
 {
-	private static final int sPointerSize = 10;
-	public static AngleActivity uInstance = null;
-	public static boolean[] iKeys = new boolean[KeyEvent.MAX_KEYCODE];
-	public static Pointer[] iPointer = new Pointer[sPointerSize];
-	public static Fling[] iFling = new Fling[sPointerSize];
+	private static final int sMaxFingers = 10; //Max number of multitouch points
+	public static AngleActivity uInstance = null; //UBW selft instance
+	public static boolean[] iKeys = new boolean[KeyEvent.MAX_KEYCODE]; //UBW State of keys
+	public static Pointer[] iPointer = new Pointer[sMaxFingers]; //UBW Pointers array for multitouch
+	public static Fling[] iFling = new Fling[sMaxFingers]; //UBW Flings array for multitouch
 	protected GLSurfaceView lGLSurfaceView;
 
 	public class Pointer
 	{
-		public AngleVector fPosition_uu = new AngleVector();
-		public boolean isDown;
-		public boolean newData;
+		public AngleVector fPosition_uu = new AngleVector(); //UBW Position of the pointer in User Units
+		public boolean isDown; //UBW Finger is pushing the screen
+		public boolean newData; //Data of the pointer is changed (clear this after check it)
 
 	}
 
 	public class Fling
 	{
-		public long lBegin;
-		public AngleVector lOrigin_uu = new AngleVector();
-		public AngleVector fDelta_uu = new AngleVector();
-		public float fTime;
-		public boolean newData;
+		private long lBegin; //time where fling began
+		private AngleVector lOrigin_uu = new AngleVector(); //point where fling began 
+		public AngleVector fDelta_uu = new AngleVector(); //UBW Vector of fling movement
+		public float fTime; //UBW Duration of fling movement
+		public boolean newData; //Data of the fling is changed (clear this after check it)
 
 	}
 
@@ -37,7 +47,7 @@ public class AngleActivity extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		for (int p = 0; p < sPointerSize; p++)
+		for (int p = 0; p < sMaxFingers; p++)
 		{
 			iPointer[p] = new Pointer();
 			iFling[p] = new Fling();
@@ -129,5 +139,4 @@ public class AngleActivity extends Activity
 	{
 		return super.onTrackballEvent(event);
 	}
-
 }

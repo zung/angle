@@ -96,7 +96,7 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 		fVertBufferIndex = -1;
 		setLayout(lLayout);
 		fPosition_uu.set(x_uu, y_uu);
-		lColor.fAlpha = alpha;
+		fColor.fAlpha = alpha;
 		isFrameInvalid = true;
 	}
 
@@ -214,7 +214,7 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 			gl.glScalef(fScale.fX, fScale.fY, 1);
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, lLayout.lTexture.lHWTextureID);
-		gl.glColor4f(lColor.fRed, lColor.fGreen, lColor.fBlue, lColor.fAlpha);
+		gl.glColor4f(fColor.fRed, fColor.fGreen, fColor.fBlue, fColor.fAlpha);
 
 		if (AngleRenderer.sUseHWBuffers)
 		{
