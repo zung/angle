@@ -1,6 +1,9 @@
 package com.alt90.angle2;
 
+import java.util.Iterator;
 import java.util.Vector;
+
+import android.content.Context;
 
 /**
  * TileMap with layer support
@@ -16,6 +19,7 @@ public class AngleTileMap extends XMLUnmarshaller
 	private Vector<AngleTileSet> lTileSets;
 	private Vector<AngleTileLayer> lTileLayers;
 	private XMLProperties properties;
+	private AngleTileLayer[] fTileLayers;
 	
 	public AngleTileMap()
 	{
@@ -29,7 +33,6 @@ public class AngleTileMap extends XMLUnmarshaller
 		fTileHeight=0;
 	}
 
-
 	/**
 	 * support for unmarshal TMX files
 	 * You can found info about TMX format in http://mapeditor.org/
@@ -38,11 +41,34 @@ public class AngleTileMap extends XMLUnmarshaller
 	 */
 
 	@Override
+	void loadFromAsset(Context context, String filename) throws Exception
+	{
+		super.loadFromAsset(context, filename);
+		fTileLayers=new AngleTileLayer[lTileLayers.size()];
+		Iterator<AngleTileLayer> tl_it = lTileLayers.iterator();
+		int idx=0;
+		while (tl_it.hasNext())
+	   {
+			fTileLayers[idx]=tl_it.next();
+			fTileLayers[idx].beginCheck();
+			Iterator<AngleTileSet> ts_it = lTileSets.iterator();
+			while (ts_it.hasNext())
+		   {
+				AngleTileSet ts=ts_it.next();
+			   if ((fTileLayers[idx].fMinGid>=ts.fFirstGid)&&(fTileLayers[idx].fMaxGid<ts.fFirstGid+(ts.fWidth*ts.fHeight)))
+			   	fTileLayers[idx].setTileSet(ts);
+		   }
+			fTileLayers[idx].endCheck();
+			idx++;
+	   }
+	}
+
+	@Override
 	protected void processTag(String tag) throws Exception
 	{
 		if (tag.equals("tileset"))
 		{
-			AngleTileSet ts=new AngleTileSet();
+			AngleTileSet ts=new AngleTileSet(this);
 			ts.read(lXMLParser);
 			lTileSets.add(ts);
 		}

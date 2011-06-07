@@ -7,38 +7,34 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-public class AngleResourceTexture extends AngleTexture
+public class AngleAssetTexture extends AngleTexture
 {
 	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
-	public int fResourceID;
+	public String fFileName;
 
-	public AngleResourceTexture(int resourceId)
+	public AngleAssetTexture(String filename)
 	{
 		super();
-		fResourceID = resourceId;
+		fFileName=filename;
 	}
 
+	@Override
 	public Bitmap create()
 	{
-		//Log.e("Texture", "HID:"+mHWTextureID+", RID:"+mResourceID);
 		sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		InputStream is = AngleActivity.uInstance.getResources().openRawResource(fResourceID);
-		Bitmap bitmap=null;
+		InputStream is;
+		Bitmap bitmap = null;
 		try
 		{
+			is = AngleActivity.uInstance.getAssets().open(fFileName);
 			bitmap = BitmapFactory.decodeStream(is, null, sBitmapOptions);
+			is.close();
 		}
-		finally
+		catch (IOException e)
 		{
-			try
-			{
-				is.close();
-			}
-			catch (IOException e)
-			{
-				Log.e("AngleTextureEngine", "loadTexture::InputStream.close error: " + e.getMessage());
-			}
+			Log.e("AngleTextureEngine", "loadTexture::InputStream error: " + e.getMessage());
 		}
 		return bitmap;
 	}
+
 }
