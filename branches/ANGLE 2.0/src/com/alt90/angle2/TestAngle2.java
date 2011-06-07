@@ -69,7 +69,7 @@ public class TestAngle2 extends AngleActivity
 		AngleTileMap tm=new AngleTileMap();
 		try
 		{
-			tm.loadFromResource(this, R.xml.desert);
+			tm.loadFromAsset(this, "desert.tmx");
 		}
 		catch (Exception e)
 		{

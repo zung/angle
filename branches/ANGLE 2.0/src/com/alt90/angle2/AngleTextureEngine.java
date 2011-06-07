@@ -110,6 +110,31 @@ public class AngleTextureEngine
 		return tex;
 	}
 
+	public static AngleTexture createTextureFromAsset(String filename)
+	{
+		AngleTexture tex = null;
+		Iterator<AngleTexture> it = mTexturesX.iterator();
+		while (it.hasNext())
+		{
+			tex = it.next();
+			if (tex instanceof AngleAssetTexture)
+			{
+				// Texture already exists
+				if (((AngleAssetTexture) tex).fFileName.equals(filename))
+				{
+					tex.lRefernces++;
+					return tex;
+				}
+			}
+		}
+
+		tex = new AngleAssetTexture(filename);
+		mTexturesX.add(tex);
+		if (mGl != null)
+			tex.linkToGL(mGl);
+		return tex;
+	}
+
 	public static int generateTexture()
 	{
 		if (mGl != null)
@@ -146,4 +171,5 @@ public class AngleTextureEngine
 				mGl.glDeleteTextures(1, texture, 0);
 		}
 	}
+
 }

@@ -32,7 +32,7 @@ public abstract class AngleTexture
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, lHWTextureID);
 			int error = gl.glGetError();
 			if (error != GL10.GL_NO_ERROR)
-				Log.e("AngleTexture", "load Bind GLError: " + error);
+				Log.e("AngleTexture", "load Bind GLError: " + String.format("%04Xh", error));
 	
 			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
 			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
@@ -41,12 +41,12 @@ public abstract class AngleTexture
 			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 			error = gl.glGetError();
 			if (error != GL10.GL_NO_ERROR)
-				Log.e("AngleTexture", "load Parameterf GLError: " + error);
+				Log.e("AngleTexture", "load Parameterf GLError: " + String.format("%04Xh", error));
 	
 			gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
 			error = gl.glGetError();
 			if (error != GL10.GL_NO_ERROR)
-				Log.e("AngleTexture", "load Envf GLError: " + error);
+				Log.e("AngleTexture", "load Envf GLError: " + String.format("%04Xh", error));
 	
 	
 			Bitmap bitmap = create();
@@ -54,7 +54,7 @@ public abstract class AngleTexture
 			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
 			error = gl.glGetError();
 			if (error != GL10.GL_NO_ERROR)
-				Log.e("AngleTexture", "load Image2D GLError: " + error);
+				Log.e("AngleTexture", "load Image2D GLError: " + String.format("%04Xh", error));
 	
 			lWidth_tx = bitmap.getWidth();
 			lHeight_tx = bitmap.getHeight();

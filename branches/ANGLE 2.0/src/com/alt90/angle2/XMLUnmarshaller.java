@@ -1,6 +1,9 @@
 package com.alt90.angle2;
 
+import java.io.InputStream;
+
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,7 +11,8 @@ import android.util.Log;
 public abstract class XMLUnmarshaller
 {
 	protected XmlPullParser lXMLParser;
-	protected String lXMLTag; 	
+	protected String lXMLTag;
+	protected String lPath; 	
 
 	/**
 	 * Load XML from resource
@@ -16,10 +20,19 @@ public abstract class XMLUnmarshaller
 	 * @param resId
 	 * @throws Exception
 	 */
-	void loadFromResource (Context context, int resId) throws Exception
+	void loadFromAsset (Context context, String filename) throws Exception
 	{
-		lXMLParser = context.getResources().getXml(resId);
-		Log.d("XMLUnmarshaller", "open " + resId);
+		int pos=filename.lastIndexOf('/');
+		if (pos>0)
+			lPath=filename.substring(0, pos);
+		else
+			lPath="";
+		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+      factory.setValidating(false);
+      lXMLParser = factory.newPullParser();
+      InputStream raw = context.getAssets().open(filename);
+		lXMLParser.setInput(raw, null);		
+		Log.d("XMLUnmarshaller", "open " + filename);
 		findTag();
 		read(lXMLParser);
 	}
