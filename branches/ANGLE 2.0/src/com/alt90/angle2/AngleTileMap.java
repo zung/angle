@@ -2,9 +2,6 @@ package com.alt90.angle2;
 
 import java.util.Vector;
 
-import android.content.Context;
-import android.util.Log;
-
 /**
  * TileMap with layer support
  * @author Ivan Pajuelo
@@ -18,10 +15,11 @@ public class AngleTileMap extends XMLUnmarshaller
 	public int fTileHeight;
 	private Vector<AngleTileSet> lTileSets;
 	private Vector<AngleTileLayer> lTileLayers;
-	private XMLProperties properties; 	
+	private XMLProperties properties;
 	
 	public AngleTileMap()
 	{
+		lXMLTag="map";
 		properties=new XMLProperties();
 		lTileSets=new Vector<AngleTileSet>();
 		lTileLayers=new Vector<AngleTileLayer>();
@@ -38,19 +36,6 @@ public class AngleTileMap extends XMLUnmarshaller
 	 * Property of Thorbjørn Lindeijer   
 	 * @throws Exception 
 	 */
-	void open(Context context, int resId)
-	{
-		try
-		{
-			super.open(context, resId, "map");
-			readAttributes();
-			while (nextTag("map"));
-		}
-		catch (Exception e)
-		{
-			Log.e("AngleTileMap","Can't open map. Error: "+e.getMessage());
-		}
-	}
 
 	@Override
 	protected void processTag(String tag) throws Exception
@@ -58,23 +43,26 @@ public class AngleTileMap extends XMLUnmarshaller
 		if (tag.equals("tileset"))
 		{
 			AngleTileSet ts=new AngleTileSet();
-			ts.processTag(tag);
+			ts.read(lXMLParser);
 			lTileSets.add(ts);
 		}
 		else if (tag.equals("layer"))
 		{
-			AngleTileLayer tl=new AngleTileLayer();
-			tl.processTag(tag);
+			AngleTileLayer tl=new AngleTileLayer(this);
+			tl.read(lXMLParser);
 			lTileLayers.add(tl);
 		}
 		else if (tag.equals("objectgroup"))
 		{
+			skip(tag);
 			//TODO ObjectGroup support?
 		}
 		else if (tag.equals("properties"))
 		{
-			properties.processTag(tag);
+			properties.read(lXMLParser);
 		}
+		else
+			skip(tag);
 	}
 
 	@Override

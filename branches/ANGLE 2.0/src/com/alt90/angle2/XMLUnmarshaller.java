@@ -7,55 +7,106 @@ import android.util.Log;
 
 public abstract class XMLUnmarshaller
 {
-	protected XmlPullParser xmlParser;
+	protected XmlPullParser lXMLParser;
+	protected String lXMLTag; 	
 
-	void open (Context context, int resId, String tag) throws Exception
+	/**
+	 * Load XML from resource
+	 * @param context
+	 * @param resId
+	 * @throws Exception
+	 */
+	void loadFromResource (Context context, int resId) throws Exception
 	{
-		xmlParser = context.getResources().getXml(resId);
+		lXMLParser = context.getResources().getXml(resId);
 		Log.d("XMLUnmarshaller", "open " + resId);
-		findTag(tag);
+		findTag();
+		read(lXMLParser);
 	}
 
-	private void findTag(String tag) throws Exception
+	/**
+	 * Find <lXMLTag>
+	 * @throws Exception
+	 */
+	private void findTag() throws Exception
 	{
 		do
 		{
-			xmlParser.next();
-			if (xmlParser.getEventType() == XmlPullParser.START_TAG)
-				if (xmlParser.getName().equals(tag))
+			lXMLParser.next();
+			if (lXMLParser.getEventType() == XmlPullParser.START_TAG)
+				if (lXMLParser.getName().equals(lXMLTag))
 					return;
-		}while (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT);
+		}while (lXMLParser.getEventType() != XmlPullParser.END_DOCUMENT);
 		
-		throw new Exception ("Can't find tag "+tag);
+		throw new Exception ("Can't find tag "+lXMLTag);
 	}
 
-	protected boolean nextTag(String tag) throws Exception //coge todo los tags que haya dentro de 'tag' hasta que encuentre /tag
+	/**
+	 * Process tags into <lXMLTag>
+	 * @return
+	 * @throws Exception
+	 */
+	protected boolean nextTag() throws Exception
 	{
 		do
 		{
-			xmlParser.next();
-			if (xmlParser.getEventType() == XmlPullParser.END_TAG)
+			lXMLParser.next();
+			if (lXMLParser.getEventType() == XmlPullParser.END_TAG)
 			{
-				if (xmlParser.getName().equals(tag))
+				if (lXMLParser.getName().equals(lXMLTag))
 					break;
 			}
-			else if (xmlParser.getEventType() == XmlPullParser.START_TAG)
+			else if (lXMLParser.getEventType() == XmlPullParser.START_TAG)
 			{
-				if (xmlParser.getName()!=null)
+				if (lXMLParser.getName()!=null)
 				{
-					Log.d("XMLUnmarshaller", "processing "+xmlParser.getName().toLowerCase()+" Type="+xmlParser.getEventType());
-					processTag(xmlParser.getName().toLowerCase());
+					Log.d("XMLUnmarshaller", "processing "+lXMLParser.getName().toLowerCase()+" Type="+lXMLParser.getEventType());
+					processTag(lXMLParser.getName().toLowerCase());
 					return true;
 				}
 			}
-		}while (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT);
+		}while (lXMLParser.getEventType() != XmlPullParser.END_DOCUMENT);
 		return false;
 	}
 
+	/**
+	 * Skip until /tag
+	 * @param tag
+	 * @throws Exception
+	 */
+	protected void skip(String tag) throws Exception
+	{
+		do
+		{
+			lXMLParser.next();
+			if (lXMLParser.getEventType() == XmlPullParser.END_TAG)
+			{
+				if (lXMLParser.getName().equals(tag))
+					break;
+			}
+		}while (lXMLParser.getEventType() != XmlPullParser.END_DOCUMENT);
+	}
+
+	/**
+	 * Reads lXMLTag from xmlParser
+	 * @param xmlParser
+	 * @throws Exception
+	 */
+	protected void read(XmlPullParser xmlParser) throws Exception
+	{
+		lXMLParser=xmlParser;
+		readAttributes();
+		while (nextTag());
+	}
+
+	/**
+	 * Read the attributes of a tag
+	 * @throws Exception
+	 */
 	protected void readAttributes() throws Exception
 	{
-		for (int t = 0; t < xmlParser.getAttributeCount(); t++)
-			processAttribute(xmlParser.getAttributeName(t).toLowerCase(), xmlParser.getAttributeValue(t).toLowerCase());
+		for (int t = 0; t < lXMLParser.getAttributeCount(); t++)
+			processAttribute(lXMLParser.getAttributeName(t).toLowerCase(), lXMLParser.getAttributeValue(t).toLowerCase());
 	}
 
 	protected abstract void processAttribute(String param, String value) throws Exception;

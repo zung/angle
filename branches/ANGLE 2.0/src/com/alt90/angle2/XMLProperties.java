@@ -2,6 +2,10 @@ package com.alt90.angle2;
 
 public class XMLProperties extends XMLUnmarshaller
 {
+	XMLProperties ()
+	{
+		lXMLTag="properties";
+	}
 
 	@Override
 	protected void processAttribute(String param, String value) throws Exception

@@ -67,7 +67,15 @@ public class TestAngle2 extends AngleActivity
 		myScene.addObject(new AngleFPSCounter());
 		AngleRenderer.setRenderTree(myScene);
 		AngleTileMap tm=new AngleTileMap();
-		tm.open(this, R.xml.desert);
+		try
+		{
+			tm.loadFromResource(this, R.xml.desert);
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

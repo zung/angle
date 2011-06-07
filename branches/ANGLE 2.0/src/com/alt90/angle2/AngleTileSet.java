@@ -7,8 +7,13 @@ package com.alt90.angle2;
  */
 public class AngleTileSet extends XMLUnmarshaller
 {
-	public int fFirstGid; //UBW Public field for speed. Beware of undefined behavior 
+	public int fFirstGid;
 
+	AngleTileSet ()
+	{
+		lXMLTag="tileset";
+	}
+	
 	/**
 	 * support for unmarshal TMX files
 	 * You can found info about TMX format in http://mapeditor.org/
@@ -28,5 +33,4 @@ public class AngleTileSet extends XMLUnmarshaller
 		// TODO Auto-generated method stub
 		
 	}
-
 }
