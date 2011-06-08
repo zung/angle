@@ -50,9 +50,9 @@ public class AngleFont
 	 * @param blue			Color of the font (Blue)
 	 * @param alpha		Color of the font (Alpha channel)
 	 */
-	public AngleFont(float fontSize, Typeface typeface, int space, int red, int green, int blue, int alpha)
+	public AngleFont(float fontSize, Typeface typeface, int space, AngleColor color)
 	{
-		doInit(fontSize, typeface, DEFAULT_FONT_CHARS, (short) space, red, green, blue, alpha);
+		doInit(fontSize, typeface, DEFAULT_FONT_CHARS, (short) space, color);
 		for (int c = 0; c < lCharCount_ch; c++)
 			lCodePoints[c] = 33 + c;
 		lBorder_tx=1;
@@ -72,10 +72,9 @@ public class AngleFont
 	 * @param blue			Color of the font (Blue)
 	 * @param alpha		Color of the font (Alpha channel)
 	 */
-	public AngleFont(float fontSize, Typeface typeface, int charCount, int border, int space, int red, int green,
-			int blue, int alpha)
+	public AngleFont(float fontSize, Typeface typeface, int charCount, int border, int space, AngleColor color)
 	{
-		doInit(fontSize, typeface, (short) charCount, (short) space, red, green, blue, alpha);
+		doInit(fontSize, typeface, (short) charCount, (short) space, color);
 		for (int c = 0; c < lCharCount_ch; c++)
 			lCodePoints[c] = 33 + c;
 		lBorder_tx=border;
@@ -95,10 +94,9 @@ public class AngleFont
 	 * @param blue			Color of the font (Blue)
 	 * @param alpha		Color of the font (Alpha channel)
 	 */
-	public AngleFont(float fontSize, Typeface typeface, char[] chars, int border, int space, int red, int green,
-			int blue, int alpha)
+	public AngleFont(float fontSize, Typeface typeface, char[] chars, int border, int space, AngleColor color)
 	{
-		doInit(fontSize, typeface, (short) chars.length, (short) space, red, green, blue, alpha);
+		doInit(fontSize, typeface, (short) chars.length, (short) space, color);
 		for (int c = 0; c < chars.length; c++)
 			lCodePoints[c] = (int) chars[c];
 		lBorder_tx=border;
@@ -132,13 +130,13 @@ public class AngleFont
 		lColor=new AngleColor(AngleColor.cWhite);
 	}
 
-	private void doInit(float fontSize, Typeface typeface, short charCount, short space_uu, int red, int green, int blue, int alpha)
+	private void doInit(float fontSize, Typeface typeface, short charCount, short space_uu, AngleColor color)
 	{
 		doInit(charCount);
 		lSpace_uu = space_uu;
 		lFontSize = fontSize;
 		lTypeface = typeface;
-		lColor.set(red,green,blue,alpha);
+		lColor.set(color);
 	}
 
 	/**
