@@ -17,6 +17,7 @@ import android.util.Base64;
  */
 public class AngleTileLayer extends AngleObject
 {
+	protected static int[] lTextureIV_tx=new int[4]; // Texture coordinates
 	private XMLProperties properties;
 	private AngleTileMap lMap;
 	private AngleTileSet lTileSet;
@@ -24,7 +25,6 @@ public class AngleTileLayer extends AngleObject
 	private int[] fData;
 	protected int fMinGid;
 	protected int fMaxGid;
-	protected int[] lTextureIV_tx; // Texture coordinates
 	public int fVisible;
 	public AngleColor fColor; //Set to change layer tint color and alpha
 	public AngleVectorF fTopLeft_uu; //Set to change the position of the layer into the map

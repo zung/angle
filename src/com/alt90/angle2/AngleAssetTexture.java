@@ -10,7 +10,6 @@ import android.util.Log;
 
 public class AngleAssetTexture extends AngleTexture
 {
-	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
 	public String fFileName;
 
 	public AngleAssetTexture(String filename)
