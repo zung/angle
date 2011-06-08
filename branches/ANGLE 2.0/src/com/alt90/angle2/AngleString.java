@@ -341,10 +341,19 @@ public class AngleString extends AngleObject
 							gl.glBindTexture(GL10.GL_TEXTURE_2D, lFont.lTexture.lHWTextureID);
 							gl.glColor4f(lColor.fRed, lColor.fGreen, lColor.fBlue, lColor.fAlpha);
 
+							lTextureIV_tx[0] = 0;
+							lTextureIV_tx[1] = 128;
+							lTextureIV_tx[2] = 128;
+							lTextureIV_tx[3] = -128;
+							((GL11) gl).glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
+
+							((GL11Ext) gl).glDrawTexfOES(0, 0, 0, 128, 128);
+/*
 							int LC_ln = linesCount_ln();
 							float y_uu = fPosition_uu.fY;
 							for (int ln = LC_ln - fDisplayLines_ln; ln < LC_ln; ln++)
 								y_uu += drawLine(gl, y_uu, ln);
+*/								
 						}
 					}
 				}

@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 public class TestAngle2 extends AngleActivity
 {
 	private AngleString fDsp;
+	private AngleFPSCounter fFPS;
 	
 	private class Logo extends AngleSpriteRotable
 	{
@@ -20,6 +21,7 @@ public class TestAngle2 extends AngleActivity
 		@Override
 		protected void step(float secondsElapsed)
 		{
+			//fDsp.set(String.format("%.3f", fFPS.fFPS));
 			if (iKeys[KeyEvent.KEYCODE_BACK])
 				finish();
 			if (iFling[0].newData)
@@ -43,6 +45,7 @@ public class TestAngle2 extends AngleActivity
 		super.onCreate(savedInstanceState);
 		AngleSpriteLayout slLogo=new AngleSpriteLayout(128,128,R.drawable.anglelogo);
 		AngleFont fntCafe=new AngleFont(25, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, 30, 200, 255, 255);
+		fntCafe.saveTo("cafe.fnt");
 
 		AngleObject myScene=new AngleObject(30);
 		myScene.addObject(new AngleScreenEraser());
@@ -62,21 +65,21 @@ public class TestAngle2 extends AngleActivity
 		myScene.addObject(new AngleLine(0,AngleRenderer.rViewportExtent_uu.fY/2,AngleRenderer.rViewportExtent_uu.fX,AngleRenderer.rViewportExtent_uu.fY/2,AngleColor.cBlue));
 		myScene.addObject(new AngleLine(100,100,300,100,AngleColor.cGreen));
 		myScene.addObject(new Logo(slLogo));
-		fDsp=new AngleString(fntCafe,"Hola",100,100,AngleString.aLeft);
-		myScene.addObject(fDsp);
-		myScene.addObject(new AngleFPSCounter());
-		AngleRenderer.setRenderTree(myScene);
+		fFPS=new AngleFPSCounter();
+		myScene.addObject(fFPS);
 		AngleTileMap tm=new AngleTileMap(new AngleRect(100,100,400,400));
 		try
 		{
-			tm.loadFromAsset(this, "desert.tmx");
-			myScene.addObject(tm);
+			//tm.loadFromAsset(this, "desert.tmx");
+			//myScene.addObject(tm);
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		fDsp=new AngleString(fntCafe,"Hola",100,400,AngleString.aLeft);
+		myScene.addObject(fDsp);
+		AngleRenderer.setRenderTree(myScene);
 		
 	}
 }

@@ -129,7 +129,7 @@ public class AngleFont
 		lCharY_tx = new short[lCharCount_ch];
 		lCharRight_tx = new short[lCharCount_ch];
 		lHeight_tx = 0;
-		lColor=new AngleColor(1, 1, 1, 1);
+		lColor=new AngleColor(AngleColor.cWhite);
 	}
 
 	private void doInit(float fontSize, Typeface typeface, short charCount, short space_uu, int red, int green, int blue, int alpha)
@@ -249,4 +249,6 @@ public class AngleFont
 		else
 			return lCharRight_tx[chr]*AngleRenderer.vHorizontalFactor_uu + lSpace_uu;
 	}
+	
+	
 }
