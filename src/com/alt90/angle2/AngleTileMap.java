@@ -39,6 +39,10 @@ public class AngleTileMap extends AngleObject
 		fScale=1f;
 		fClipRect_uu=clipRect;
 	}
+	public AngleTileLayer getLayer(int idx)
+	{
+		return (AngleTileLayer) this.lChildren[idx];
+	}
 
 	
 	/**

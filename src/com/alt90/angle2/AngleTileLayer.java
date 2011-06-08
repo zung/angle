@@ -135,6 +135,7 @@ public class AngleTileLayer extends AngleObject
 	            tileSize_uu.fX=(lMap.fTileWidth)*lMap.fScale;
 	            if (tileSize_uu.fX>(lMap.fClipRect_uu.fSize.fX-current_uu.fX)*lMap.fScale)
 	               tileSize_uu.fX=(lMap.fClipRect_uu.fSize.fX-current_uu.fX)*lMap.fScale;
+	            uvDelta_tx.fX=0;
 	         }
 	         //------
 	         row++;
@@ -142,6 +143,7 @@ public class AngleTileLayer extends AngleObject
 	     		tileSize_uu.fY=(lMap.fTileHeight)*lMap.fScale;
 	         if (tileSize_uu.fY>(lMap.fClipRect_uu.fSize.fY-current_uu.fY)*lMap.fScale)
 	         	tileSize_uu.fY=(lMap.fClipRect_uu.fSize.fY-current_uu.fY)*lMap.fScale;
+            uvDelta_tx.fY=0;
 		   }
 		}
 	}
