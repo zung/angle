@@ -22,8 +22,8 @@ public class AngleSpriteLayout
 	protected int lFrameColumns;
 	protected int lFrame;
 
-	protected AngleVector lDimensions_uu; 	//User units
-	protected AngleVector[] lPivot_uu;		//User units
+	protected AngleVectorF lDimensions_uu; 	//User units
+	protected AngleVectorF[] lPivot_uu;		//User units
 
 	/**
 	 * 
@@ -90,7 +90,7 @@ public class AngleSpriteLayout
 	{
 		lTexture = AngleTextureEngine.createTextureFromResourceId(resourceId);
 		lCrop_tx=new AngleRect(cropLeft_tx,cropTop_tx,cropWidth_tx,cropHeight_tx);
-		lDimensions_uu=new AngleVector(width_uu,height_uu);
+		lDimensions_uu=new AngleVectorF(width_uu,height_uu);
 		if ((lCrop_tx.fSize.fX==0)||(lCrop_tx.fSize.fY==0))
 		{
 			InputStream is = AngleActivity.uInstance.getResources().openRawResource(resourceId);			
@@ -120,10 +120,10 @@ public class AngleSpriteLayout
 		lFrameCount = frameCount;
 		lFrameColumns = frameColumns;
 
-		lPivot_uu=new AngleVector[lFrameCount];
+		lPivot_uu=new AngleVectorF[lFrameCount];
 		//Set all frame pivots at center point by default
 		for (int f=0;f<lFrameCount;f++)
-			lPivot_uu[f]=new AngleVector(lDimensions_uu.fX / 2, lDimensions_uu.fY / 2);
+			lPivot_uu[f]=new AngleVectorF(lDimensions_uu.fX / 2, lDimensions_uu.fY / 2);
 
 	}
 
@@ -156,7 +156,7 @@ public class AngleSpriteLayout
 	 * @param frame
 	 * @return pivot point 
 	 */
-	public AngleVector getPivot_px(int frame) //User units
+	public AngleVectorF getPivot_px(int frame) //User units
 	{
 		if (frame<lFrameCount)
 			return AngleRenderer.coordsUserToViewport(lPivot_uu[frame]);
@@ -196,8 +196,8 @@ public class AngleSpriteLayout
 	{
 		if (frame<lFrameCount)
 		{
-			AngleVector size_px=AngleRenderer.coordsUserToViewport(lDimensions_uu);
-			AngleVector pivot_px=AngleRenderer.coordsUserToViewport(lPivot_uu[frame]);
+			AngleVectorF size_px=AngleRenderer.coordsUserToViewport(lDimensions_uu);
+			AngleVectorF pivot_px=AngleRenderer.coordsUserToViewport(lPivot_uu[frame]);
 			vertexValues[0] = -pivot_px.fX;
 			vertexValues[1] = size_px.fY - pivot_px.fY;
 			vertexValues[2] = size_px.fX - pivot_px.fX;

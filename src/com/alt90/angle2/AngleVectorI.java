@@ -1,35 +1,43 @@
 package com.alt90.angle2;
 
-public class AngleVector
+public class AngleVectorI
 {
-	public float fX;
-	public float fY;
+	public int fX;
+	public int fY;
 
-	public AngleVector()
+	public AngleVectorI()
 	{
-		fX = 0.0f;
-		fY = 0.0f;
+		set(0,0);
 	}
 
-	public AngleVector(float x, float y)
+	public AngleVectorI(int x, int y)
 	{
-		fX = x;
-		fY = y;
+		set (x,y);
 	}
 
-	public AngleVector(AngleVector src)
+	public AngleVectorI(AngleVectorI src)
+	{
+		set(src);
+	}
+
+	public AngleVectorI(AngleVectorF src)
+	{
+		set(src);
+	}
+
+	public void set(AngleVectorI src)
 	{
 		fX = src.fX;
 		fY = src.fY;
 	}
 
-	public void set(AngleVector src)
+	public void set(AngleVectorF src)
 	{
-		fX = src.fX;
-		fY = src.fY;
+		fX = (int) src.fX;
+		fY = (int) src.fY;
 	}
 
-	public void set(float x, float y)
+	public void set(int x, int y)
 	{
 		fX = x;
 		fY = y;
@@ -44,7 +52,7 @@ public class AngleVector
 	 * if (len != 0.0f) { mX /= len; mY /= len; } else { mX = 0.0f; mY = 0.0f; }
 	 * }
 	 */
-	public void add(AngleVector vector)
+	public void add(AngleVectorI vector)
 	{
 		fX += vector.fX;
 		fY += vector.fY;
@@ -53,25 +61,25 @@ public class AngleVector
 	/*
 	 * public void add(float x, float y) { x += x; y += y; }
 	 */
-	public void sub(AngleVector vector)
+	public void sub(AngleVectorI vector)
 	{
 		fX -= vector.fX;
 		fY -= vector.fY;
 	}
 
-	public void subAt(AngleVector vector)
+	public void subAt(AngleVectorI vector)
 	{
 		fX = vector.fX - fX;
 		fY = vector.fY - fY;
 	}
 
-	public void mul(AngleVector vector)
+	public void mul(AngleVectorI vector)
 	{
 		fX *= vector.fX;
 		fY *= vector.fY;
 	}
 
-	public void div(AngleVector vector)
+	public void div(AngleVectorI vector)
 	{
 		fX /= vector.fX;
 		fY /= vector.fY;
@@ -96,21 +104,9 @@ public class AngleVector
 		fY /= scalar;
 	}
 
-	public float dot(AngleVector vector)
+	public float dot(AngleVectorI vector)
 	{
 		return (fX * vector.fX) + (fY * vector.fY);
-	}
-
-	public void rotate(float dAlfa)
-	{
-		float nCos = (float) Math.cos(dAlfa);
-		float nSin = (float) Math.sin(dAlfa);
-
-		float iX = fX * nCos - fY * nSin;
-		float iY = fY * nCos + fX * nSin;
-
-		fX = iX;
-		fX = iY;
 	}
 
 	public boolean isZero()

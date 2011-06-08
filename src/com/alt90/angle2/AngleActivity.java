@@ -24,7 +24,7 @@ public class AngleActivity extends Activity
 
 	public class Pointer
 	{
-		public AngleVector fPosition_uu = new AngleVector(); //UBW Position of the pointer in User Units
+		public AngleVectorF fPosition_uu = new AngleVectorF(); //UBW Position of the pointer in User Units
 		public boolean isDown; //UBW Finger is pushing the screen
 		public boolean newData; //Data of the pointer is changed (clear this after check it)
 
@@ -33,8 +33,8 @@ public class AngleActivity extends Activity
 	public class Fling
 	{
 		private long lBegin; //time where fling began
-		private AngleVector lOrigin_uu = new AngleVector(); //point where fling began 
-		public AngleVector fDelta_uu = new AngleVector(); //UBW Vector of fling movement
+		private AngleVectorF lOrigin_uu = new AngleVectorF(); //point where fling began 
+		public AngleVectorF fDelta_uu = new AngleVectorF(); //UBW Vector of fling movement
 		public float fTime; //UBW Duration of fling movement
 		public boolean newData; //Data of the fling is changed (clear this after check it)
 

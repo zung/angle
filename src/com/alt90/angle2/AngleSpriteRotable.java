@@ -205,7 +205,7 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
-		AngleVector pos_px=AngleRenderer.coordsUserToViewport(fPosition_uu);
+		AngleVectorF pos_px=AngleRenderer.coordsUserToViewport(fPosition_uu);
 
 		gl.glTranslatef(pos_px.fX, pos_px.fY, 0);
 		if (fRotation != 0)

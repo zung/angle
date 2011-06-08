@@ -3,6 +3,10 @@ package com.alt90.angle2;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+import javax.microedition.khronos.opengles.GL11Ext;
+
 import android.content.Context;
 
 /**
@@ -10,18 +14,19 @@ import android.content.Context;
  * @author Ivan Pajuelo
  *
  */
-public class AngleTileMap extends XMLUnmarshaller
+public class AngleTileMap extends AngleObject 
 {
-	public int fWidth;
-	public int fHeight;
-	public int fTileWidth;
-	public int fTileHeight;
+	protected int fWidth;
+	protected int fHeight;
+	protected int fTileWidth;
+	protected int fTileHeight;
 	private Vector<AngleTileSet> lTileSets;
 	private Vector<AngleTileLayer> lTileLayers;
-	private XMLProperties properties;
-	private AngleTileLayer[] fTileLayers;
+	public XMLProperties properties;
+	public AngleRect fClipRect_uu; //Set to change the position and dimensions of the map in the screen
+	public float fScale; //Scale factor of whole map
 	
-	public AngleTileMap()
+	public AngleTileMap(AngleRect clipRect)
 	{
 		lXMLTag="map";
 		properties=new XMLProperties();
@@ -31,8 +36,11 @@ public class AngleTileMap extends XMLUnmarshaller
 		fHeight=0;
 		fTileWidth=0;
 		fTileHeight=0;
+		fScale=1f;
+		fClipRect_uu=clipRect;
 	}
 
+	
 	/**
 	 * support for unmarshal TMX files
 	 * You can found info about TMX format in http://mapeditor.org/
@@ -44,21 +52,22 @@ public class AngleTileMap extends XMLUnmarshaller
 	void loadFromAsset(Context context, String filename) throws Exception
 	{
 		super.loadFromAsset(context, filename);
-		fTileLayers=new AngleTileLayer[lTileLayers.size()];
+		resize(lTileLayers.size());
 		Iterator<AngleTileLayer> tl_it = lTileLayers.iterator();
 		int idx=0;
 		while (tl_it.hasNext())
 	   {
-			fTileLayers[idx]=tl_it.next();
-			fTileLayers[idx].beginCheck();
+			AngleTileLayer tl=tl_it.next();
+			tl.beginCheck();
 			Iterator<AngleTileSet> ts_it = lTileSets.iterator();
 			while (ts_it.hasNext())
 		   {
 				AngleTileSet ts=ts_it.next();
-			   if ((fTileLayers[idx].fMinGid>=ts.fFirstGid)&&(fTileLayers[idx].fMaxGid<ts.fFirstGid+(ts.fWidth*ts.fHeight)))
-			   	fTileLayers[idx].setTileSet(ts);
+			   if ((tl.fMinGid>=ts.fFirstGid)&&(tl.fMaxGid<ts.fFirstGid+(ts.fCols*ts.fRows)))
+			   	tl.setTileSet(ts);
 		   }
-			fTileLayers[idx].endCheck();
+			tl.endCheck();
+			addObject(tl);
 			idx++;
 	   }
 	}

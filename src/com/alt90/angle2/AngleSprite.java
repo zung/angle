@@ -81,10 +81,10 @@ public class AngleSprite extends AngleAbstractSprite
 
 		((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 				
-		AngleVector pos_px=lLayout.getPivot_px(lFrame);
+		AngleVectorF pos_px=lLayout.getPivot_px(lFrame);
 		pos_px.mul(fScale);
 		pos_px.subAt(AngleRenderer.coordsUserToViewport(fPosition_uu));
-		AngleVector size_px=AngleRenderer.coordsUserToViewport(lLayout.lDimensions_uu);
+		AngleVectorF size_px=AngleRenderer.coordsUserToViewport(lLayout.lDimensions_uu);
 		size_px.mul(fScale);
 
 		((GL11Ext) gl).glDrawTexfOES(pos_px.fX, AngleRenderer.vViewportHeight_px - pos_px.fY - size_px.fY, 0, size_px.fX, size_px.fY);

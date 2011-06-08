@@ -15,11 +15,11 @@ public class AngleRenderer implements Renderer
 	public static final boolean sUseHWBuffers = true; //UBW Determines if hardware buffers are used
 	private static long lCTM;
 	private static AngleRect lViewport_px=null; 
-	private static AngleVector lUserExtent_uu=new AngleVector(0,0);
+	private static AngleVectorF lUserExtent_uu=new AngleVectorF(0,0);
 	private static AngleObject lRenderTree=null;
 
 	//Only for reading. DO NOT change this filed. It's never updated
-	public static AngleVector rViewportExtent_uu=new AngleVector(0,0); //Dimensions of viewport in user units 
+	public static AngleVectorF rViewportExtent_uu=new AngleVectorF(0,0); //Dimensions of viewport in user units 
 	//Virtual fields for scaled rendering. Updated on surface changed
 	public static float vViewportHeight_px=0;		//Viewport height in pixels
 	public static float vHorizontalFactor_uu=0;  //Relation factor between viewport horizontal uu and px (uu/px)
@@ -59,12 +59,20 @@ public class AngleRenderer implements Renderer
 
 	/**
 	 * Converts user units to pixels within viewport
-	 * @param coords_uu coordinates in user units
+	 * @param fPosition coordinates in user units
 	 * @return coordinates in pixels (viewport pixels)
 	 */
-	public static AngleVector coordsUserToViewport(AngleVector coords_uu)
+	public static AngleVectorF coordsUserToViewport(AngleVectorI fPosition)
 	{
-		AngleVector result=new AngleVector(coords_uu);
+		AngleVectorF result=new AngleVectorF(fPosition);
+		result.div(lUserExtent_uu);
+		result.mul(lViewport_px.fSize);
+
+		return result;
+	}
+	public static AngleVectorF coordsUserToViewport(AngleVectorF fPosition)
+	{
+		AngleVectorF result=new AngleVectorF(fPosition);
 		result.div(lUserExtent_uu);
 		result.mul(lViewport_px.fSize);
 
@@ -76,9 +84,9 @@ public class AngleRenderer implements Renderer
 	 * @param coords_uu coordinates in pixels (viewport pixels)
 	 * @return coordinates in user units
 	 */
-	public static AngleVector coordsViewportToUser(AngleVector coords_px)
+	public static AngleVectorF coordsViewportToUser(AngleVectorF coords_px)
 	{
-		AngleVector result=new AngleVector(coords_px);
+		AngleVectorF result=new AngleVectorF(coords_px);
 		result.div(lViewport_px.fSize);
 		result.mul(lUserExtent_uu);
 
@@ -90,9 +98,9 @@ public class AngleRenderer implements Renderer
 	 * @param coords_uu coordinates in pixels (screen pixels)
 	 * @return coordinates in user units
 	 */
-	public static AngleVector coordsScreenToUser(AngleVector coords_px)
+	public static AngleVectorF coordsScreenToUser(AngleVectorF coords_px)
 	{
-		AngleVector result=new AngleVector(coords_px);
+		AngleVectorF result=new AngleVectorF(coords_px);
 		result.sub(lViewport_px.fPosition);
 		result.div(lViewport_px.fSize);
 		result.mul(lUserExtent_uu);
@@ -171,6 +179,16 @@ public class AngleRenderer implements Renderer
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
 		AngleTextureEngine.loadTextures(gl);
+	}
+
+	public static int fitPow2(int ammount)
+	{
+		for (int p=0;p<32;p++)
+		{
+			if (ammount<(1<<p))
+				return (1<<p);
+		}
+		return 0;
 	}
 
 }

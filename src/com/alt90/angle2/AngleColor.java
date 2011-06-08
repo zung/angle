@@ -20,6 +20,11 @@ public class AngleColor
 	public float fBlue; // Blue tint (0 - 1)
 	public float fAlpha; // Alpha channel (0 - 1)
 	
+	AngleColor (AngleColor src)
+	{
+		set (src);
+	}
+	
 	AngleColor (float r, float g, float b, float a)
 	{
 		set (r,g,b,a);
@@ -31,5 +36,13 @@ public class AngleColor
 		fGreen=g;
 		fBlue=b;
 		fAlpha=a;
+	}
+
+	void set (AngleColor src)
+	{
+		fRed=src.fRed;
+		fGreen=src.fGreen;
+		fBlue=src.fBlue;
+		fAlpha=src.fAlpha;
 	}
 }
