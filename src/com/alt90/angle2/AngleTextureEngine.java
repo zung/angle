@@ -172,4 +172,14 @@ public class AngleTextureEngine
 		}
 	}
 
+	public static int fitPow2(int size)
+	{
+		for (int p=0;p<32;p++)
+		{
+			if (size<(1<<p))
+				return (1<<p);
+		}
+		return 0;
+	}
+
 }
