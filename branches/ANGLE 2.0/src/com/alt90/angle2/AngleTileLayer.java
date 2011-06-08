@@ -95,20 +95,20 @@ public class AngleTileLayer extends AngleObject
 			
 		   AngleVectorI current_uu=new AngleVectorI();
 			AngleVectorF tileSize_uu=new AngleVectorF();
-		   AngleVectorI mod_uu=new AngleVectorI((int)fTopLeft_uu.fX%lTileSet.fTileSize_uu.fX, (int)fTopLeft_uu.fY%lTileSet.fTileSize_uu.fY);
-		   AngleVectorI div_uu=new AngleVectorI((int)fTopLeft_uu.fX/lTileSet.fTileSize_uu.fX, (int)fTopLeft_uu.fY/lTileSet.fTileSize_uu.fY);
+		   AngleVectorI mod_uu=new AngleVectorI((int)fTopLeft_uu.fX%lMap.fTileWidth, (int)fTopLeft_uu.fY%lMap.fTileHeight);
+		   AngleVectorI div_uu=new AngleVectorI((int)fTopLeft_uu.fX/lMap.fTileWidth, (int)fTopLeft_uu.fY/lMap.fTileHeight);
 			AngleVectorI uvDelta_tx=new AngleVectorI();
-	
+			
 	      uvDelta_tx.fY=mod_uu.fY;
-	     	tileSize_uu.fY=(lTileSet.fTileSize_uu.fY-mod_uu.fY)*lMap.fScale;
-	      int col=div_uu.fX;
+	     	tileSize_uu.fY=(lMap.fTileHeight-mod_uu.fY)*lMap.fScale;
+	      int row=div_uu.fY;
 	      current_uu.fY=0;
 		   while (current_uu.fY<lMap.fClipRect_uu.fSize.fY)
 		   {
 		      //drawRow
 	         uvDelta_tx.fX=mod_uu.fX;
-	         tileSize_uu.fX=(lTileSet.fTileSize_uu.fX-mod_uu.fX)*lMap.fScale;
-		      int row=div_uu.fY;
+	         tileSize_uu.fX=(lMap.fTileWidth-mod_uu.fX)*lMap.fScale;
+		      int col=div_uu.fX;
 	         current_uu.fX=0;
 	         while (current_uu.fX<lMap.fClipRect_uu.fSize.fX)
 	         {
@@ -118,25 +118,28 @@ public class AngleTileLayer extends AngleObject
 				      int tile=fData[row*lMap.fWidth+col];
 	               if (tile>0)
 	               {
-							lTileSet.fillTextureValues(lTextureIV_tx,tile,uvDelta_tx,tileSize_uu);
+							lTileSet.fillTextureValues(lTextureIV_tx,tile-1,uvDelta_tx,tileSize_uu);
 	                  ((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 	
-							AngleVectorF tilePos_px=AngleRenderer.coordsUserToViewport(current_uu);
-							AngleVectorF tileSixe_px=AngleRenderer.coordsUserToViewport(tileSize_uu);
-	                  ((GL11Ext) gl).glDrawTexfOES(tilePos_px.fX, AngleRenderer.vViewportHeight_px - tilePos_px.fY - tilePos_px.fY, 0, tileSixe_px.fX, tileSixe_px.fY);
+	                  ((GL11Ext) gl).glDrawTexfOES(
+	                  		(current_uu.fX+lMap.fClipRect_uu.fPosition.fX)*AngleRenderer.vHorizontalFactor_px, 
+	                  		AngleRenderer.vViewportHeight_px - (current_uu.fY+lMap.fClipRect_uu.fPosition.fY+tileSize_uu.fY)*AngleRenderer.vVerticalFactor_px,
+	                  		0, 
+	                  		tileSize_uu.fX*AngleRenderer.vHorizontalFactor_px, 
+	                  		tileSize_uu.fY*AngleRenderer.vVerticalFactor_px);
 	               }
 	      		}
 	            //------
 	            col++;
 	            current_uu.fX+=tileSize_uu.fX;
-	            tileSize_uu.fX=(lTileSet.fTileSize_uu.fX)*lMap.fScale;
+	            tileSize_uu.fX=(lMap.fTileWidth)*lMap.fScale;
 	            if (tileSize_uu.fX>(lMap.fClipRect_uu.fSize.fX-current_uu.fX)*lMap.fScale)
 	               tileSize_uu.fX=(lMap.fClipRect_uu.fSize.fX-current_uu.fX)*lMap.fScale;
 	         }
 	         //------
 	         row++;
 		      current_uu.fY+=tileSize_uu.fY;
-	     		tileSize_uu.fY=(lTileSet.fTileSize_uu.fY)*lMap.fScale;
+	     		tileSize_uu.fY=(lMap.fTileHeight)*lMap.fScale;
 	         if (tileSize_uu.fY>(lMap.fClipRect_uu.fSize.fY-current_uu.fY)*lMap.fScale)
 	         	tileSize_uu.fY=(lMap.fClipRect_uu.fSize.fY-current_uu.fY)*lMap.fScale;
 		   }
