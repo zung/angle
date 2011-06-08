@@ -11,6 +11,7 @@ public class TestAngle2 extends AngleActivity
 	private AngleString fDsp;
 	private AngleFPSCounter fFPS;
 	private AngleTileMap tm;
+	private AngleTileLayer tl;
 	
 	private class Logo extends AngleSpriteRotable
 	{
@@ -22,7 +23,6 @@ public class TestAngle2 extends AngleActivity
 		@Override
 		protected void step(float secondsElapsed)
 		{
-			fDsp.set(String.format("%.3f", fFPS.fFPS));
 			if (iKeys[KeyEvent.KEYCODE_BACK])
 				finish();
 			if (iFling[0].newData)
@@ -30,7 +30,12 @@ public class TestAngle2 extends AngleActivity
 				iFling[0].newData=false;
 				String aa="T="+iFling[0].fTime+", X="+iFling[0].fDelta_uu.fX+", Y="+iFling[0].fDelta_uu.fY;
 				Log.d("AE2",aa);
-				fDsp.set(aa);
+				//fDsp.set(aa);
+				if (iFling[0].fTime<0.5)
+				{
+					tl.fTopLeft_uu.fX-=iFling[0].fDelta_uu.fX/2;
+					tl.fTopLeft_uu.fY-=iFling[0].fDelta_uu.fY/2;
+				}
 			}
 			fRotation+=90*secondsElapsed;
 			if (iPointer[0].isDown)
@@ -67,19 +72,21 @@ public class TestAngle2 extends AngleActivity
 		myScene.addObject(new AngleLine(0,AngleRenderer.rViewportExtent_uu.fY/2,AngleRenderer.rViewportExtent_uu.fX,AngleRenderer.rViewportExtent_uu.fY/2,AngleColor.cBlue));
 		myScene.addObject(new AngleLine(100,100,300,100,AngleColor.cGreen));
 		*/
-		myScene.addObject(new Logo(slLogo));
 		fFPS=new AngleFPSCounter();
 		myScene.addObject(fFPS);
 		tm=new AngleTileMap(new AngleRect((int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*1,(int)AngleRenderer.rViewportExtent_uu.fX/8*6,(int)AngleRenderer.rViewportExtent_uu.fY/8*6));
 		try
 		{
 			tm.loadFromAsset(this, "desert.tmx");
+			tl=tm.getLayer(0);
+			tl.fTopLeft_uu.fX=3;
 			myScene.addObject(tm);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		myScene.addObject(new Logo(slLogo));
 		fDsp=new AngleString(fntCafe,"Hola",(int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*5,AngleString.aLeft);
 		myScene.addObject(fDsp);
 		AngleRenderer.setRenderTree(myScene);
