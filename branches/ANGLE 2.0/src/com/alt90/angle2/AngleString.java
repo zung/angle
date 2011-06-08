@@ -21,7 +21,7 @@ public class AngleString extends AngleObject
 	public int fLength_ch; // Length to display
 	protected AngleFont lFont; // Font
 	protected int[] lTextureIV_tx = new int[4]; // Texture coordinates
-	public AngleVector fPosition_uu; // Position
+	public AngleVectorF fPosition_uu; // Position
 	public int fAlignment; // Text alignment
 	public AngleColor lColor;
 	public float fDisplayWidth_uu;
@@ -81,7 +81,7 @@ public class AngleString extends AngleObject
 
 	private void init(AngleFont font, int tabLength_ch, boolean ignoreNL)
 	{
-		fPosition_uu = new AngleVector();
+		fPosition_uu = new AngleVectorF();
 		lFont = font;
 		fLength_ch = 0;
 		lLinesCount_ln = 0;

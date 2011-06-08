@@ -3,6 +3,8 @@ package com.alt90.angle2;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -17,22 +19,35 @@ public class AngleTileSet extends XMLUnmarshaller
 	protected AngleTexture lTexture;
 	private AngleTileMap lMap;
 	protected int fFirstGid;
-	protected int fTileWidth;
-	protected int fTileHeight;
+	protected AngleVectorI fTileSize_uu;
 	private int fSpacing;
 	private int fMargin;
-	protected int fWidth;
-	protected int fHeight;
+	protected int fCols;
+	protected int fRows;
 
 	AngleTileSet (AngleTileMap map)
 	{
 		lMap=map;
 		lXMLTag="tileset";
 		fFirstGid=0;
-		fTileWidth=0;
-		fTileHeight=0;
-		fWidth=0;
-		fHeight=0;
+		fTileSize_uu=new AngleVectorI();
+		fCols=0;
+		fRows=0;
+	}
+
+	public boolean bindTexture(GL10 gl)
+	{
+		if (lTexture != null)
+			return lTexture.bind(gl);
+		return false;
+	}
+
+	public void fillTextureValues(int[] lTextureIV_tx, int tile, AngleVectorI uvDelta_tx, AngleVectorF tileSize_tx)
+	{
+	   lTextureIV_tx[0] = (int) (tile%fCols)*(fTileSize_uu.fX+fSpacing)+fMargin+uvDelta_tx.fX; // Ucr
+	   lTextureIV_tx[1] = (int) ((tile/fCols)*(fTileSize_uu.fY+fSpacing)+fMargin+uvDelta_tx.fY+tileSize_tx.fY); // Vcr
+		lTextureIV_tx[2] = (int) tileSize_tx.fX; // Wcr
+		lTextureIV_tx[3] = (int) -tileSize_tx.fY; // Hcr
 	}
 	
 	/**
@@ -49,9 +64,9 @@ public class AngleTileSet extends XMLUnmarshaller
 		else if (param.equals("source"))
 			throw new Exception("TSX files not supported");
 		else if (param.equals("tilewidth"))
-			fTileWidth=Integer.parseInt(value);
+			fTileSize_uu.fX=Integer.parseInt(value);
 		else if (param.equals("tileheight"))
-			fTileHeight=Integer.parseInt(value);
+			fTileSize_uu.fY=Integer.parseInt(value);
 		else if (param.equals("spacing"))
 			fSpacing=Integer.parseInt(value);
 		else if (param.equals("margin"))
@@ -93,8 +108,8 @@ public class AngleTileSet extends XMLUnmarshaller
 			{
 				throw new Exception ("Image "+lMap.lPath+value+" not found.");
 			}
-			fWidth=(bitmap.getWidth()-fMargin)/(fTileWidth+fSpacing);
-			fHeight=(bitmap.getHeight()-fMargin)/(fTileHeight+fSpacing);
+			fCols=(int) ((bitmap.getWidth()-fMargin)/(fTileSize_uu.fX+fSpacing));
+			fRows=(int) ((bitmap.getHeight()-fMargin)/(fTileSize_uu.fY+fSpacing));
 			bitmap.recycle();
 			lTexture = AngleTextureEngine.createTextureFromAsset(lMap.lPath+value);
 		}

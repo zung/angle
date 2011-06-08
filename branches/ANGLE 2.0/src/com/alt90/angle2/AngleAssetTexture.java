@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.util.Log;
 
 public class AngleAssetTexture extends AngleTexture
@@ -21,14 +22,19 @@ public class AngleAssetTexture extends AngleTexture
 	@Override
 	public Bitmap create()
 	{
-		sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
 		InputStream is;
 		Bitmap bitmap = null;
 		try
 		{
 			is = AngleActivity.uInstance.getAssets().open(fFileName);
-			bitmap = BitmapFactory.decodeStream(is, null, sBitmapOptions);
+			Bitmap image = BitmapFactory.decodeStream(is);
 			is.close();
+			
+			bitmap = Bitmap.createBitmap(AngleRenderer.fitPow2(image.getWidth()), AngleRenderer.fitPow2(image.getHeight()), Bitmap.Config.ARGB_8888); 
+
+			Canvas canvas = new Canvas(bitmap);
+
+			canvas.drawBitmap(image, 0, 0, null);			
 		}
 		catch (IOException e)
 		{

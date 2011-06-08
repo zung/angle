@@ -10,15 +10,15 @@ public class AngleLine extends AngleObject
 {
 	private FloatBuffer lVertices;
 	private AngleColor lColor;
-	private AngleVector lA;
-	private AngleVector lB;
+	private AngleVectorF lA;
+	private AngleVectorF lB;
 
 	AngleLine (float x1_uu, float y1_uu, float x2_uu, float y2_uu, AngleColor color)
 	{
 		lColor=color;
 		lVertices = ByteBuffer.allocateDirect(2 * 2 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		lA=new AngleVector(x1_uu,y1_uu);
-		lB=new AngleVector(x2_uu,y2_uu);
+		lA=new AngleVectorF(x1_uu,y1_uu);
+		lB=new AngleVectorF(x2_uu,y2_uu);
 	}
 	
 	@Override

@@ -4,6 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+import javax.microedition.khronos.opengles.GL11Ext;
+
 import android.util.Base64;
 
 /**
@@ -11,29 +15,28 @@ import android.util.Base64;
  * @author Ivan Pajuelo
  *
  */
-public class AngleTileLayer extends XMLUnmarshaller
+public class AngleTileLayer extends AngleObject
 {
 	private XMLProperties properties;
-	private int lWidth;
-	private int lHeight;
-	private float lOpacity;
-	private int lVisible;
 	private AngleTileMap lMap;
 	private AngleTileSet lTileSet;
 	private byte[] fByteData;
 	private int[] fData;
 	protected int fMinGid;
 	protected int fMaxGid;
+	protected int[] lTextureIV_tx; // Texture coordinates
+	public int fVisible;
+	public AngleColor fColor; //Set to change layer tint color and alpha
+	public AngleVectorF fTopLeft_uu; //Set to change the position of the layer into the map
 
 	AngleTileLayer(AngleTileMap map)
 	{
 		lMap=map;
 		lXMLTag="layer";
 		properties=new XMLProperties();
-		lWidth=lMap.fWidth;
-		lHeight=lMap.fHeight;
-		lOpacity=1;
-		lVisible=1;
+		fColor=new AngleColor(AngleColor.cWhite);
+		fTopLeft_uu=new AngleVectorF();
+		fVisible=1;
 		lTileSet=null;
 	}
 
@@ -42,23 +45,23 @@ public class AngleTileLayer extends XMLUnmarshaller
 		lTileSet=null;
 		fMinGid=Integer.MAX_VALUE;
 		fMaxGid=Integer.MIN_VALUE;
-		fData=new int[lWidth*lHeight];
-		for (int y=0;y<lHeight;y++)
+		fData=new int[lMap.fWidth*lMap.fHeight];
+		for (int y=0;y<lMap.fHeight;y++)
 		{
-			for (int x=0;x<lWidth;x++)
+			for (int x=0;x<lMap.fWidth;x++)
 			{
-				int gid=fByteData[(y*lWidth+x)*4+3];
+				int gid=fByteData[(y*lMap.fWidth+x)*4+3];
 				gid<<=8;
-				gid|=fByteData[(y*lWidth+x)*4+2];
+				gid|=fByteData[(y*lMap.fWidth+x)*4+2];
 				gid<<=8;
-				gid|=fByteData[(y*lWidth+x)*4+1];
+				gid|=fByteData[(y*lMap.fWidth+x)*4+1];
 				gid<<=8;
-				gid|=fByteData[(y*lWidth+x)*4+0];
+				gid|=fByteData[(y*lMap.fWidth+x)*4+0];
 				if (fMinGid>gid)
 					fMinGid=gid;
 				if (fMaxGid<gid)
 					fMaxGid=gid;
-				fData[y*lWidth+x]=gid;
+				fData[y*lMap.fWidth+x]=gid;
 			}
 		}
 	}
@@ -75,10 +78,68 @@ public class AngleTileLayer extends XMLUnmarshaller
 			lTileSet=tileset;
 		else
 			throw new Exception("Only one TileSet per layer supported");
-		for (int y=0;y<lHeight;y++)
+		for (int y=0;y<lMap.fHeight;y++)
 		{
-			for (int x=0;x<lWidth;x++)
-				fData[y*lWidth+x]-=(lTileSet.fFirstGid-1);
+			for (int x=0;x<lMap.fWidth;x++)
+				fData[y*lMap.fWidth+x]-=(lTileSet.fFirstGid-1);
+		}
+	}
+
+	@Override
+	public void draw(GL10 gl)
+	{
+		if (lTileSet.bindTexture(gl))
+		{
+		
+			gl.glColor4f(fColor.fRed, fColor.fGreen, fColor.fBlue, fColor.fAlpha);
+			
+		   AngleVectorI current_uu=new AngleVectorI();
+			AngleVectorF tileSize_uu=new AngleVectorF();
+		   AngleVectorI mod_uu=new AngleVectorI((int)fTopLeft_uu.fX%lTileSet.fTileSize_uu.fX, (int)fTopLeft_uu.fY%lTileSet.fTileSize_uu.fY);
+		   AngleVectorI div_uu=new AngleVectorI((int)fTopLeft_uu.fX/lTileSet.fTileSize_uu.fX, (int)fTopLeft_uu.fY/lTileSet.fTileSize_uu.fY);
+			AngleVectorI uvDelta_tx=new AngleVectorI();
+	
+	      uvDelta_tx.fY=mod_uu.fY;
+	     	tileSize_uu.fY=(lTileSet.fTileSize_uu.fY-mod_uu.fY)*lMap.fScale;
+	      int col=div_uu.fX;
+	      current_uu.fY=0;
+		   while (current_uu.fY<lMap.fClipRect_uu.fSize.fY)
+		   {
+		      //drawRow
+	         uvDelta_tx.fX=mod_uu.fX;
+	         tileSize_uu.fX=(lTileSet.fTileSize_uu.fX-mod_uu.fX)*lMap.fScale;
+		      int row=div_uu.fY;
+	         current_uu.fX=0;
+	         while (current_uu.fX<lMap.fClipRect_uu.fSize.fX)
+	         {
+	            //drawTile
+			      if ((col>=0)&&(row>=0)&&(col<lMap.fWidth)&&(row<lMap.fHeight))
+			      {
+				      int tile=fData[row*lMap.fWidth+col];
+	               if (tile>0)
+	               {
+							lTileSet.fillTextureValues(lTextureIV_tx,tile,uvDelta_tx,tileSize_uu);
+	                  ((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
+	
+							AngleVectorF tilePos_px=AngleRenderer.coordsUserToViewport(current_uu);
+							AngleVectorF tileSixe_px=AngleRenderer.coordsUserToViewport(tileSize_uu);
+	                  ((GL11Ext) gl).glDrawTexfOES(tilePos_px.fX, AngleRenderer.vViewportHeight_px - tilePos_px.fY - tilePos_px.fY, 0, tileSixe_px.fX, tileSixe_px.fY);
+	               }
+	      		}
+	            //------
+	            col++;
+	            current_uu.fX+=tileSize_uu.fX;
+	            tileSize_uu.fX=(lTileSet.fTileSize_uu.fX)*lMap.fScale;
+	            if (tileSize_uu.fX>(lMap.fClipRect_uu.fSize.fX-current_uu.fX)*lMap.fScale)
+	               tileSize_uu.fX=(lMap.fClipRect_uu.fSize.fX-current_uu.fX)*lMap.fScale;
+	         }
+	         //------
+	         row++;
+		      current_uu.fY+=tileSize_uu.fY;
+	     		tileSize_uu.fY=(lTileSet.fTileSize_uu.fY)*lMap.fScale;
+	         if (tileSize_uu.fY>(lMap.fClipRect_uu.fSize.fY-current_uu.fY)*lMap.fScale)
+	         	tileSize_uu.fY=(lMap.fClipRect_uu.fSize.fY-current_uu.fY)*lMap.fScale;
+		   }
 		}
 	}
 
@@ -92,13 +153,15 @@ public class AngleTileLayer extends XMLUnmarshaller
 	protected void processAttribute(String param, String value) throws Exception
 	{
 		if (param.equals("width"))
-			lWidth=Integer.parseInt(value);
+			if (lMap.fWidth!=Integer.parseInt(value))
+				throw new Exception("Map and layer width must be the same");
 		else if (param.equals("height"))
-			lHeight=Integer.parseInt(value);
+			if (lMap.fHeight!=Integer.parseInt(value))
+				throw new Exception("Map and layer height must be the same");
 		else if (param.equals("opacity"))
-			lOpacity=Float.parseFloat(value);
+			fColor.fAlpha=Float.parseFloat(value);
 		else if (param.equals("visible"))
-			lVisible=Integer.parseInt(value);
+			fVisible=Integer.parseInt(value);
 	}
 
 	@Override
@@ -129,7 +192,7 @@ public class AngleTileLayer extends XMLUnmarshaller
 		
       byte[] dec = Base64.decode(lXMLParser.getText().trim(),Base64.DEFAULT);
       InputStream is=new GZIPInputStream(new ByteArrayInputStream(dec));
-      fByteData=new byte[lWidth*lHeight*4];
+      fByteData=new byte[lMap.fWidth*lMap.fHeight*4];
       is.read(fByteData);
       is.close();
    }

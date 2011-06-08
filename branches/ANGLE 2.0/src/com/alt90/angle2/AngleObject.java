@@ -2,7 +2,7 @@ package com.alt90.angle2;
 
 import javax.microedition.khronos.opengles.GL10;
 
-public class AngleObject
+public class AngleObject extends XMLUnmarshaller
 {
 	private static final int sDefaultChildren = 2;
 	private static final int sInQueueSize = 10;
@@ -23,7 +23,7 @@ public class AngleObject
 	 */
 	public AngleObject ()
 	{
-		Create(sDefaultChildren);
+		create(sDefaultChildren);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class AngleObject
 	 */
 	public AngleObject (int maxChildren)
 	{
-		Create(maxChildren);
+		create(maxChildren);
 	}
 
 	/**
@@ -147,13 +147,18 @@ public class AngleObject
 		}
 	}
 
-	private void Create(int maxChildren)
+	protected void resize(int maxChildren)
 	{
-		fTag=0;
 		lChildrenCount=0;
 		lChildrenSize=maxChildren;
 		lChildren=new AngleObject[lChildrenSize];
+	}
+
+	private void create(int maxChildren)
+	{
+		fTag=0;
 		lParent=null;
+		resize(maxChildren);
 	}
 	protected void addObjectNow(AngleObject object)
 	{
@@ -193,6 +198,18 @@ public class AngleObject
 	{
 		for (int t=0;t<lChildrenCount;t++)
 			lChildren[t].releaseHardwareBuffers(gl);
+	}
+
+	@Override
+	protected void processAttribute(String param, String value) throws Exception
+	{
+		// Do nothing
+	}
+
+	@Override
+	protected void processTag(String tag) throws Exception
+	{
+		// Do nothing
 	}
 
 }
