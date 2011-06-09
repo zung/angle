@@ -12,9 +12,9 @@ public class AngleAssetTexture extends AngleTexture
 {
 	public String fFileName;
 
-	public AngleAssetTexture(String filename)
+	public AngleAssetTexture(String filename, int type)
 	{
-		super();
+		super(type);
 		fFileName=filename;
 	}
 

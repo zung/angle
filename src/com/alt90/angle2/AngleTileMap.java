@@ -3,10 +3,6 @@ package com.alt90.angle2;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
-
 import android.content.Context;
 
 /**

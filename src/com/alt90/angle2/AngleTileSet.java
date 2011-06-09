@@ -42,12 +42,12 @@ public class AngleTileSet extends XMLUnmarshaller
 		return false;
 	}
 
-	public void fillTextureValues(int[] lTextureIV_tx, int tile, AngleVectorI uvDelta_tx, AngleVectorF tileSize_tx)
+	public void fillTextureValues(int[] lTextureIV_tx, int tile, AngleVectorI uvDelta_tx, AngleVectorI tileSize_uu)
 	{
 	   lTextureIV_tx[0] = (int) (tile%fCols)*(fTileSize_uu.fX+fSpacing)+fMargin+uvDelta_tx.fX; // Ucr
-	   lTextureIV_tx[1] = (int) ((tile/fCols)*(fTileSize_uu.fY+fSpacing)+fMargin+uvDelta_tx.fY+tileSize_tx.fY); // Vcr
-		lTextureIV_tx[2] = (int) tileSize_tx.fX; // Wcr
-		lTextureIV_tx[3] = (int) -tileSize_tx.fY; // Hcr
+	   lTextureIV_tx[1] = (int) ((tile/fCols)*(fTileSize_uu.fY+fSpacing)+fMargin+uvDelta_tx.fY+tileSize_uu.fY); // Vcr
+		lTextureIV_tx[2] = (int) tileSize_uu.fX; // Wcr
+		lTextureIV_tx[3] = (int) -tileSize_uu.fY; // Hcr
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class AngleTileSet extends XMLUnmarshaller
 			fCols=(int) ((bitmap.getWidth()-fMargin)/(fTileSize_uu.fX+fSpacing));
 			fRows=(int) ((bitmap.getHeight()-fMargin)/(fTileSize_uu.fY+fSpacing));
 			bitmap.recycle();
-			lTexture = AngleTextureEngine.createTextureFromAsset(lMap.lPath+value);
+			lTexture = AngleTextureEngine.createTextureFromAsset(lMap.lPath+value,AngleTexture.FASTEST);
 		}
 		else if (param.equals("trans"))
 			throw new Exception ("Transparent color not supported. Use PNG32 instead.");

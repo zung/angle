@@ -88,7 +88,7 @@ public class AngleSpriteLayout
 	private void doInit(float width_uu, float height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx, int cropHeight_tx, int frameCount,
 			int frameColumns)
 	{
-		lTexture = AngleTextureEngine.createTextureFromResourceId(resourceId);
+		lTexture = AngleTextureEngine.createTextureFromResourceId(resourceId, AngleTexture.TRANSLUCENT_SMOOTH);
 		lCrop_tx=new AngleRect(cropLeft_tx,cropTop_tx,cropWidth_tx,cropHeight_tx);
 		lDimensions_uu=new AngleVectorF(width_uu,height_uu);
 		if ((lCrop_tx.fSize.fX==0)||(lCrop_tx.fSize.fY==0))
@@ -223,7 +223,7 @@ public class AngleSpriteLayout
 	public void changeTexture (int resourceId)
 	{
 		AngleTextureEngine.deleteTexture(lTexture);
-		lTexture = AngleTextureEngine.createTextureFromResourceId(resourceId);
+		lTexture = AngleTextureEngine.createTextureFromResourceId(resourceId,AngleTexture.TRANSLUCENT_SMOOTH);
 	}
 
 	/**

@@ -56,7 +56,7 @@ public class AngleFont
 		for (int c = 0; c < lCharCount_ch; c++)
 			lCodePoints[c] = 33 + c;
 		lBorder_tx=1;
-		lTexture=AngleTextureEngine.createTextureFromFont(this);
+		lTexture=AngleTextureEngine.createTextureFromFont(this,AngleTexture.TRANSLUCENT_SMOOTH);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class AngleFont
 		for (int c = 0; c < lCharCount_ch; c++)
 			lCodePoints[c] = 33 + c;
 		lBorder_tx=border;
-		lTexture=AngleTextureEngine.createTextureFromFont(this);
+		lTexture=AngleTextureEngine.createTextureFromFont(this,AngleTexture.TRANSLUCENT_SMOOTH);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class AngleFont
 		for (int c = 0; c < chars.length; c++)
 			lCodePoints[c] = (int) chars[c];
 		lBorder_tx=border;
-		lTexture=AngleTextureEngine.createTextureFromFont(this);
+		lTexture=AngleTextureEngine.createTextureFromFont(this,AngleTexture.TRANSLUCENT_SMOOTH);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class AngleFont
 	public AngleFont(String asset, int resourceId, int space_uu)
 	{
 		loadFrom(asset);
-		lTexture=AngleTextureEngine.createTextureFromResourceId(resourceId);
+		lTexture=AngleTextureEngine.createTextureFromResourceId(resourceId,AngleTexture.TRANSLUCENT_SMOOTH);
 		lSpace_uu = (short) space_uu;
 	}
 

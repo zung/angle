@@ -60,7 +60,7 @@ public class AngleTextureEngine
 		}
 	}
 
-	public static AngleTexture createTextureFromFont(AngleFont font)
+	public static AngleTexture createTextureFromFont(AngleFont font, int type)
 	{
 		AngleTexture tex = null;
 		Iterator<AngleTexture> it = mTexturesX.iterator();
@@ -78,14 +78,14 @@ public class AngleTextureEngine
 			}
 		}
 
-		tex = new AngleFontTexture(font);
+		tex = new AngleFontTexture(font, type);
 		mTexturesX.add(tex);
 		if (mGl != null)
 			tex.linkToGL(mGl);
 		return tex;
 	}
 	
-	public static AngleTexture createTextureFromResourceId(int resourceId)
+	public static AngleTexture createTextureFromResourceId(int resourceId, int type)
 	{
 		AngleTexture tex = null;
 		Iterator<AngleTexture> it = mTexturesX.iterator();
@@ -103,14 +103,14 @@ public class AngleTextureEngine
 			}
 		}
 
-		tex = new AngleResourceTexture(resourceId);
+		tex = new AngleResourceTexture(resourceId, type);
 		mTexturesX.add(tex);
 		if (mGl != null)
 			tex.linkToGL(mGl);
 		return tex;
 	}
 
-	public static AngleTexture createTextureFromAsset(String filename)
+	public static AngleTexture createTextureFromAsset(String filename, int type)
 	{
 		AngleTexture tex = null;
 		Iterator<AngleTexture> it = mTexturesX.iterator();
@@ -128,7 +128,7 @@ public class AngleTextureEngine
 			}
 		}
 
-		tex = new AngleAssetTexture(filename);
+		tex = new AngleAssetTexture(filename, type);
 		mTexturesX.add(tex);
 		if (mGl != null)
 			tex.linkToGL(mGl);

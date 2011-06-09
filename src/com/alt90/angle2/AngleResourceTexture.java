@@ -12,9 +12,9 @@ public class AngleResourceTexture extends AngleTexture
 	private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
 	public int fResourceID;
 
-	public AngleResourceTexture(int resourceId)
+	public AngleResourceTexture(int resourceId, int type)
 	{
-		super();
+		super(type);
 		fResourceID = resourceId;
 	}
 
