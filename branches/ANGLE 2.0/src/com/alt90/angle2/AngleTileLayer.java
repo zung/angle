@@ -161,11 +161,15 @@ public class AngleTileLayer extends AngleObject
 	protected void processAttribute(String param, String value) throws Exception
 	{
 		if (param.equals("width"))
+		{
 			if (lMap.fWidth!=Integer.parseInt(value))
 				throw new Exception("Map and layer width must be the same");
+		}
 		else if (param.equals("height"))
+		{
 			if (lMap.fHeight!=Integer.parseInt(value))
 				throw new Exception("Map and layer height must be the same");
+		}
 		else if (param.equals("opacity"))
 			fColor.fAlpha=Float.parseFloat(value);
 		else if (param.equals("visible"))

@@ -24,8 +24,9 @@ public class AngleTileSet extends XMLUnmarshaller
 	private int fMargin;
 	protected int fCols;
 	protected int fRows;
+	private boolean lOpacitySupport;
 
-	AngleTileSet (AngleTileMap map)
+	AngleTileSet (AngleTileMap map, boolean opacitySupport)
 	{
 		lMap=map;
 		lXMLTag="tileset";
@@ -33,6 +34,7 @@ public class AngleTileSet extends XMLUnmarshaller
 		fTileSize_uu=new AngleVectorI();
 		fCols=0;
 		fRows=0;
+		lOpacitySupport=opacitySupport;
 	}
 
 	public boolean bindTexture(GL10 gl)
@@ -111,7 +113,7 @@ public class AngleTileSet extends XMLUnmarshaller
 			fCols=(int) ((bitmap.getWidth()-fMargin)/(fTileSize_uu.fX+fSpacing));
 			fRows=(int) ((bitmap.getHeight()-fMargin)/(fTileSize_uu.fY+fSpacing));
 			bitmap.recycle();
-			lTexture = AngleTextureEngine.createTextureFromAsset(lMap.lPath+value,AngleTexture.FASTEST);
+			lTexture = AngleTextureEngine.createTextureFromAsset(lMap.lPath+value,(lOpacitySupport)?AngleTexture.TRANSLUCENT:AngleTexture.FASTEST);
 		}
 		else if (param.equals("trans"))
 			throw new Exception ("Transparent color not supported. Use PNG32 instead.");
