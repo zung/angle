@@ -11,7 +11,6 @@ public class TestAngle2 extends AngleActivity
 	private AngleString fDsp;
 	private AngleFPSCounter fFPS;
 	private AngleTileMap tm;
-	private AngleTileLayer tl;
 	
 	private class Logo extends AngleSpriteRotable
 	{
@@ -33,8 +32,13 @@ public class TestAngle2 extends AngleActivity
 				//fDsp.set(aa);
 				if (iFling[0].fTime<0.5)
 				{
-					tl.fTopLeft_uu.fX-=iFling[0].fDelta_uu.fX/2;
-					tl.fTopLeft_uu.fY-=iFling[0].fDelta_uu.fY/2;
+					AngleTileLayer tl;
+					for (int l=0;l<1;l++)
+					{
+						tl = tm.getLayer(l);
+						tl.fTopLeft_uu.fX-=iFling[0].fDelta_uu.fX/(2+l);
+						tl.fTopLeft_uu.fY-=iFling[0].fDelta_uu.fY/(2+l);
+					}
 				}
 			}
 			fRotation+=90*secondsElapsed;
@@ -84,13 +88,11 @@ public class TestAngle2 extends AngleActivity
 		*/
 		fFPS=new AngleFPSCounter();
 		myScene.addObject(fFPS);
-		tm=new AngleTileMap(new AngleRect((int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*1,(int)AngleRenderer.rViewportExtent_uu.fX/8*6,(int)AngleRenderer.rViewportExtent_uu.fY/8*6));
+		tm=new AngleTileMap(new AngleRect((int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*1,(int)AngleRenderer.rViewportExtent_uu.fX/8*6,(int)AngleRenderer.rViewportExtent_uu.fY/8*6),false);
 		try
 		{
-			tm.loadFromAsset(this, "sewers.tmx");
+			tm.loadFromAsset(this, "desert.tmx");
 			tm.fScale=1.5f;
-			tl=tm.getLayer(0);
-			tl.fTopLeft_uu.fX=3;
 			myScene.addObject(tm);
 		}
 		catch (Exception e)

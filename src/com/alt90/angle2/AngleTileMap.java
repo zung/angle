@@ -21,8 +21,9 @@ public class AngleTileMap extends AngleObject
 	public XMLProperties properties;
 	public AngleRect fClipRect_uu; //Set to change the position and dimensions of the map in the screen
 	public float fScale; //Scale factor of whole map
+	private boolean lOpacitySupport;
 	
-	public AngleTileMap(AngleRect clipRect)
+	public AngleTileMap(AngleRect clipRect, boolean opacitySupport)
 	{
 		lXMLTag="map";
 		properties=new XMLProperties();
@@ -34,6 +35,7 @@ public class AngleTileMap extends AngleObject
 		fTileHeight=0;
 		fScale=1f;
 		fClipRect_uu=clipRect;
+		lOpacitySupport=opacitySupport;
 	}
 	public AngleTileLayer getLayer(int idx)
 	{
@@ -77,7 +79,7 @@ public class AngleTileMap extends AngleObject
 	{
 		if (tag.equals("tileset"))
 		{
-			AngleTileSet ts=new AngleTileSet(this);
+			AngleTileSet ts=new AngleTileSet(this, lOpacitySupport);
 			ts.read(lXMLParser);
 			lTileSets.add(ts);
 		}
