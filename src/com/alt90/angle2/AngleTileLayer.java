@@ -20,6 +20,7 @@ public class AngleTileLayer extends AngleObject
 	//Cached variables
    private static AngleVectorI cCurrent_uu=new AngleVectorI();
    private static AngleVectorI cTileSize_uu=new AngleVectorI();
+   private static AngleVectorF cTileSizeScaled_uu=new AngleVectorF();
    private static AngleVectorI cMod_uu=new AngleVectorI();
    private static AngleVectorI cDiv_uu=new AngleVectorI();
    private static AngleVectorI cUVDelta_tx=new AngleVectorI();
@@ -101,9 +102,16 @@ public class AngleTileLayer extends AngleObject
 			
 			cMod_uu.set((int)fTopLeft_uu.fX%lMap.fTileWidth, (int)fTopLeft_uu.fY%lMap.fTileHeight);
 		   cDiv_uu.set((int)fTopLeft_uu.fX/lMap.fTileWidth, (int)fTopLeft_uu.fY/lMap.fTileHeight);
+		   
+		   //Solve negative modules
+		   if (cMod_uu.fX<0)
+		   	cMod_uu.fX+=lMap.fTileWidth;
+		   if (cMod_uu.fY<0)
+		   	cMod_uu.fY+=lMap.fTileHeight;
 			
 	      cUVDelta_tx.fY=cMod_uu.fY;
 	     	cTileSize_uu.fY=lMap.fTileHeight-cMod_uu.fY;
+         cTileSizeScaled_uu.fY=cTileSize_uu.fY*lMap.fScale;
 	      int row=cDiv_uu.fY;
 	      cCurrent_uu.fY=0;
 		   while (cTileSize_uu.fY>0)
@@ -111,6 +119,7 @@ public class AngleTileLayer extends AngleObject
 		      //drawRow
 	         cUVDelta_tx.fX=cMod_uu.fX;
 	         cTileSize_uu.fX=lMap.fTileWidth-cMod_uu.fX;
+            cTileSizeScaled_uu.fX=cTileSize_uu.fX*lMap.fScale;
 		      int col=cDiv_uu.fX;
 	         cCurrent_uu.fX=0;
 	         while (cTileSize_uu.fX>0)
@@ -126,26 +135,34 @@ public class AngleTileLayer extends AngleObject
 	
 	                  ((GL11Ext) gl).glDrawTexfOES(
 	                  		(cCurrent_uu.fX*lMap.fScale+lMap.fClipRect_uu.fPosition.fX)*AngleRenderer.vHorizontalFactor_px, 
-	                  		AngleRenderer.vViewportHeight_px - (cCurrent_uu.fY*lMap.fScale+lMap.fClipRect_uu.fPosition.fY+cTileSize_uu.fY*lMap.fScale)*AngleRenderer.vVerticalFactor_px,
+	                  		AngleRenderer.vViewportHeight_px - (cCurrent_uu.fY*lMap.fScale+lMap.fClipRect_uu.fPosition.fY+cTileSizeScaled_uu.fY)*AngleRenderer.vVerticalFactor_px,
 	                  		0, 
-	                  		cTileSize_uu.fX*lMap.fScale*AngleRenderer.vHorizontalFactor_px, 
-	                  		cTileSize_uu.fY*lMap.fScale*AngleRenderer.vVerticalFactor_px);
+	                  		cTileSizeScaled_uu.fX*AngleRenderer.vHorizontalFactor_px, 
+	                  		cTileSizeScaled_uu.fY*AngleRenderer.vVerticalFactor_px);
 	               }
 	      		}
 	            //------
 	            col++;
 	            cCurrent_uu.fX+=cTileSize_uu.fX;
 	            cTileSize_uu.fX=lMap.fTileWidth;
-	            if (cTileSize_uu.fX>(lMap.fClipRect_uu.fSize.fX-cCurrent_uu.fX*lMap.fScale)/lMap.fScale)
-	               cTileSize_uu.fX=(int) ((lMap.fClipRect_uu.fSize.fX-cCurrent_uu.fX*lMap.fScale)/lMap.fScale);
+	            cTileSizeScaled_uu.fX=cTileSize_uu.fX*lMap.fScale;
+	            if (cTileSizeScaled_uu.fX>(lMap.fClipRect_uu.fSize.fX-cCurrent_uu.fX*lMap.fScale))
+	            {
+	               cTileSizeScaled_uu.fX=((lMap.fClipRect_uu.fSize.fX-cCurrent_uu.fX*lMap.fScale));
+	               cTileSize_uu.fX=(int) (cTileSizeScaled_uu.fX/lMap.fScale);
+	            }
 	            cUVDelta_tx.fX=0;
 	         }
 	         //------
 	         row++;
 		      cCurrent_uu.fY+=cTileSize_uu.fY;
 	     		cTileSize_uu.fY=lMap.fTileHeight;
-	         if (cTileSize_uu.fY>(lMap.fClipRect_uu.fSize.fY-cCurrent_uu.fY*lMap.fScale)/lMap.fScale)
-	         	cTileSize_uu.fY=(int) ((lMap.fClipRect_uu.fSize.fY-cCurrent_uu.fY*lMap.fScale)/lMap.fScale);
+            cTileSizeScaled_uu.fY=cTileSize_uu.fY*lMap.fScale;
+	         if (cTileSizeScaled_uu.fY>(lMap.fClipRect_uu.fSize.fY-cCurrent_uu.fY*lMap.fScale))
+	         {
+	         	cTileSizeScaled_uu.fY=((lMap.fClipRect_uu.fSize.fY-cCurrent_uu.fY*lMap.fScale));
+               cTileSize_uu.fY=(int) (cTileSizeScaled_uu.fY/lMap.fScale);
+	         }
             cUVDelta_tx.fY=0;
 		   }
 		}
