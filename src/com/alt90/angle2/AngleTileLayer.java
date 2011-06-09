@@ -64,7 +64,7 @@ public class AngleTileLayer extends AngleObject
 				gid|=fByteData[(y*lMap.fWidth+x)*4+1];
 				gid<<=8;
 				gid|=fByteData[(y*lMap.fWidth+x)*4+0];
-				if (fMinGid>gid)
+				if ((fMinGid>gid)&&(gid>0))
 					fMinGid=gid;
 				if (fMaxGid<gid)
 					fMaxGid=gid;

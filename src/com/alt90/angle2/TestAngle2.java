@@ -87,7 +87,7 @@ public class TestAngle2 extends AngleActivity
 		tm=new AngleTileMap(new AngleRect((int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*1,(int)AngleRenderer.rViewportExtent_uu.fX/8*6,(int)AngleRenderer.rViewportExtent_uu.fY/8*6));
 		try
 		{
-			tm.loadFromAsset(this, "desert.tmx");
+			tm.loadFromAsset(this, "sewers.tmx");
 			tm.fScale=1.5f;
 			tl=tm.getLayer(0);
 			tl.fTopLeft_uu.fX=3;
