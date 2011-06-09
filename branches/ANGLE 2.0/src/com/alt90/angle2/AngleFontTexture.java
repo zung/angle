@@ -15,8 +15,9 @@ public class AngleFontTexture extends AngleTexture
 {
 	private AngleFont lFont;
 	
-	AngleFontTexture (AngleFont font)
+	AngleFontTexture (AngleFont font, int type)
 	{
+		super(type);
 		lFont=font;
 	}
 

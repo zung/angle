@@ -42,7 +42,17 @@ public class TestAngle2 extends AngleActivity
 			{
 				fPosition_uu.fX=iPointer[0].fPosition_uu.fX;
 				fPosition_uu.fY=iPointer[0].fPosition_uu.fY-150;
+				tm.fScale+=secondsElapsed;
+				if (tm.fScale>3)
+					tm.fScale=3;
 			}
+			else
+			{
+				tm.fScale-=secondsElapsed/2;
+				if (tm.fScale<1)
+					tm.fScale=1;
+			}
+			fDsp.set(String.format("%.1f", fFPS.fFPS));
 		}
 	}
 	@Override
@@ -50,11 +60,11 @@ public class TestAngle2 extends AngleActivity
 	{
 		super.onCreate(savedInstanceState);
 		AngleSpriteLayout slLogo=new AngleSpriteLayout(128,128,R.drawable.anglelogo);
-		AngleFont fntCafe=new AngleFont(25, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, AngleColor.cLime);
+		AngleFont fntCafe=new AngleFont(AngleRenderer.rViewportExtent_uu.fY/12, Typeface.createFromAsset(getAssets(),"cafe.ttf"), 222, 0, 0, AngleColor.cLime);
 		//fntCafe.saveTo("cafe");
 
 		AngleObject myScene=new AngleObject(30);
-		myScene.addObject(new AngleScreenEraser(AngleColor.cWhite));
+		myScene.addObject(new AngleScreenEraser(AngleColor.cBlack));
 /*		
 		myScene.addObject(new AngleLine(AngleRenderer.rViewportExtent_uu.fX/8,0,AngleRenderer.rViewportExtent_uu.fX/8,AngleRenderer.rViewportExtent_uu.fY,AngleColor.cMaroon));
 		myScene.addObject(new AngleLine(0,AngleRenderer.rViewportExtent_uu.fY/8,AngleRenderer.rViewportExtent_uu.fX,AngleRenderer.rViewportExtent_uu.fY/8,AngleColor.cMaroon));
@@ -78,6 +88,7 @@ public class TestAngle2 extends AngleActivity
 		try
 		{
 			tm.loadFromAsset(this, "desert.tmx");
+			tm.fScale=1.5f;
 			tl=tm.getLayer(0);
 			tl.fTopLeft_uu.fX=3;
 			myScene.addObject(tm);
@@ -87,7 +98,7 @@ public class TestAngle2 extends AngleActivity
 			e.printStackTrace();
 		}
 		myScene.addObject(new Logo(slLogo));
-		fDsp=new AngleString(fntCafe,"Hola",(int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*5,AngleString.aLeft);
+		fDsp=new AngleString(fntCafe,"FPS",(int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*5,AngleString.aLeft);
 		myScene.addObject(fDsp);
 		AngleRenderer.setRenderTree(myScene);
 		
