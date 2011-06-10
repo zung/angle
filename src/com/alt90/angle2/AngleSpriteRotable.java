@@ -8,6 +8,8 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+import android.util.Log;
+
 /**
  * Sprite with rotating capabilities. Uses hardware buffers if available
  * 
@@ -16,6 +18,7 @@ import javax.microedition.khronos.opengles.GL11;
  */
 public class AngleSpriteRotable extends AngleAbstractSprite
 {
+	private static final boolean sLogAngleSpriteRotable = true;
 	public static final char[] sIndexValues = new char[] { 0, 1, 2, 1, 2, 3 };
 	public static int sIndexBufferIndex = -1;
 	protected float[] lTexCoordValues;
@@ -27,22 +30,33 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 
 	public static void generateIndexBuffer (GL10 gl)
 	{
-		int[] hwBuffers=new int[1];
-		((GL11)gl).glGenBuffers(1, hwBuffers, 0);
-
-		// Allocate and fill the index buffer.
-		sIndexBufferIndex = hwBuffers[0];
-		((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, sIndexBufferIndex);
-		((GL11)gl).glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, 6 * 2, CharBuffer.wrap(sIndexValues), GL11.GL_STATIC_DRAW);
-		((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+		if (sIndexBufferIndex<0)
+		{
+			if (sLogAngleSpriteRotable)
+				Log.d("AngleSpriteRotable","generateIndexBuffer");
+			int[] hwBuffers=new int[1];
+			((GL11)gl).glGenBuffers(1, hwBuffers, 0);
+	
+			// Allocate and fill the index buffer.
+			sIndexBufferIndex = hwBuffers[0];
+			((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, sIndexBufferIndex);
+			((GL11)gl).glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, 6 * 2, CharBuffer.wrap(sIndexValues), GL11.GL_STATIC_DRAW);
+			((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
 	}
 
 	public static void releaseIndexBuffer (GL10 gl)
 	{
-		int[] hwBuffers = new int[1];
-		hwBuffers[0]=sIndexBufferIndex;
-		((GL11) gl).glDeleteBuffers(1, hwBuffers, 0);
-		sIndexBufferIndex=-1;
+		if (sIndexBufferIndex>=0)
+		{
+			if (sLogAngleSpriteRotable)
+				Log.d("AngleSpriteRotable","releaseIndexBuffer");
+			int[] hwBuffers = new int[1];
+			hwBuffers[0]=sIndexBufferIndex;
+			if (gl!=null)
+				((GL11) gl).glDeleteBuffers(1, hwBuffers, 0);
+			sIndexBufferIndex=-1;
+		}
 	}
 	/**
 	 * 
@@ -110,6 +124,8 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 	@Override
 	public void setFrame(int frame)
 	{
+		if (sLogAngleSpriteRotable)
+			Log.d("AngleSpriteRotable","setFrame");
 		if (lLayout != null)
 		{
 			if (frame < lLayout.lFrameCount)
@@ -168,9 +184,12 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 	@Override
 	public void invalidateHardwareBuffers(GL10 gl)
 	{
+		if (sLogAngleSpriteRotable)
+			Log.d("AngleSpriteRotable","invalidateHardwareBuffers");
 		int[] hwBuffers = new int[2];
 		((GL11) gl).glGenBuffers(2, hwBuffers, 0);
 
+		sIndexBufferIndex = -1;
 		// Allocate and fill the texture buffer.
 		lTextureCoordBufferIndex = hwBuffers[0];
 		((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, lTextureCoordBufferIndex);
@@ -179,7 +198,6 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 		((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, fVertBufferIndex);
 		((GL11) gl).glBufferData(GL11.GL_ARRAY_BUFFER, 8 * 4, FloatBuffer.wrap(fVertexValues), GL11.GL_STATIC_DRAW);
 		((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-
 		super.invalidateHardwareBuffers(gl);
 
 	}
@@ -188,12 +206,15 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 	public void releaseHardwareBuffers(GL10 gl)
 	{
 		int[] hwBuffers = new int[2];
+		if (sLogAngleSpriteRotable)
+			Log.d("AngleSpriteRotable","releaseHardwareBuffers");
 		hwBuffers[0] = lTextureCoordBufferIndex;
 		hwBuffers[1] = fVertBufferIndex;
 		if (gl != null)
 			((GL11) gl).glDeleteBuffers(2, hwBuffers, 0);
 		lTextureCoordBufferIndex = -1;
 		fVertBufferIndex = -1;
+		releaseIndexBuffer(gl);
 	}
 
 	@Override
@@ -218,10 +239,10 @@ public class AngleSpriteRotable extends AngleAbstractSprite
 
 		if (AngleRenderer.sUseHWBuffers)
 		{
-			if (sIndexBufferIndex<0)
-				generateIndexBuffer (gl);
 			if ((lTextureCoordBufferIndex < 0) || (fVertBufferIndex < 0))
 				invalidateHardwareBuffers(gl);
+			if (sIndexBufferIndex<0)
+				generateIndexBuffer (gl);
 
 			((GL11) gl).glBindBuffer(GL11.GL_ARRAY_BUFFER, fVertBufferIndex);
 			((GL11) gl).glVertexPointer(2, GL10.GL_FLOAT, 0, 0);

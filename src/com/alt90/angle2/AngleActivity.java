@@ -3,6 +3,7 @@ package com.alt90.angle2;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
  */
 public class AngleActivity extends Activity
 {
+	private static final boolean sLogAngleActivity = true;
 	private static final int sMaxFingers = 10; //Max number of multitouch points
 	public static AngleActivity uInstance = null; //UBW selft instance
 	public static boolean[] iKeys = new boolean[KeyEvent.MAX_KEYCODE]; //UBW State of keys
@@ -43,12 +45,17 @@ public class AngleActivity extends Activity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		if (sLogAngleActivity)
+			Log.d("AngleActivity","onCreate");
 		super.onCreate(savedInstanceState);
+		AngleTextureEngine.init();
 		for (int p = 0; p < sMaxFingers; p++)
 		{
 			iPointer[p] = new Pointer();
 			iFling[p] = new Fling();
 		}
+		for (int k=0;k<KeyEvent.MAX_KEYCODE;k++)
+			iKeys[k]=false;
 		uInstance = this;
 		lGLSurfaceView = new GLSurfaceView(this);
 		lGLSurfaceView
@@ -59,13 +66,18 @@ public class AngleActivity extends Activity
 	@Override
 	protected void onPause()
 	{
+		if (sLogAngleActivity)
+			Log.d("AngleActivity","onPause");
 		super.onPause();
 		lGLSurfaceView.onPause();
 	}
 
+
 	@Override
 	protected void onResume()
 	{
+		if (sLogAngleActivity)
+			Log.d("AngleActivity","onResume");
 		super.onResume();
 		lGLSurfaceView.onResume();
 	}
@@ -136,4 +148,12 @@ public class AngleActivity extends Activity
 	{
 		return super.onTrackballEvent(event);
 	}
+
+	@Override
+	public void finish()
+	{
+		AngleTextureEngine.deinit();
+		super.finish();
+	}
+	
 }

@@ -15,24 +15,21 @@ import android.util.Log;
  */
 public class AngleTextureEngine
 {
+	private static final boolean sLogAngleTextureEngine = true;
 	public static AngleTextureEngine uInstance=null;
 	private static CopyOnWriteArrayList<AngleTexture> mTexturesX = new CopyOnWriteArrayList<AngleTexture>();
 	private static GL10 mGl;
 
-	/**
-	 * Not called
-	 * @param gl
-	 */
+/*	
 	public static void destroy(GL10 gl)
 	{
+		if (sLogAngleTextureEngine)
+			Log.d("AngleTextureEngine","onSudestroyrfaceCreated");
 		mGl = gl;
 		onContextLost();
+		mGl=null;
 	}
 
-	/**
-	 * Not called
-	 * @param gl
-	 */
 	public static void onContextLost()
 	{
 		if (mGl != null)
@@ -47,7 +44,7 @@ public class AngleTextureEngine
 			mTexturesX.clear();
 		}
 	}
-
+*/
 	public static void loadTextures(GL10 gl)
 	{
 		mGl = gl;
@@ -80,8 +77,10 @@ public class AngleTextureEngine
 
 		tex = new AngleFontTexture(font, type);
 		mTexturesX.add(tex);
+		Log.v("TextureEngine", "link tex to gl");
 		if (mGl != null)
 			tex.linkToGL(mGl);
+		Log.v("TextureEngine", "--------------");
 		return tex;
 	}
 	
@@ -180,6 +179,27 @@ public class AngleTextureEngine
 				return (1<<p);
 		}
 		return 0;
+	}
+
+	public static void init()
+	{
+		mGl=null;
+	}
+
+	public static void deinit()
+	{
+		if (mGl != null)
+		{
+			int d = 0;
+			int[] textures = new int[mTexturesX.size()];
+			Iterator<AngleTexture> it = mTexturesX.iterator();
+			while (it.hasNext())
+				textures[d++] = it.next().lHWTextureID;
+
+			mGl.glDeleteTextures(d, textures, 0);
+			mTexturesX.clear();
+			mGl=null;
+		}
 	}
 
 }

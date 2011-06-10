@@ -105,6 +105,7 @@ public class TestAngle2 extends AngleActivity
 		fDsp=new AngleString(fntCafe,"FPS",(int)AngleRenderer.rViewportExtent_uu.fX/8*1,(int)AngleRenderer.rViewportExtent_uu.fY/8*5,AngleString.aLeft);
 		myScene.addObject(fDsp);
 		AngleRenderer.setRenderTree(myScene);
+		Log.d("TestAngle2","onCreate end");
 		
 	}
 }
