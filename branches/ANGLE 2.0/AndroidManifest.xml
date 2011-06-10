@@ -4,12 +4,15 @@
       android:versionCode="2" android:versionName="2.0.001.dev">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".TestAngle2"
-                  android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape">
+        <activity android:name=".AngleTutorials"
+                  android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".TestAngle2"
+                  android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape">
         </activity>
 
     </application>

@@ -4,6 +4,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 /**
  * Main renderer
@@ -12,6 +13,7 @@ import android.opengl.GLSurfaceView.Renderer;
  */
 public class AngleRenderer implements Renderer
 {
+	private static final boolean sLogAngleRenderer = false;
 	public static final boolean sUseHWBuffers = true; //UBW Determines if hardware buffers are used
 	private static long lCTM;
 	private static AngleRect lViewport_px=null; 
@@ -65,17 +67,21 @@ public class AngleRenderer implements Renderer
 	public static AngleVectorF coordsUserToViewport(AngleVectorI fPosition)
 	{
 		AngleVectorF result=new AngleVectorF(fPosition);
-		result.div(lUserExtent_uu);
-		result.mul(lViewport_px.fSize);
-
+		if (lViewport_px!=null) //Viewport is created
+		{
+			result.div(lUserExtent_uu);
+			result.mul(lViewport_px.fSize);
+		}
 		return result;
 	}
 	public static AngleVectorF coordsUserToViewport(AngleVectorF fPosition)
 	{
 		AngleVectorF result=new AngleVectorF(fPosition);
-		result.div(lUserExtent_uu);
-		result.mul(lViewport_px.fSize);
-
+		if (lViewport_px!=null) //Viewport is created
+		{
+			result.div(lUserExtent_uu);
+			result.mul(lViewport_px.fSize);
+		}
 		return result;
 	}
 
@@ -87,9 +93,11 @@ public class AngleRenderer implements Renderer
 	public static AngleVectorF coordsViewportToUser(AngleVectorF coords_px)
 	{
 		AngleVectorF result=new AngleVectorF(coords_px);
-		result.div(lViewport_px.fSize);
-		result.mul(lUserExtent_uu);
-
+		if (lViewport_px!=null) //Viewport is created
+		{
+			result.div(lViewport_px.fSize);
+			result.mul(lUserExtent_uu);
+		}
 		return result;
 	}
 
@@ -101,16 +109,20 @@ public class AngleRenderer implements Renderer
 	public static AngleVectorF coordsScreenToUser(AngleVectorF coords_px)
 	{
 		AngleVectorF result=new AngleVectorF(coords_px);
-		result.sub(lViewport_px.fPosition);
-		result.div(lViewport_px.fSize);
-		result.mul(lUserExtent_uu);
-
+		if (lViewport_px!=null) //Viewport is created
+		{
+			result.sub(lViewport_px.fPosition);
+			result.div(lViewport_px.fSize);
+			result.mul(lUserExtent_uu);
+		}
 		return result;
 	}
 
 	@Override
 	public void onDrawFrame(GL10 gl)
 	{
+		if (sLogAngleRenderer)
+			Log.d("AngleRenderer","onDrawFrame");
       gl.glMatrixMode(GL10.GL_MODELVIEW);
       gl.glLoadIdentity();
 		if (lRenderTree!=null)
@@ -131,6 +143,9 @@ public class AngleRenderer implements Renderer
 	@Override
 	public void onSurfaceChanged(GL10 gl, int surfaceWidth, int surfaceHeight)
 	{
+		if (sLogAngleRenderer)
+			Log.d("AngleRenderer","onSurfaceChanged");
+
 		lViewport_px=new AngleRect(0,0,surfaceWidth,surfaceHeight);
 
 		if (!lUserExtent_uu.isZero())
@@ -173,11 +188,16 @@ public class AngleRenderer implements Renderer
 		
 		if (lRenderTree!=null)
 			lRenderTree.invalidateHardwareBuffers(gl);
+			
 	}
 
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
+		if (sLogAngleRenderer)
+			Log.d("AngleRenderer","onSurfaceCreated");
+		if (lRenderTree!=null)
+			lRenderTree.releaseHardwareBuffers(gl);
 		AngleTextureEngine.loadTextures(gl);
 	}
 
