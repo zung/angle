@@ -40,7 +40,12 @@ public class AngleFPSCounter extends AngleObject
 			lFrameCount=lCountEvery;
 			fFPS=lCountEvery/lTime;
 			lTime=0;
-			Log.v("FPS","" + fFPS);
+			logFPS();
 		}
+	}
+
+	protected void logFPS()
+	{
+		Log.v("FPS","" + fFPS);
 	}
 }
