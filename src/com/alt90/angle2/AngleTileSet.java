@@ -44,12 +44,31 @@ public class AngleTileSet extends XMLUnmarshaller
 		return false;
 	}
 
-	public void fillTextureValues(int[] lTextureIV_tx, int tile, AngleVectorI uvDelta_tx, AngleVectorI tileSize_uu)
+	public void fillTextureValues(int[] lTextureIV_tx, int tile, AngleVectorI uvDelta_tx, AngleVectorI tileSize_uu, byte flags)
 	{
-	   lTextureIV_tx[0] = (int) (tile%fCols)*(fTileSize_uu.fX+fSpacing)+fMargin+uvDelta_tx.fX; // Ucr
-	   lTextureIV_tx[1] = (int) ((tile/fCols)*(fTileSize_uu.fY+fSpacing)+fMargin+uvDelta_tx.fY+tileSize_uu.fY); // Vcr
-		lTextureIV_tx[2] = (int) tileSize_uu.fX; // Wcr
-		lTextureIV_tx[3] = (int) -tileSize_uu.fY; // Hcr
+		if ((flags&AngleTileLayer.sHorizontalFlip)==AngleTileLayer.sHorizontalFlip)
+		{
+			//TODO Quick test. Need to be calculated
+		   lTextureIV_tx[0] = (int) ((tile%fCols)*(fTileSize_uu.fX+fSpacing)+fMargin+uvDelta_tx.fX+tileSize_uu.fX); // Ucr
+			lTextureIV_tx[2] = (int) -tileSize_uu.fX; // Wcr
+		}
+		else
+		{
+		   lTextureIV_tx[0] = (int) ((tile%fCols)*(fTileSize_uu.fX+fSpacing)+fMargin+uvDelta_tx.fX); // Ucr
+			lTextureIV_tx[2] = (int) tileSize_uu.fX; // Wcr
+		}
+
+		if ((flags&AngleTileLayer.sVerticalFlip)==AngleTileLayer.sVerticalFlip)
+		{
+			//TODO Quick test. Need to be calculated
+		   lTextureIV_tx[1] = (int) ((tile/fCols)*(fTileSize_uu.fY+fSpacing)+fMargin+uvDelta_tx.fY); // Vcr
+			lTextureIV_tx[3] = (int) tileSize_uu.fY; // Hcr
+		}
+		else
+		{
+		   lTextureIV_tx[1] = (int) ((tile/fCols)*(fTileSize_uu.fY+fSpacing)+fMargin+uvDelta_tx.fY+tileSize_uu.fY); // Vcr
+			lTextureIV_tx[3] = (int) -tileSize_uu.fY; // Hcr
+		}
 	}
 	
 	/**

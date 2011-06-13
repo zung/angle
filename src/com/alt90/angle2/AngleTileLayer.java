@@ -18,6 +18,8 @@ import android.util.Base64;
 public class AngleTileLayer extends AngleObject
 {
 	//Cached variables
+   protected static final byte sVerticalFlip = 0x01;
+   protected static final byte sHorizontalFlip = 0x02;
    private static AngleVectorI cCurrent_uu=new AngleVectorI();
    private static AngleVectorI cTileSize_uu=new AngleVectorI();
    private static AngleVectorF cTileSizeScaled_uu=new AngleVectorF();
@@ -30,7 +32,8 @@ public class AngleTileLayer extends AngleObject
 	private AngleTileMap lMap;
 	private AngleTileSet lTileSet;
 	private byte[] fByteData;
-	private int[] fData;
+	private short[] fData;
+	private byte[] fFlags;
 	protected int fMinGid;
 	protected int fMaxGid;
 	public int fVisible;
@@ -48,12 +51,13 @@ public class AngleTileLayer extends AngleObject
 		lTileSet=null;
 	}
 
-	protected void beginCheck ()
+	protected void beginCheck () throws Exception
 	{
 		lTileSet=null;
 		fMinGid=Integer.MAX_VALUE;
 		fMaxGid=Integer.MIN_VALUE;
-		fData=new int[lMap.fWidth*lMap.fHeight];
+		fData=new short[lMap.fWidth*lMap.fHeight];
+		fFlags=new byte[lMap.fWidth*lMap.fHeight];
 		for (int y=0;y<lMap.fHeight;y++)
 		{
 			for (int x=0;x<lMap.fWidth;x++)
@@ -65,11 +69,15 @@ public class AngleTileLayer extends AngleObject
 				gid|=fByteData[(y*lMap.fWidth+x)*4+1];
 				gid<<=8;
 				gid|=fByteData[(y*lMap.fWidth+x)*4+0];
+				fFlags[y*lMap.fWidth+x]=(byte) (gid>>30);
+				if ((gid&0x3FFFFFFF)>0x7FFF)
+					throw new Exception("Don't use GIDs greater than 7FFFh");
+				gid&=0x7FFF;
 				if ((fMinGid>gid)&&(gid>0))
 					fMinGid=gid;
 				if (fMaxGid<gid)
 					fMaxGid=gid;
-				fData[y*lMap.fWidth+x]=gid;
+				fData[y*lMap.fWidth+x]=(short) gid;
 			}
 		}
 	}
@@ -130,7 +138,7 @@ public class AngleTileLayer extends AngleObject
 				      int tile=fData[row*lMap.fWidth+col];
 	               if (tile>0)
 	               {
-							lTileSet.fillTextureValues(lTextureIV_tx,tile-1,cUVDelta_tx,cTileSize_uu);
+							lTileSet.fillTextureValues(lTextureIV_tx,tile-1,cUVDelta_tx,cTileSize_uu,fFlags[row*lMap.fWidth+col]);
 	                  ((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
 	
 	                  ((GL11Ext) gl).glDrawTexfOES(
