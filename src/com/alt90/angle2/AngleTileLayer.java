@@ -3,6 +3,7 @@ package com.alt90.angle2;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
@@ -20,6 +21,8 @@ public class AngleTileLayer extends AngleObject
 	//Cached variables
    protected static final byte sVerticalFlip = 0x01;
    protected static final byte sHorizontalFlip = 0x02;
+	private static final int COMPRESSION_GZIP = 0;
+	private static final int COMPRESSION_ZLIB = 1;
    private static AngleVectorI cCurrent_uu=new AngleVectorI();
    private static AngleVectorI cTileSize_uu=new AngleVectorI();
    private static AngleVectorF cTileSizeScaled_uu=new AngleVectorF();
@@ -28,6 +31,7 @@ public class AngleTileLayer extends AngleObject
    private static AngleVectorI cUVDelta_tx=new AngleVectorI();
 
 	protected static int[] lTextureIV_tx=new int[4]; // Texture coordinates
+	protected static float[] lTextureFV_tx=new float[4]; // Texture coordinates
 	private XMLProperties properties;
 	private AngleTileMap lMap;
 	private AngleTileSet lTileSet;
@@ -39,6 +43,7 @@ public class AngleTileLayer extends AngleObject
 	public int fVisible;
 	public AngleColor fColor; //Set to change layer tint color and alpha
 	public AngleVectorF fTopLeft_uu; //Set to change the position of the layer into the map
+	private int lCompression;
 
 	AngleTileLayer(AngleTileMap map)
 	{
@@ -70,6 +75,8 @@ public class AngleTileLayer extends AngleObject
 				gid<<=8;
 				gid|=fByteData[(y*lMap.fWidth+x)*4+0];
 				fFlags[y*lMap.fWidth+x]=(byte) (gid>>30);
+				fFlags[y*lMap.fWidth+x]|=AngleTileLayer.sHorizontalFlip;
+				//fFlags[y*lMap.fWidth+x]|=AngleTileLayer.sVerticalFlip;
 				if ((gid&0x3FFFFFFF)>0x7FFF)
 					throw new Exception("Don't use GIDs greater than 7FFFh");
 				gid&=0x7FFF;
@@ -139,7 +146,8 @@ public class AngleTileLayer extends AngleObject
 	               if (tile>0)
 	               {
 							lTileSet.fillTextureValues(lTextureIV_tx,tile-1,cUVDelta_tx,cTileSize_uu,fFlags[row*lMap.fWidth+col]);
-	                  ((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureIV_tx, 0);
+							lTileSet.fillTextureValues(lTextureFV_tx,tile-1,cUVDelta_tx,cTileSize_uu,fFlags[row*lMap.fWidth+col]);
+	                  ((GL11) gl).glTexParameterfv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureFV_tx, 0);
 	
 	                  ((GL11Ext) gl).glDrawTexfOES(
 	                  		(cCurrent_uu.fX*lMap.fScale+lMap.fClipRect_uu.fPosition.fX)*AngleRenderer.vHorizontalFactor_px, 
@@ -227,11 +235,18 @@ public class AngleTileLayer extends AngleObject
 		
 		lXMLParser.next();
 		
-      byte[] dec = Base64.decode(lXMLParser.getText().trim(),Base64.DEFAULT);
-      InputStream is=new GZIPInputStream(new ByteArrayInputStream(dec));
       fByteData=new byte[lMap.fWidth*lMap.fHeight*4];
-      is.read(fByteData);
-      is.close();
+      byte[] dec = Base64.decode(lXMLParser.getText().trim(),Base64.DEFAULT);
+      InputStream is=null;
+      if (lCompression==COMPRESSION_GZIP)
+      	is=new GZIPInputStream(new ByteArrayInputStream(dec));
+      else if (lCompression==COMPRESSION_ZLIB)
+      	is=new InflaterInputStream(new ByteArrayInputStream(dec));
+      if (is!=null)
+      {
+      	is.read(fByteData);
+      	is.close();
+      }
    }
 	
 	private void processDataAttribute(String param, String value) throws Exception
@@ -243,9 +258,15 @@ public class AngleTileLayer extends AngleObject
 		}
 		else if (param.equals("compression"))
 		{
-			if (!value.equals("gzip"))
-				throw new Exception ("Only GZip compression supported.");
+			if (value.equals("gzip"))
+				lCompression=COMPRESSION_GZIP;
+			else if (value.equals("zlib"))
+				lCompression=COMPRESSION_ZLIB;
+			else
+				throw new Exception ("Only GZip and ZLib compression supported.");
 		}
 	}
 
 }
+
+
