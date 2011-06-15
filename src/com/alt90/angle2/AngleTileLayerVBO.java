@@ -2,36 +2,37 @@ package com.alt90.angle2;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.CharBuffer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.util.Base64;
+import android.util.Log;
 
-/**
- * TileLayer for TileMap
- * @author Ivan Pajuelo
- *
- */
-public class AngleTileLayer extends AngleObject
+public class AngleTileLayerVBO extends AngleObject
 {
-	//Cached variables
+	private static final boolean sLogAngleTileLayerVBO = true;
+
    protected static final byte sVerticalFlip = 0x01;
    protected static final byte sHorizontalFlip = 0x02;
 	private static final int COMPRESSION_GZIP = 0;
 	private static final int COMPRESSION_ZLIB = 1;
-   private static AngleVectorI cCurrent_uu=new AngleVectorI();
-   private static AngleVectorI cTileSize_uu=new AngleVectorI();
-   private static AngleVectorF cTileSizeScaled_uu=new AngleVectorF();
-   private static AngleVectorI cMod_uu=new AngleVectorI();
-   private static AngleVectorI cDiv_uu=new AngleVectorI();
-   private static AngleVectorI cUVDelta_tx=new AngleVectorI();
+	
+	private int lVertexCount;
+	private char[] lIndexValues;
+	private int lIndexBufferIndex;
+	public float[] fVertexValues;
+	public int fVertBufferIndex;
+	protected float[] lTexCoordValues;
+	protected int lTextureCoordBufferIndex;
 
-	protected static int[] lTextureIV_tx=new int[4]; // Texture coordinates
-	protected static float[] lTextureFV_tx=new float[4]; // Texture coordinates
+	public static AngleVectorF cDelta_uu=new AngleVectorF();
+	public static AngleVectorF cTopLeftTileCorner_uu=new AngleVectorF();
+	public static AngleVectorF cBottomRightTileCorner_uu=new AngleVectorF();
+
 	private XMLProperties properties;
 	private AngleTileMap lMap;
 	private AngleTileSet lTileSet;
@@ -42,16 +43,18 @@ public class AngleTileLayer extends AngleObject
 	protected int fMaxGid;
 	public int fVisible;
 	public AngleColor fColor; //Set to change layer tint color and alpha
-	public AngleVectorF fTopLeft_uu; //Set to change the position of the layer into the map
+	public AngleVectorF fPosition_uu; //Set to change the position of the layer into the map
 	private int lCompression;
+	private int lColCount;
+	private int lRowCount;
 
-	AngleTileLayer(AngleTileMap map)
+	AngleTileLayerVBO(AngleTileMap map)
 	{
 		lMap=map;
 		lXMLTag="layer";
 		properties=new XMLProperties();
 		fColor=new AngleColor(AngleColor.cWhite);
-		fTopLeft_uu=new AngleVectorF();
+		fPosition_uu=new AngleVectorF();
 		fVisible=1;
 		lTileSet=null;
 	}
@@ -107,83 +110,65 @@ public class AngleTileLayer extends AngleObject
 				fData[y*lMap.fWidth+x]-=(lTileSet.fFirstGid-1);
 		}
 	}
-
-	@Override
-	public void draw(GL10 gl)
-	{
-		if (lTileSet.bindTexture(gl))
-		{
-			gl.glColor4f(fColor.fRed, fColor.fGreen, fColor.fBlue, fColor.fAlpha);
-			
-			cMod_uu.set((int)fTopLeft_uu.fX%lMap.fTileWidth, (int)fTopLeft_uu.fY%lMap.fTileHeight);
-		   cDiv_uu.set((int)fTopLeft_uu.fX/lMap.fTileWidth, (int)fTopLeft_uu.fY/lMap.fTileHeight);
-		   
-		   //Solve negative modules
-		   if (cMod_uu.fX<0)
-		   	cMod_uu.fX+=lMap.fTileWidth;
-		   if (cMod_uu.fY<0)
-		   	cMod_uu.fY+=lMap.fTileHeight;
-			
-	      cUVDelta_tx.fY=cMod_uu.fY;
-	     	cTileSize_uu.fY=lMap.fTileHeight-cMod_uu.fY;
-         cTileSizeScaled_uu.fY=cTileSize_uu.fY*lMap.fScale;
-	      int row=cDiv_uu.fY;
-	      cCurrent_uu.fY=0;
-		   while (cTileSize_uu.fY>0)
-		   {
-		      //drawRow
-	         cUVDelta_tx.fX=cMod_uu.fX;
-	         cTileSize_uu.fX=lMap.fTileWidth-cMod_uu.fX;
-            cTileSizeScaled_uu.fX=cTileSize_uu.fX*lMap.fScale;
-		      int col=cDiv_uu.fX;
-	         cCurrent_uu.fX=0;
-	         while (cTileSize_uu.fX>0)
-	         {
-	            //drawTile
-			      if ((col>=0)&&(row>=0)&&(col<lMap.fWidth)&&(row<lMap.fHeight))
-			      {
-				      int tile=fData[row*lMap.fWidth+col];
-	               if (tile>0)
-	               {
-							lTileSet.fillTextureValues(lTextureIV_tx,tile-1,cUVDelta_tx,cTileSize_uu,fFlags[row*lMap.fWidth+col]);
-							lTileSet.fillTextureValues(lTextureFV_tx,tile-1,cUVDelta_tx,cTileSize_uu,fFlags[row*lMap.fWidth+col]);
-	                  ((GL11) gl).glTexParameterfv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, lTextureFV_tx, 0);
 	
-	                  ((GL11Ext) gl).glDrawTexfOES(
-	                  		(cCurrent_uu.fX*lMap.fScale+lMap.fClipRect_uu.fPosition.fX)*AngleRenderer.vHorizontalFactor_px, 
-	                  		AngleRenderer.vViewportHeight_px - (cCurrent_uu.fY*lMap.fScale+lMap.fClipRect_uu.fPosition.fY+cTileSizeScaled_uu.fY)*AngleRenderer.vVerticalFactor_px,
-	                  		0, 
-	                  		cTileSizeScaled_uu.fX*AngleRenderer.vHorizontalFactor_px, 
-	                  		cTileSizeScaled_uu.fY*AngleRenderer.vVerticalFactor_px);
-	               }
-	      		}
-	            //------
-	            col++;
-	            cCurrent_uu.fX+=cTileSize_uu.fX;
-	            cTileSize_uu.fX=lMap.fTileWidth;
-	            cTileSizeScaled_uu.fX=cTileSize_uu.fX*lMap.fScale;
-	            if (cTileSizeScaled_uu.fX>(lMap.fClipRect_uu.fSize.fX-cCurrent_uu.fX*lMap.fScale))
-	            {
-	               cTileSizeScaled_uu.fX=((lMap.fClipRect_uu.fSize.fX-cCurrent_uu.fX*lMap.fScale));
-	               cTileSize_uu.fX=(int) (cTileSizeScaled_uu.fX/lMap.fScale);
-	            }
-	            cUVDelta_tx.fX=0;
-	         }
-	         //------
-	         row++;
-		      cCurrent_uu.fY+=cTileSize_uu.fY;
-	     		cTileSize_uu.fY=lMap.fTileHeight;
-            cTileSizeScaled_uu.fY=cTileSize_uu.fY*lMap.fScale;
-	         if (cTileSizeScaled_uu.fY>(lMap.fClipRect_uu.fSize.fY-cCurrent_uu.fY*lMap.fScale))
-	         {
-	         	cTileSizeScaled_uu.fY=((lMap.fClipRect_uu.fSize.fY-cCurrent_uu.fY*lMap.fScale));
-               cTileSize_uu.fY=(int) (cTileSizeScaled_uu.fY/lMap.fScale);
-	         }
-            cUVDelta_tx.fY=0;
-		   }
+	public void generateIndexBuffer (GL10 gl)
+	{
+		if (lIndexBufferIndex<0)
+		{
+			if (sLogAngleTileLayerVBO)
+				Log.d("AngleTileLayerVBO","generateIndexBuffer");
+			int[] hwBuffers=new int[1];
+			((GL11)gl).glGenBuffers(1, hwBuffers, 0);
+	
+			// Allocate and fill the index buffer.
+			lIndexBufferIndex = hwBuffers[0];
+			((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, lIndexBufferIndex);
+			((GL11)gl).glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, lVertexCount * 2, CharBuffer.wrap(lIndexValues), GL11.GL_STATIC_DRAW);
+			((GL11)gl).glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 	}
-	
+
+	public void releaseIndexBuffer (GL10 gl)
+	{
+		if (lIndexBufferIndex>=0)
+		{
+			if (sLogAngleTileLayerVBO)
+				Log.d("AngleTileLayerVBO","releaseIndexBuffer");
+			int[] hwBuffers = new int[1];
+			hwBuffers[0]=lIndexBufferIndex;
+			if (gl!=null)
+				((GL11) gl).glDeleteBuffers(1, hwBuffers, 0);
+			lIndexBufferIndex=-1;
+		}
+	}
+
+	private void fillBuffers()
+	{
+		cDelta_uu.fX=fPosition_uu.fX%lMap.fTileWidth;
+		cDelta_uu.fY=fPosition_uu.fY%lMap.fTileHeight;
+		
+		int cL = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fX-cTopLeftTileCorner_uu.fX)/(lMap.fTileWidth*lMap.fScale));
+		int rU = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fY-cTopLeftTileCorner_uu.fY)/(lMap.fTileHeight*lMap.fScale));
+		int cR = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fX+lMap.fClipRect_uu.fSize.fX-cBottomRightTileCorner_uu.fX)/(lMap.fTileWidth*lMap.fScale));
+		int rD = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fY+lMap.fClipRect_uu.fSize.fY-cBottomRightTileCorner_uu.fY)/(lMap.fTileHeight*lMap.fScale));
+		lColCount=cR-cL;
+		lRowCount=rD-rU;
+		lVertexCount=(lRowCount+1)*(lColCount+1);
+		lIndexValues=new char[lVertexCount];
+		fVertexValues=new float[lVertexCount];
+		lTexCoordValues=new float[lVertexCount];
+		for (int r=rU,vn=0;r<=rD;r++)
+		{
+		   for (int c=cL;c<=cR;c++)
+		   {
+		   	fVertexValues[vn++]=c*lMap.fTileWidth-cDelta_uu.fX;
+		   	fVertexValues[vn++]=r*lMap.fTileHeight-cDelta_uu.fY;
+		   }
+		}
+		//TODO rellenar lIndexValues y lTexCoordValues
+	}
+
+
 	/**
 	 * support for unmarshal TMX files
 	 * You can found info about TMX format in http://mapeditor.org/
@@ -266,7 +251,4 @@ public class AngleTileLayer extends AngleObject
 				throw new Exception ("Only GZip and ZLib compression supported.");
 		}
 	}
-
 }
-
-
