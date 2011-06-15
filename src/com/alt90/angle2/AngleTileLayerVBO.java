@@ -147,6 +147,8 @@ public class AngleTileLayerVBO extends AngleObject
 		cDelta_uu.fX=fPosition_uu.fX%lMap.fTileWidth;
 		cDelta_uu.fY=fPosition_uu.fY%lMap.fTileHeight;
 		
+		//TODO calcular cTopLeftTileCorner_uu y cBottomRightTileCorner_uu
+		
 		int cL = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fX-cTopLeftTileCorner_uu.fX)/(lMap.fTileWidth*lMap.fScale));
 		int rU = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fY-cTopLeftTileCorner_uu.fY)/(lMap.fTileHeight*lMap.fScale));
 		int cR = (int) Math.ceil((lMap.fClipRect_uu.fPosition.fX+lMap.fClipRect_uu.fSize.fX-cBottomRightTileCorner_uu.fX)/(lMap.fTileWidth*lMap.fScale));
