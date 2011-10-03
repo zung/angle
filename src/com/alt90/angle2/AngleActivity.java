@@ -41,7 +41,7 @@ public class AngleActivity extends Activity
 		public boolean newData; //Data of the fling is changed (clear this after check it)
 
 	}
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -58,8 +58,7 @@ public class AngleActivity extends Activity
 			iKeys[k]=false;
 		uInstance = this;
 		lGLSurfaceView = new GLSurfaceView(this);
-		lGLSurfaceView
-				.setRenderer(new AngleRenderer(getResources().getDimension(R.dimen.Width), getResources().getDimension(R.dimen.Height)));
+		
 		setContentView(lGLSurfaceView);
 	}
 

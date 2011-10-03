@@ -26,7 +26,7 @@ public abstract class AngleAbstractSprite extends AngleObject
 		fScale = new AngleVectorF(1, 1);
 		fPosition_uu = new AngleVectorF(0, 0);
 		lLayout=layout;
-		fColor=AngleColor.cWhite;
+		fColor=new AngleColor(AngleColor.cWhite);
 	}
 
 	/**
@@ -67,5 +67,14 @@ public abstract class AngleAbstractSprite extends AngleObject
 		if (lLayout != null)
 			if (lLayout.bindTexture(gl))
 				blockDraw (gl);
+	}
+	
+	public boolean clickTest(AngleVectorF poiner_uu)
+	{
+		AngleVectorF pivot_uu=lLayout.getPivot_uu();
+		return ((poiner_uu.fX>=fPosition_uu.fX-pivot_uu.fX)&&
+				(poiner_uu.fY>=fPosition_uu.fY-pivot_uu.fY)&&
+				(poiner_uu.fX<fPosition_uu.fX+pivot_uu.fX)&&
+				(poiner_uu.fY<fPosition_uu.fY+pivot_uu.fY));
 	}
 }

@@ -1,6 +1,9 @@
 package com.alt90.angle2;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -20,7 +23,7 @@ public abstract class XMLUnmarshaller
 	 * @param resId
 	 * @throws Exception
 	 */
-	void loadFromAsset (Context context, String filename) throws Exception
+	public void loadFromAsset (Context context, String filename) throws Exception
 	{
 		int pos=filename.lastIndexOf('/');
 		if (pos>0)
@@ -33,6 +36,26 @@ public abstract class XMLUnmarshaller
       InputStream raw = context.getAssets().open(filename);
 		lXMLParser.setInput(raw, null);		
 		Log.d("XMLUnmarshaller", "open " + filename);
+		findTag();
+		read(lXMLParser);
+	}
+
+	/**
+	 * Load XML from resource
+	 * @param context
+	 * @param resId
+	 * @throws Exception
+	 */
+	public void loadFromURL (Context context, String dir) throws Exception
+	{
+		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+      factory.setValidating(false);
+      lXMLParser = factory.newPullParser();
+		URL url = new URL(dir);
+		URLConnection urlConnection = url.openConnection();
+		BufferedInputStream raw = new BufferedInputStream(urlConnection.getInputStream());
+      lXMLParser.setInput(raw, null);		
+		Log.d("XMLUnmarshaller", "open " + dir);
 		findTag();
 		read(lXMLParser);
 	}

@@ -134,6 +134,31 @@ public class AngleTextureEngine
 		return tex;
 	}
 
+	public static AngleTexture createTextureFromURL(String url, int type)
+	{
+		AngleTexture tex = null;
+		Iterator<AngleTexture> it = mTexturesX.iterator();
+		while (it.hasNext())
+		{
+			tex = it.next();
+			if (tex instanceof AngleURLTexture)
+			{
+				// Texture already exists
+				if (((AngleURLTexture) tex).fURL.equals(url))
+				{
+					tex.lRefernces++;
+					return tex;
+				}
+			}
+		}
+
+		tex = new AngleURLTexture(url, type);
+		mTexturesX.add(tex);
+		if (mGl != null)
+			tex.linkToGL(mGl);
+		return tex;
+	}
+
 	public static int generateTexture()
 	{
 		if (mGl != null)
@@ -164,6 +189,7 @@ public class AngleTextureEngine
 		}
 		if (tex.lHWTextureID > -1)
 		{
+			Log.v("TextureEngine", "deleteTexture id="+tex.lHWTextureID);
 			int[] texture = new int[1];
 			texture[0] = tex.lHWTextureID;
 			if (mGl != null)

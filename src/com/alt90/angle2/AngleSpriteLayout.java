@@ -42,7 +42,7 @@ public class AngleSpriteLayout
 	 * @param cropHeight_tx
 	 *           Height of the cropping rectangle in texture
 	 */
-	public AngleSpriteLayout(int width_uu, int height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx,
+	public AngleSpriteLayout(float width_uu, float height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx,
 			int cropHeight_tx)
 	{
 		doInit(width_uu, height_uu, resourceId, cropLeft_tx, cropTop_tx, cropWidth_tx, cropHeight_tx, 1, 1);
@@ -69,13 +69,13 @@ public class AngleSpriteLayout
 	 * @param frameColumns
 	 *           Number of frames horizontally in texture
 	 */
-	public AngleSpriteLayout(int width_uu, int height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx,
+	public AngleSpriteLayout(float width_uu, float height_uu, int resourceId, int cropLeft_tx, int cropTop_tx, int cropWidth_tx,
 			int cropHeight_tx, int frameCount, int frameColumns)
 	{
 		doInit(width_uu, height_uu, resourceId, cropLeft_tx, cropTop_tx, cropWidth_tx, cropHeight_tx, frameCount, frameColumns);
 	}
 
-	public AngleSpriteLayout(int width_uu, int height_uu, int resourceId)
+	public AngleSpriteLayout(float width_uu, float height_uu, int resourceId)
 	{
 		doInit(width_uu, height_uu, resourceId, 0, 0, 0, 0, 1, 1);
 	}
@@ -122,9 +122,14 @@ public class AngleSpriteLayout
 
 		lPivot_uu=new AngleVectorF[lFrameCount];
 		//Set all frame pivots at center point by default
+		centerPivots();
+
+	}
+
+	public void centerPivots()
+	{
 		for (int f=0;f<lFrameCount;f++)
 			lPivot_uu[f]=new AngleVectorF(lDimensions_uu.fX / 2, lDimensions_uu.fY / 2);
-
 	}
 
 	/**
@@ -148,6 +153,15 @@ public class AngleSpriteLayout
 	{
 		for (int f=0;f<lFrameCount;f++)
 			lPivot_uu[f].set(x,y);
+	}
+
+	/**
+	 * Get pivot of current frame in uu
+	 * @return 
+	 */
+	public AngleVectorF getPivot_uu()
+	{
+		return lPivot_uu[lFrame];
 	}
 
 	/**
@@ -227,6 +241,17 @@ public class AngleSpriteLayout
 	}
 
 	/**
+	 * Change the content of the texture
+	 * @param resourceId Durable
+	 */
+	public void changeTexture (String url)
+	{
+		//TODO delete correct texture hardware id
+		//AngleTextureEngine.deleteTexture(lTexture);
+		lTexture = AngleTextureEngine.createTextureFromURL(url,AngleTexture.TRANSLUCENT_SMOOTH);
+	}
+
+	/**
 	 * Change the entire layout
 	 * @param width_uu in viewport units
 	 * @param height_uu in viewport units
@@ -275,6 +300,57 @@ public class AngleSpriteLayout
 		lFrameCount = frameCount;
 		lFrameColumns = frameColumns;
 		changeTexture (resourceId);
+	}
+
+	/**
+	 * Change the entire layout
+	 * @param width_uu in viewport units
+	 * @param height_uu in viewport units
+	 * @param resourceId
+	 */
+	public void changeLayout(float width_uu, float height_uu, String url)
+	{
+		changeLayout(width_uu, height_uu, url, 0, 0, 0, 0, 1, 1);
+	}
+	
+	/**
+	 * Change the entire layout
+	 * @param width_uu in viewport units
+	 * @param height_uu in viewport units
+	 * @param resourceId
+	 * @param cropLeft_tx in texels
+	 * @param cropTop_tx in texels
+	 * @param cropWidth_tx in texels
+	 * @param cropHeight_tx in texels
+	 */
+	public void changeLayout(float width_uu, float height_uu, String url, int cropLeft_tx, int cropTop_tx, int cropWidth_tx, int cropHeight_tx)
+	{
+		changeLayout(width_uu, height_uu, url, cropLeft_tx, cropTop_tx, cropWidth_tx, cropHeight_tx, 1, 1);
+	}
+	
+	/**
+	 * Change the entire layout
+	 * @param width_uu in viewport units
+	 * @param height_uu in viewport units
+	 * @param resourceId
+	 * @param cropLeft_tx in texels
+	 * @param cropTop_tx in texels
+	 * @param cropWidth_tx in texels
+	 * @param cropHeight_tx in texels
+	 * @param frameCount
+	 * @param frameColumns
+	 */
+	public void changeLayout(float width_uu, float height_uu, String url, int cropLeft_tx, int cropTop_tx, int cropWidth_tx, int cropHeight_tx, int frameCount, int frameColumns)
+	{
+		lDimensions_uu.fX = width_uu;
+		lDimensions_uu.fY = height_uu;
+		lCrop_tx.fPosition.fX = cropLeft_tx;
+		lCrop_tx.fPosition.fY = cropTop_tx;
+		lCrop_tx.fSize.fX = cropWidth_tx;
+		lCrop_tx.fSize.fY = cropHeight_tx;
+		lFrameCount = frameCount;
+		lFrameColumns = frameColumns;
+		changeTexture (url);
 	}
 
 	public boolean bindTexture(GL10 gl)
