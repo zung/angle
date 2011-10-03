@@ -212,4 +212,9 @@ public class AngleObject extends XMLUnmarshaller
 		// Do nothing
 	}
 
+	public void empty()
+	{
+		lChildrenCount=0; //TODO analizar daños colaterales
+	}
+
 }

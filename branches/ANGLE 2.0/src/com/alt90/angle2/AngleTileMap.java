@@ -51,6 +51,7 @@ public class AngleTileMap extends AngleObject
 	 */
 
 	@Override
+	public
 	void loadFromAsset(Context context, String filename) throws Exception
 	{
 		super.loadFromAsset(context, filename);

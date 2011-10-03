@@ -1,4 +1,4 @@
-package com.alt90.angle2;
+package com.alt90.test;
 
 import android.app.Activity;
 import android.content.Intent;

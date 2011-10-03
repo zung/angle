@@ -1,9 +1,23 @@
-package com.alt90.angle2;
+package com.alt90.test;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+
+import com.alt90.angle2.AngleActivity;
+import com.alt90.angle2.AngleColor;
+import com.alt90.angle2.AngleFPSCounter;
+import com.alt90.angle2.AngleFont;
+import com.alt90.angle2.AngleObject;
+import com.alt90.angle2.AngleRect;
+import com.alt90.angle2.AngleRenderer;
+import com.alt90.angle2.AngleScreenEraser;
+import com.alt90.angle2.AngleSpriteLayout;
+import com.alt90.angle2.AngleSpriteRotable;
+import com.alt90.angle2.AngleString;
+import com.alt90.angle2.AngleTileLayer;
+import com.alt90.angle2.AngleTileMap;
 
 
 public class TestAngle2 extends AngleActivity
@@ -95,6 +109,8 @@ public class TestAngle2 extends AngleActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		lGLSurfaceView
+		.setRenderer(new AngleRenderer(getResources().getDimension(R.dimen.Width), getResources().getDimension(R.dimen.Height)));
 		minDim=(int)(AngleRenderer.rViewportExtent_uu.fX/4);
 		if (minDim>(int)(AngleRenderer.rViewportExtent_uu.fY/4))
 			minDim=(int)(AngleRenderer.rViewportExtent_uu.fY/4);

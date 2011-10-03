@@ -16,9 +16,9 @@ public class AngleRenderer implements Renderer
 	private static final boolean sLogAngleRenderer = false;
 	public static final boolean sUseHWBuffers = true; //UBW Determines if hardware buffers are used
 	private static long lCTM;
-	private static AngleRect lViewport_px=null; 
-	private static AngleVectorF lUserExtent_uu=new AngleVectorF(0,0);
-	private static AngleObject lRenderTree=null;
+	protected static AngleRect lViewport_px=null; 
+	protected static AngleVectorF lUserExtent_uu=new AngleVectorF(0,0);
+	protected static AngleObject lRenderTree=null;
 
 	//Only for reading. DO NOT change this filed. It's never updated
 	public static AngleVectorF rViewportExtent_uu=new AngleVectorF(0,0); //Dimensions of viewport in user units 
